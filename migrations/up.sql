@@ -26,7 +26,7 @@ CREATE TABLE product_categories(
 
   screen_id INTEGER NULL,
 
-  FOREIGN KEY (screen_id) REFERENCES kitchen(id) ON DELETE SET NULL
+  FOREIGN KEY (screen_id) REFERENCES screens(id) ON DELETE SET NULL
 );
 
 CREATE TABLE products(
