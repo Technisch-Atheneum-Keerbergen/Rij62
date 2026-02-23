@@ -1,7 +1,10 @@
-DROP TABLE product_order_links;
+
+DROP TABLE order_items;
 DROP TABLE orders;
+DROP TABLE product_availible_history;
 DROP TABLE products;
 DROP TABLE product_categories;
-DROP TABLE kitchen;
+DROP TABLE screens;
 DROP TABLE tables;
-DROP TABLE images;
+DROP TABLE users;
+DROP TABLE language;
