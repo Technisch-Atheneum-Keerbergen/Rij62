@@ -1,0 +1,3 @@
+Kassa:	-Machine: QTouch 11
+	-Documentation:
+	-Link: https://www.quorion.com/qtouch11-all-in-one-pos-system/
