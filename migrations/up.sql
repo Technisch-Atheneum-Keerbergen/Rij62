@@ -7,9 +7,9 @@ CREATE TABLE language (
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR NOT NULL,
-  password VARCHAR NULL
+  password VARCHAR NULL,
+  email VARCHAR NULL
 );
-
 CREATE TABLE tables (
   id SERIAL PRIMARY KEY,
   table_number INTEGER UNIQUE NOT NULL

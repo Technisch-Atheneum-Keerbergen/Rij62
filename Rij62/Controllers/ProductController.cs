@@ -62,5 +62,25 @@ namespace Rij62.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+
+        // GET: api/product/sampleData
+        [HttpPost("sampleData")]
+        public IActionResult CreateSampleData()
+        {
+            var sample = new[] {
+                new Product { TitleKey = "Sample1", DescriptionKey = "Desc1", PriceCent = 1000, Stock = 10, IsAvailable = true, ImgUrl = "sample1.jpg", CategoryId = 1 },
+                new Product { TitleKey = "Sample2", DescriptionKey = "Desc2", PriceCent = 2000, Stock = 5, IsAvailable = true, ImgUrl = "sample2.jpg", CategoryId = 2 }
+            };
+            foreach (var product in sample)
+            {
+                if (!_context.Products.Any(p => p.TitleKey == product.TitleKey && p.DescriptionKey == product.DescriptionKey))
+                {
+                    _context.Products.Add(product);
+                }
+            }
+            _context.SaveChanges();
+            return Ok(sample);
+        }
     }
 }
