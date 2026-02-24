@@ -16,10 +16,52 @@ Controllers:
 Todo:
     ##   API   ##
         - Fix DTOs
-        -
+        - Fix User system
     ##   SQL   ##
         - Fix that tables are linked to user if need be
             --> Two types of users: 1-> Temporary user  2-> Verified user   
 
 
 
+[
+  {
+    "id": 2,
+    "titleKey": "burger",
+    "descriptionKey": "tasty burger",
+    "priceCent": 890,
+    "stock": 50,
+    "isAvailable": true,
+    "imgUrl": "https://example.com/burger.jpg",
+    "categoryId": 1
+  },
+  {
+    "id": 1,
+    "titleKey": "Sample1",
+    "descriptionKey": "Desc1",
+    "priceCent": 1000,
+    "stock": 10,
+    "isAvailable": true,
+    "imgUrl": "sample1.jpg",
+    "categoryId": 1
+  },
+  {
+    "id": 3,
+    "titleKey": "Sample2",
+    "descriptionKey": "Desc2",
+    "priceCent": 2000,
+    "stock": 5,
+    "isAvailable": true,
+    "imgUrl": "sample2.jpg",
+    "categoryId": 2
+  },
+  {
+    "id": 4,
+    "titleKey": "ouleehhh",
+    "descriptionKey": "zeer lekker",
+    "priceCent": 888,
+    "stock": 13,
+    "isAvailable": true,
+    "imgUrl": "https://example.com/ouleh.jpg",
+    "categoryId": 1
+  }
+]
