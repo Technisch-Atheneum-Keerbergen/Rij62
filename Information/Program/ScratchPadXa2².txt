@@ -1,0 +1,25 @@
+Xavier zijn scratchpad bljif er defock af ouleehh
+
+
+Controllers:
+    -ProductController
+        GET /api/product → returns all columns of products
+
+        GET /api/product/{id} → returns one product
+
+        POST /api/product → create a new Product (JSON body must match EF entity)
+
+        PUT /api/product/{id} → update a product (send full JSON)
+
+        DELETE /api/product/{id} → deletes a product
+
+Todo:
+    ##   API   ##
+        - Fix DTOs
+        -
+    ##   SQL   ##
+        - Fix that tables are linked to user if need be
+            --> Two types of users: 1-> Temporary user  2-> Verified user   
+
+
+
