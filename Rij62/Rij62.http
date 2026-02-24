@@ -1,0 +1,6 @@
+@Rij62_HostAddress = http://localhost:5148
+
+GET {{Rij62_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
