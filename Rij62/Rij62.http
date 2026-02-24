@@ -1,6 +1,5 @@
-@Rij62_HostAddress = http://localhost:5148
+@baseUrl = http://localhost:5148
 
-GET {{Rij62_HostAddress}}/weatherforecast/
+### Get all products
+GET {{baseUrl}}/api/product
 Accept: application/json
-
-###
