@@ -1,5 +1,0 @@
-@baseUrl = http://localhost:5148
-
-### Get all products
-GET {{baseUrl}}/api/product
-Accept: application/json
