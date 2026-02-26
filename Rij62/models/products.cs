@@ -10,9 +10,11 @@ public class Product
     [Column("id")]
     public int Id { get; set; }
 
+    // The TitleKey and DescriptionKey are keys to look up the localized strings in the resource files.
     [Column("title_key")]
     public string TitleKey { get; set; } = string.Empty;
 
+    // The DescriptionKey is a key to look up the localized description in the resource files.
     [Column("description_key")]
     public string DescriptionKey { get; set; } = string.Empty;
 

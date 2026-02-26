@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Rij62.Data;
 using Rij62.Models;
 
@@ -7,6 +8,7 @@ namespace Rij62.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    
     public class ProductController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -17,6 +19,7 @@ namespace Rij62.Controllers
         }
 
         // Get all products
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
@@ -25,6 +28,7 @@ namespace Rij62.Controllers
         }
 
         // Get product by id
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
@@ -33,7 +37,8 @@ namespace Rij62.Controllers
             return Ok(product);
         }
 
-        // Create a new product
+        // Only authenticated users can create a product
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] Product product)
         {
@@ -42,7 +47,8 @@ namespace Rij62.Controllers
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
         }
 
-        // Update a product
+        // Only authenticated users can update
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product updatedProduct)
         {
@@ -61,26 +67,6 @@ namespace Rij62.Controllers
 
             await _context.SaveChangesAsync();
             return NoContent();
-        }
-
-
-        // GET: api/product/sampleData
-        [HttpPost("sampleData")]
-        public IActionResult CreateSampleData()
-        {
-            var sample = new[] {
-                new Product { TitleKey = "Sample1", DescriptionKey = "Desc1", PriceCent = 1000, Stock = 10, IsAvailable = true, ImgUrl = "sample1.jpg", CategoryId = 1 },
-                new Product { TitleKey = "Sample2", DescriptionKey = "Desc2", PriceCent = 2000, Stock = 5, IsAvailable = true, ImgUrl = "sample2.jpg", CategoryId = 2 }
-            };
-            foreach (var product in sample)
-            {
-                if (!_context.Products.Any(p => p.TitleKey == product.TitleKey && p.DescriptionKey == product.DescriptionKey))
-                {
-                    _context.Products.Add(product);
-                }
-            }
-            _context.SaveChanges();
-            return Ok(sample);
         }
     }
 }
