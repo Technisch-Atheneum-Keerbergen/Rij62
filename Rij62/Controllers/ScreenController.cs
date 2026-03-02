@@ -60,7 +60,7 @@ namespace Rij62.Controllers
         //                      *** UPDATE ***
         //      UPDATE: api/screens/UpdateScreen/{id} - Update a screen by ID
         // ************************************************************
-        [HttpPut("screens/UpdateScreen/{id}")] 
+        [HttpPut("UpdateScreen/{id}")] 
         public async Task<IActionResult> UpdateScreen(int id, Screen updatedScreen)
         {
             if (id != updatedScreen.Id)
