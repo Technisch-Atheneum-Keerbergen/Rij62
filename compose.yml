@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:17
+    user: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=admin
+
+volumes:
+  db-data:
