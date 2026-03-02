@@ -13,5 +13,6 @@ namespace Rij62.Data
             : base(options) { }
 
         public DbSet<Screen> Screens { get; set; }
+        public DbSet<Order> Orders { get; set; }
     }
 }
