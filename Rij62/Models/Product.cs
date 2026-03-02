@@ -1,6 +1,6 @@
 namespace Rij62.Models;
 
-class Products
+class Product
 {
     public int Id { get; set; }
     public string TitleKey { get; set; }

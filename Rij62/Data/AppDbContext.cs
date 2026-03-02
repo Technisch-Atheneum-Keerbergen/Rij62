@@ -14,5 +14,7 @@ namespace Rij62.Data
 
         public DbSet<Screen> Screens { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Table> Tables { get; set; }
     }
 }
