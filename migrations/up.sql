@@ -17,6 +17,7 @@ CREATE TABLE tables (
 
 CREATE TABLE screens (
   id SERIAL PRIMARY KEY,
+  Description VARCHAR NOT NULL,
   name VARCHAR NOT NULL
 );
 
