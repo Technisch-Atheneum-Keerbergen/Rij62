@@ -1,10 +1,13 @@
-using Microsoft.EntityFrameworkCore;
-using Rij62.Models;
 // **********************************
 //     *** Database Context  ***
 // Author: Xavier Demaerel
 // Date: 02/03/2026
+// File: Data/AppDbContext.cs
 // **********************************
+
+using Microsoft.EntityFrameworkCore;
+using Rij62.Models;
+
 namespace Rij62.Data
 {
     public class AppDbContext : DbContext
