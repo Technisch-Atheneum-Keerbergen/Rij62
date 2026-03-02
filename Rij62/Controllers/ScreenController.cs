@@ -1,13 +1,15 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Rij62.Data;
-using Rij62.Models;
-
 // **********************************
 //          *** CRUD  ***
 // Author: Xavier Demaerel
 // Date: 02/03/2026
-// **********************************
+// File: Controllers/ScreenController.cs
+// ************************************
+
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Rij62.Data;
+using Rij62.Models;
 
 namespace Rij62.Controllers
 {

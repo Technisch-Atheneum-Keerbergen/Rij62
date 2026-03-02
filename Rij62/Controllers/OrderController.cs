@@ -1,13 +1,14 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Rij62.Data;
-using Rij62.Models;
-
 // **********************************
 //          *** CRUD  ***
 // Author: Xavier Demaerel
 // Date: 02/03/2026
+// File: Controllers/OrderController.cs
 // **********************************
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Rij62.Data;
+using Rij62.Models;
 
 namespace Rij62.Controllers
 {
@@ -32,10 +33,10 @@ namespace Rij62.Controllers
         {
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetOrders", new { id = order.Id }, order);
+            return CreatedAtAction("GetOrders", new { id = order.Id }, order);        
         }
 
-        // ************************************************************
+        // ************************************************************ 
         //                      *** READ ***
         //   GET: api/orders/GetOrders - Get all orders or with id
         // ************************************************************
