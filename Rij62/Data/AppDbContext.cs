@@ -1,6 +1,5 @@
 // **********************************
 //     *** Database Context  ***
-// Author: Xavier Demaerel
 // Date: 02/03/2026
 // File: Data/AppDbContext.cs
 // **********************************
@@ -19,5 +18,6 @@ namespace Rij62.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Table> Tables { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
     }
 }
