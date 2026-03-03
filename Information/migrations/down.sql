@@ -1,0 +1,9 @@
+DROP TABLE order_items;
+DROP TABLE orders;
+DROP TABLE product_available_history;
+DROP TABLE products;
+DROP TABLE product_categories;
+DROP TABLE screens;
+DROP TABLE tables;
+DROP TABLE users;
+DROP TABLE language;
