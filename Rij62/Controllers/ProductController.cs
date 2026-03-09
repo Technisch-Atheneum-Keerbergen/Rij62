@@ -16,23 +16,23 @@ namespace Rij62.Controllers
         {
             _context = context;
         }
-        
+
         [HttpGet()]
         public async Task<IEnumerable<ApiProduct>> GetProducts()
         {
-            _context.Products.Select((p) =>
-            {
-                new ApiProduct
-                {
-                    Id=p.Id,
-                    Price=p.PriceCent,
-                    Stock=p.Stock,
-                    IsAvailible=p.IsAvailable,
-                    ImgURL=p.ImgUrl,
-                    CategoryId=p.CategoryId,
+            var languages = await _context.Language.ToArrayAsync();
 
-                }
-            })
+            return _context.Products.Select(p => new ApiProduct
+            {
+                Title = MultiLangString.FromLangEntryKey(languages, p.TitleKey),
+                Description = MultiLangString.FromLangEntryKey(languages, p.DescriptionKey),
+                Id = p.Id,
+                Price = p.PriceCent,
+                Stock = p.Stock,
+                IsAvailible = p.IsAvailable,
+                ImgURL = p.ImgUrl,
+                CategoryId = p.CategoryId,
+            });
         }
     }
 }
