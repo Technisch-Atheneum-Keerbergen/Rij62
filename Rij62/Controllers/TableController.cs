@@ -5,7 +5,6 @@
 // File: Rij62\Controllers\TableController.cs
 // **********************************
 
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
@@ -23,55 +22,100 @@ namespace Rij62.Controllers
         {
             _context = context;
         }
-        
+
         // ************************************************************
         //                      *** CREATE ***
-        //       POST: api/tables/AddTable - Add a new table
+        //              POST: /api/tables - Add a new table
         // ************************************************************
 
-        [HttpPost("AddTable")]
-        public async Task<ActionResult<Table>> PostTable(Table table)
+        [HttpPost]
+        public async Task<ActionResult<Table>> CreateTable(Table table)
         {
             _context.Tables.Add(table);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetTables", new { id = table.Id }, table);        
+
+            return CreatedAtAction(nameof(GetTable), new { id = table.Id }, table);
         }
 
-        // ************************************************************ 
+        // ************************************************************
         //                      *** READ ***
-        //   GET: api/tables/GetTables - Get all tables or with id
+        //             GET: /api/tables - Get all tables
         // ************************************************************
 
-        [HttpGet("GetTables/{id?}")]
-        public async Task<ActionResult<IEnumerable<Table>>> GetTables(int? id = null)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Table>>> GetTables()
         {
             var tables = await _context.Tables.ToListAsync();
-            if (tables == null || tables.Count == 0)
+
+            if (tables.Count == 0)
             {
                 return NotFound();
             }
-            if (id.HasValue)
-            {
-                tables = tables.Where(s => s.Id == id.Value).ToList();
-            }
+
             return Ok(tables);
         }
 
-        // ************************************************************ 
-        //                      *** DELETE ***
-        //   DELETE: api/tables/DeleteTable - Delete a table by id
+        // ************************************************************
+        //                      *** READ ***
+        //           GET: /api/tables/{id} - Get a specific table
         // ************************************************************
 
-        [HttpDelete("DeleteTable/{id}")]
-        public async Task<IActionResult> DeleteTable(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Table>> GetTable(int id)
         {
             var table = await _context.Tables.FindAsync(id);
+
             if (table == null)
             {
                 return NotFound();
             }
+
+            return Ok(table);
+        }
+
+        // ************************************************************
+        //                      *** QR CODE ***
+        //        GET: /api/tables/{id}/qrcode - Generate table QR
+        // ************************************************************
+
+        [HttpGet("{id}/qrcode")]
+        public async Task<IActionResult> GetTableQrCode(int id)
+        {
+            var table = await _context.Tables.FindAsync(id);
+
+            if (table == null)
+            {
+                return NotFound();
+            }
+
+            // TODO: Replace with actual QR generation
+            var qrContent = $"https://rij62.be/order?table={table.TableNumber}";
+
+            return Ok(new
+            {
+                Table = table.TableNumber,
+                Url = qrContent
+            });
+        }
+
+        // ************************************************************
+        //                      *** DELETE ***
+        //           DELETE: /api/tables/{id} - Delete a table
+        // ************************************************************
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTable(int id)
+        {
+            var table = await _context.Tables.FindAsync(id);
+
+            if (table == null)
+            {
+                return NotFound();
+            }
+
             _context.Tables.Remove(table);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }
