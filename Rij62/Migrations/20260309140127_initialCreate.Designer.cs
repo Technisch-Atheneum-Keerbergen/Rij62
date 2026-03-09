@@ -12,7 +12,7 @@ using Rij62.Data;
 namespace Rij62.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260309125444_initialCreate")]
+    [Migration("20260309140127_initialCreate")]
     partial class initialCreate
     {
         /// <inheritdoc />
@@ -27,6 +27,10 @@ namespace Rij62.Migrations
 
             modelBuilder.Entity("Rij62.Models.LangEntry", b =>
                 {
+                    b.Property<string>("Key")
+                        .HasColumnType("text")
+                        .HasColumnName("key");
+
                     b.Property<int>("Language")
                         .HasColumnType("integer")
                         .HasColumnName("language");
@@ -36,10 +40,8 @@ namespace Rij62.Migrations
                         .HasColumnType("text")
                         .HasColumnName("value");
 
-                    b.Property<string>("key")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("key");
+                    b.HasKey("Key", "Language")
+                        .HasName("pk_language");
 
                     b.ToTable("language", (string)null);
                 });

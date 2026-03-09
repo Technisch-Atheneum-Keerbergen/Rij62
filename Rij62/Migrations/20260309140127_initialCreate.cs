@@ -17,11 +17,12 @@ namespace Rij62.Migrations
                 columns: table => new
                 {
                     key = table.Column<string>(type: "text", nullable: false),
-                    value = table.Column<string>(type: "text", nullable: false),
-                    language = table.Column<int>(type: "integer", nullable: false)
+                    language = table.Column<int>(type: "integer", nullable: false),
+                    value = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("pk_language", x => new { x.key, x.language });
                 });
 
             migrationBuilder.CreateTable(

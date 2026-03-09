@@ -24,6 +24,10 @@ namespace Rij62.Migrations
 
             modelBuilder.Entity("Rij62.Models.LangEntry", b =>
                 {
+                    b.Property<string>("Key")
+                        .HasColumnType("text")
+                        .HasColumnName("key");
+
                     b.Property<int>("Language")
                         .HasColumnType("integer")
                         .HasColumnName("language");
@@ -33,10 +37,8 @@ namespace Rij62.Migrations
                         .HasColumnType("text")
                         .HasColumnName("value");
 
-                    b.Property<string>("key")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("key");
+                    b.HasKey("Key", "Language")
+                        .HasName("pk_language");
 
                     b.ToTable("language", (string)null);
                 });
