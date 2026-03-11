@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Rij62.Data;
 using Rij62.Models;
 using Rij62.Models.Api;
+using Rij62.Services;
 
 namespace Rij62.Controllers
 {
@@ -14,10 +15,12 @@ namespace Rij62.Controllers
     public class ProductController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly LocalizationService _localization;
 
-        public ProductController(AppDbContext context)
+        public ProductController(AppDbContext context, LocalizationService localization)
         {
             _context = context;
+            _localization = localization;
         }
 
         [HttpGet()]
@@ -56,8 +59,8 @@ namespace Rij62.Controllers
             };
             _context.Products.Add(createdProduct);
 
-            _context.UpdateLanguageEntry(apiProduct.Title, titleKey);
-            _context.UpdateLanguageEntry(apiProduct.Description, descriptionKey);
+            _localization.UpdateLanguageEntry(apiProduct.Title, titleKey);
+            _localization.UpdateLanguageEntry(apiProduct.Description, descriptionKey);
 
             await _context.SaveChangesAsync();
             return Created();
@@ -74,8 +77,8 @@ namespace Rij62.Controllers
                return NotFound();
             }
 
-            _context.UpdateLanguageEntry(apiProduct.Title, product.TitleKey);
-            _context.UpdateLanguageEntry(apiProduct.Description, product.DescriptionKey);
+            _localization.UpdateLanguageEntry(apiProduct.Title, product.TitleKey);
+            _localization.UpdateLanguageEntry(apiProduct.Description, product.DescriptionKey);
 
             product.PriceCent = apiProduct.Price;
             product.Stock = apiProduct.Stock;
@@ -87,6 +90,20 @@ namespace Rij62.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            _localization.DeleteLanguageEntry(product.TitleKey);
+            _localization.DeleteLanguageEntry(product.DescriptionKey);
+            _context.Products.Remove(product);
+            return Ok();
         }
     }
 }

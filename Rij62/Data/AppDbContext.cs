@@ -22,29 +22,5 @@ namespace Rij62.Data
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductHistory> ProductHistories { get; set; }
 
-
-        public void UpdateLanguageEntry(MultiLangString multiLang, string key)
-        {
-            var titleEntries = Language.Where((p)=> p.Key == key);
-            foreach (var (lang, value) in multiLang)
-            {
-               var entry = titleEntries.Where((e)=>e.Language == lang).FirstOrDefault();
-               if (entry == null)
-                {
-                    Language.Add(new LangEntry
-                    {
-                        Key=key,
-                        Value=value,
-                        Language=lang,
-                    });
-                }
-                else
-                {
-                    entry.Value = value;
-                    Entry(entry).State = EntityState.Modified;
-                }
-               
-            }
-        }
     }
 }
