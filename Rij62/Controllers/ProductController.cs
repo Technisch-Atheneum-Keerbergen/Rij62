@@ -63,7 +63,7 @@ namespace Rij62.Controllers
             _localization.UpdateLanguageEntry(apiProduct.Description, descriptionKey);
 
             await _context.SaveChangesAsync();
-            return Created();
+            return Ok(createdProduct.Id);
         }
         
 
@@ -100,9 +100,11 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            _localization.DeleteLanguageEntry(product.TitleKey);
-            _localization.DeleteLanguageEntry(product.DescriptionKey);
+            await _localization.DeleteLanguageEntry(product.TitleKey);
+            await _localization.DeleteLanguageEntry(product.DescriptionKey);
             _context.Products.Remove(product);
+
+            await _context.SaveChangesAsync();
             return Ok();
         }
     }

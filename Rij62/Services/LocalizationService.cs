@@ -15,7 +15,7 @@ namespace Rij62.Services
             _context = context;
         }
 
-        public async void DeleteLanguageEntry(string key)
+        public async Task DeleteLanguageEntry(string key)
         {
             await _context.Language.Where((e) => e.Key == key).ExecuteDeleteAsync();
         }
