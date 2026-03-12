@@ -5,10 +5,13 @@
 // File: Rij26/models/Product.cs
 // **********************************
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Rij62.Models;
 
 public class Product
 {
+    [Key]
     public int Id { get; set; }
     public required string TitleKey { get; set; }
     public required string DescriptionKey { get; set; }

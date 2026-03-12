@@ -5,13 +5,14 @@ namespace Rij62.Models
 {
     public class OrderItem
     {
-        int Id { get; set; }
-        string Title { get; set; }
-        string Description {get; set;}
-        int TableNumber { get; set; }
-        int Price { get; set; }
-        int OrderId { get; set; }
+        [Key]
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description {get; set;}
+        public int TableNumber { get; set; }
+        public int Price { get; set; }
+        public int OrderId { get; set; }
         [ForeignKey("OrderId")]
-        Order Order { get; set; }
+        public Order Order { get; set; }
     }
 }
