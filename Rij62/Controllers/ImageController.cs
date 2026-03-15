@@ -30,6 +30,7 @@ namespace Rij62.Controllers
         [HttpGet("{imageId}")]
         public async Task<IActionResult> GetImage(Guid imageId)
         {
+            Directory.CreateDirectory(_imageDbPath);
             try
             {
                 return File(await System.IO.File.ReadAllBytesAsync(_imageDbPath + "/" + imageId), "application/octet-stream");
@@ -56,6 +57,7 @@ namespace Rij62.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteImage(Guid id)
         {
+            Directory.CreateDirectory(_imageDbPath);
             try
             {
                 System.IO.File.Delete(_imageDbPath+"/"+id);
