@@ -16,6 +16,7 @@ public class Product
     public required string TitleKey { get; set; }
     public required string DescriptionKey { get; set; }
     public required int PriceCent { get; set; }
+    public required int Btw {get; set;}
     public int Stock { get; set; }
     public bool IsAvailable { get; set; }
     public required string ImgUrl { get; set; }

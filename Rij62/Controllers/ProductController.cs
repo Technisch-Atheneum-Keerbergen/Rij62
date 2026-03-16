@@ -34,6 +34,7 @@ namespace Rij62.Controllers
                 Description = MultiLangString.FromLangEntryKey(languages, p.DescriptionKey),
                 Id = p.Id,
                 Price = p.PriceCent,
+                Btw = p.Btw,
                 Stock = p.Stock,
                 IsAvailible = p.IsAvailable,
                 ImgURL = p.ImgUrl,
@@ -44,12 +45,25 @@ namespace Rij62.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
+            var languages = await _context.Language.ToArrayAsync();
+
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
-            return Ok(product);
+            return Ok(new ApiGetProduct
+            {
+                Title = MultiLangString.FromLangEntryKey(languages, product.TitleKey),
+                Description = MultiLangString.FromLangEntryKey(languages, product.DescriptionKey),
+                Id = product.Id,
+                Price = product.PriceCent,
+                Btw = product.Btw,
+                Stock = product.Stock,
+                IsAvailible = product.IsAvailable,
+                ImgURL = product.ImgUrl,
+                CategoryId = product.CategoryId,
+            });
         }
 
         public async Task<IActionResult> PostProduct(ApiPutProduct apiProduct)
@@ -63,6 +77,7 @@ namespace Rij62.Controllers
                 TitleKey=titleKey,
                 DescriptionKey=descriptionKey,
                 PriceCent = apiProduct.Price,
+                Btw = apiProduct.Btw,
                 Stock = apiProduct.Stock,
                 IsAvailable = apiProduct.IsAvailible,
                 ImgUrl = apiProduct.ImgURL,
@@ -92,6 +107,7 @@ namespace Rij62.Controllers
             _localization.UpdateLanguageEntry(apiProduct.Description, product.DescriptionKey);
 
             product.PriceCent = apiProduct.Price;
+            product.Btw = apiProduct.Btw;
             product.Stock = apiProduct.Stock;
             product.IsAvailable = apiProduct.IsAvailible;
             product.CategoryId = apiProduct.CategoryId;
@@ -119,21 +135,5 @@ namespace Rij62.Controllers
             return Ok();
         }
 
-        [HttpGet("category")]
-        public async Task<IEnumerable<ProductCategory>> GetCategories()
-        {
-            return await _context.ProductCategories.ToArrayAsync();
-        }
-
-        [HttpGet("category/{id}")]
-        public async Task<IActionResult> GetCategory(int id)
-        {
-            var cat = await _context.ProductCategories.FindAsync(id);
-            if (cat == null)
-            {
-                return NotFound();
-            }
-            return Ok(cat);
-        }
     }
 }
