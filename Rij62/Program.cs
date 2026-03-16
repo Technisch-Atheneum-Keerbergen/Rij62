@@ -11,7 +11,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: DebugCorsPolicy,
                       policy  =>
                       {
-                          policy.WithOrigins("http://localhost:5173"); // frontend
+                          policy.WithOrigins("http://localhost:5173")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod(); // GET, POST, PUT, DELETE
                       });
 });
 

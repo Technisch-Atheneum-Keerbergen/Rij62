@@ -36,7 +36,7 @@ namespace Rij62.Controllers
                 Price = p.PriceCent,
                 Btw = p.Btw,
                 Stock = p.Stock,
-                IsAvailible = p.IsAvailable,
+                IsAvailable = p.IsAvailable,
                 ImgURL = p.ImgUrl,
                 CategoryId = p.CategoryId,
             });
@@ -61,7 +61,7 @@ namespace Rij62.Controllers
                 Price = product.PriceCent,
                 Btw = product.Btw,
                 Stock = product.Stock,
-                IsAvailible = product.IsAvailable,
+                IsAvailable = product.IsAvailable,
                 ImgURL = product.ImgUrl,
                 CategoryId = product.CategoryId,
             });
@@ -80,7 +80,7 @@ namespace Rij62.Controllers
                 PriceCent = apiProduct.Price,
                 Btw = apiProduct.Btw,
                 Stock = apiProduct.Stock,
-                IsAvailable = apiProduct.IsAvailible,
+                IsAvailable = apiProduct.IsAvailable,
                 ImgUrl = apiProduct.ImgURL,
                 CategoryId = apiProduct.CategoryId,
             };
@@ -110,7 +110,7 @@ namespace Rij62.Controllers
             product.PriceCent = apiProduct.Price;
             product.Btw = apiProduct.Btw;
             product.Stock = apiProduct.Stock;
-            product.IsAvailable = apiProduct.IsAvailible;
+            product.IsAvailable = apiProduct.IsAvailable;
             product.CategoryId = apiProduct.CategoryId;
             product.ImgUrl = apiProduct.ImgURL;
 

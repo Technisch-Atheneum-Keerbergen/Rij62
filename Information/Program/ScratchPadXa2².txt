@@ -60,3 +60,139 @@ cheat sheet
     "categoryId": 1
   }
 ]
+
+
+
+add test product in console:
+const products = [
+{
+  title: { English: "Espresso", Dutch: "Espresso" },
+  description: { English: "Strong black coffee", Dutch: "Sterke zwarte koffie" },
+  price: 250, // cents or integer units
+  stock: 120,
+  btw: 21,
+  isAvailable: true,
+  imgURL: "/images/espresso.jpg",
+  categoryId: 0,
+  apiProduct: {}
+},
+{
+  title: { English: "Cappuccino", Dutch: "Cappuccino" },
+  description: { English: "Coffee with steamed milk", Dutch: "Koffie met gestoomde melk" },
+  price: 320,
+  stock: 95,
+  btw: 21,
+  isAvailable: true,
+  imgURL: "/images/cappuccino.jpg",
+  categoryId: 0,
+  apiProduct: {}
+},
+{
+  title: { English: "Latte", Dutch: "Latte" },
+  description: { English: "Coffee with milk", Dutch: "Koffie met melk" },
+  price: 350,
+  stock: 80,
+  btw: 21,
+  isAvailable: true,
+  imgURL: "/images/latte.jpg",
+  categoryId: 0,
+  apiProduct: {}
+},
+{
+  title: { English: "Green Tea", Dutch: "Groene Thee" },
+  description: { English: "Refreshing tea", Dutch: "Verfrissende thee" },
+  price: 280,
+  stock: 60,
+  btw: 21,
+  isAvailable: true,
+  imgURL: "/images/green-tea.jpg",
+  categoryId: 0,
+  apiProduct: {}
+},
+{
+  title: { English: "Orange Juice", Dutch: "Sinaasappelsap" },
+  description: { English: "Freshly squeezed", Dutch: "Vers geperst" },
+  price: 300,
+  stock: 40,
+  btw: 21,
+  isAvailable: false,
+  imgURL: "/images/orange-juice.jpg",
+  categoryId: 0,
+  apiProduct: {}
+},
+{
+  title: { English: "Croissant", Dutch: "Croissant" },
+  description: { English: "Flaky pastry", Dutch: "Luchtig gebakje" },
+  price: 220,
+  stock: 55,
+  btw: 21,
+  isAvailable: true,
+  imgURL: "/images/croissant.jpg",
+  categoryId: 1,
+  apiProduct: {}
+},
+{
+  title: { English: "Chocolate Muffin", Dutch: "Chocolade Muffin" },
+  description: { English: "Rich chocolate muffin", Dutch: "Rijke chocolademuffin" },
+  price: 290,
+  stock: 35,
+  btw: 21,
+  isAvailable: true,
+  imgURL: "/images/chocolate-muffin.jpg",
+  categoryId: 1,
+  apiProduct: {}
+},
+{
+  title: { English: "Blueberry Tart", Dutch: "Bosbessentaart" },
+  description: { English: "Tart with blueberries", Dutch: "Taart met bosbessen" },
+  price: 380,
+  stock: 20,
+  btw: 21,
+  isAvailable: true,
+  imgURL: "/images/blueberries.jpg",
+  categoryId: 1,
+  apiProduct: {}
+},
+{
+  title: { English: "Cheesecake", Dutch: "Cheesecake" },
+  description: { English: "Classic cheesecake", Dutch: "Klassieke cheesecake" },
+  price: 450,
+  stock: 12,
+  btw: 21,
+  isAvailable: false,
+  imgURL: "/images/cheesecake.jpg",
+  categoryId: 1,
+  apiProduct: {}
+},
+{
+  title: { English: "Apple Pie", Dutch: "Appeltaart" },
+  description: { English: "Traditional apple pie", Dutch: "Traditionele appeltaart" },
+  price: 390,
+  stock: 25,
+  btw: 21,
+  isAvailable: true,
+  imgURL: "/images/apple-pie.jpg",
+  categoryId: 1,
+  apiProduct: {}
+}
+];
+
+(async () => {
+  for (const product of products) {
+    try {
+      const res = await fetch("http://localhost:5148/api/product", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(product)
+      });
+
+      if (!res.ok) throw new Error(res.statusText);
+
+      console.log("Created:", await res.json());
+    } catch (err) {
+      console.error("Failed:", product.title.English, err);
+    }
+  }
+})();

@@ -123,6 +123,10 @@ namespace Rij62.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Btw")
+                        .HasColumnType("integer")
+                        .HasColumnName("btw");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer")
                         .HasColumnName("category_id");

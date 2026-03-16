@@ -11,7 +11,7 @@ public class ApiGetProduct
     public required int Btw {get; set;}
     public required int Stock {get; set;}
 
-    public required bool IsAvailible {get; set;}
+    public required bool IsAvailable {get; set;}
     public required string ImgURL {get; set;}
     public required int CategoryId {get; set;}
 }
