@@ -44,6 +44,26 @@
   </p>
 </div>
 
+# Install
+
+## Install the following vscode extensions
+- C#
+- .NET Install Tool (should be auto installed by the C# extension).
+- C# Dev Kit.
+
+## Install dotnet 10
+- Open the command palet in vscode and select Show and run commands (Control+Shift+p).
+- Install dotnet 10 via Install tool.
+- Open a terminal and run `dotnet tool install --global dotnet-ef` to install the entity framework tools
+
+## Setup the database
+- Install docker desktop and run the command docker `compose up -d` to start the database.
+- Alternatively you can Install postgres directly without docker
+- With postgress running run `dotnet ef database update` to apply the migrations to the db
+
+## Run the code
+- Go to the run and debug menu on the left and select run and debug.
+
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
