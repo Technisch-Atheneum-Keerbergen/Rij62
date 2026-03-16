@@ -41,6 +41,17 @@ namespace Rij62.Controllers
             });
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProduct(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+
         public async Task<IActionResult> PostProduct(ApiPutProduct apiProduct)
         {
             var uniqueId = Guid.NewGuid().ToString();
