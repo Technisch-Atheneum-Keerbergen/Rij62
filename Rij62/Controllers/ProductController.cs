@@ -107,5 +107,22 @@ namespace Rij62.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpGet("category")]
+        public async Task<IEnumerable<ProductCategory>> GetCategories()
+        {
+            return await _context.ProductCategories.ToArrayAsync();
+        }
+
+        [HttpGet("category/{id}")]
+        public async Task<IActionResult> GetCategory(int id)
+        {
+            var cat = await _context.ProductCategories.FindAsync(id);
+            if (cat == null)
+            {
+                return NotFound();
+            }
+            return Ok(cat);
+        }
     }
 }
