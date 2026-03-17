@@ -10,10 +10,28 @@ namespace Rij62.Services
 
         private readonly AppDbContext _context;
 
+        private LangEntry[]? _localizationEntries = null;
+
         public LocalizationService(AppDbContext context)
         {
             _context = context;
         }
+
+        public async Task<LangEntry[]> LocalizationEntries()
+        {
+            if (_localizationEntries == null)
+            {
+                _localizationEntries = await _context.Language.ToArrayAsync();
+            }
+
+            return _localizationEntries;
+        }
+
+        public async Task<MultiLangString> GetMultiLangStringByKey(string key)
+        {
+            return MultiLangString.FromLangEntryKey(await LocalizationEntries(), key);
+        }
+
 
         public async Task DeleteLanguageEntry(string key)
         {
