@@ -8,12 +8,12 @@ public class ApiGetCategory
     public required MultiLangString Name { get; set; }
     public int? ScreenId { get; set; }
 
-    public static ApiGetCategory FromCategory(ProductCategory cat, LangEntry[] entries)
+    public static ApiGetCategory FromCategory(ProductCategory cat, Localizer localizer)
     {
         return new ApiGetCategory
         {
             Id = cat.Id,
-            Name = MultiLangString.FromLangEntryKey(entries, cat.NameKey),
+            Name = localizer.MultiLangStringByKey(cat.NameKey),
             ScreenId = cat.ScreenId,
         };
     }
