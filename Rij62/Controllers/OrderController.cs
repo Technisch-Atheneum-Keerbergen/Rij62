@@ -50,7 +50,7 @@ namespace Rij62.Controllers
             _context.OrderItems.AddRange(orderItems);
 
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok(order.Id);
         }
 
         [HttpGet("{id}")]
