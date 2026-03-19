@@ -1,4 +1,5 @@
 using System.Reflection.PortableExecutable;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -67,6 +68,7 @@ namespace Rij62.Controllers
             });
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> PostProduct(ApiPutProduct apiProduct)
         {
             var uniqueId = Guid.NewGuid().ToString();
@@ -93,7 +95,7 @@ namespace Rij62.Controllers
             return Ok(createdProduct.Id);
         }
         
-
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, ApiPutProduct apiProduct)
         {
@@ -120,6 +122,7 @@ namespace Rij62.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
