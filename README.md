@@ -32,7 +32,7 @@ docker compose exec -i db /bin/psql
 
 DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
-dotnet ef database update
+dotnet ef database updates
 ```
 
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
