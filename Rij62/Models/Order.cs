@@ -6,19 +6,32 @@
 // **********************************
 
 using System.ComponentModel.DataAnnotations.Schema;
+using Rij62.Models.Api;
 namespace Rij62.Models
 {
     public class Order
     {
         public int Id { get; set; }
-        public int PickupTime { get; set; }
-        public string Status { get; set; }
-        public int TableId { get; set; }
 
-        [ForeignKey("TableId")]
-        public Table Table {get; set;}
+        public DateTimeOffset CreatedTime {get; set;}
+        public DateTimeOffset PickupTime { get; set; }
+        public OrderStatus Status { get; set; }
+        public int TableNumber { get; set; }
 
-        public ICollection<OrderItem> OrderItems {get; set;}
+        public ICollection<OrderItem> OrderItems { get; set; }
+
+        public static Order FromApiPostOrder(ApiPostOrder order)
+        {
+            return new Order
+            {
+                Id= 0,
+                CreatedTime= DateTimeOffset.Now.ToUniversalTime(),
+                PickupTime = DateTimeOffset.FromUnixTimeSeconds(order.PickupTime),
+                Status = OrderStatus.Pending,
+                TableNumber=order.TableNumber
+            };
+
+        }
     }
 
 }

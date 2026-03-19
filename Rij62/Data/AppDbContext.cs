@@ -17,6 +17,7 @@ namespace Rij62.Data
         public DbSet<LangEntry> Language { get; set; }
         public DbSet<Screen> Screens { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems {get; set;}
         public DbSet<Product> Products { get; set; }
         public DbSet<Table> Tables { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
