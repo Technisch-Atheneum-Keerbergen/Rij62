@@ -20,6 +20,21 @@
 ## Run the code
 - Go to the run and debug menu on the left and select run and debug.
 
+
+# Utilities
+
+## Reset the database
+If you get an exception while running a database command. It is likely that your database is in a wrong state
+
+Try running `dotnet ef database update` If this doesn't fix it try fully clearing the database
+```
+docker compose exec -i db /bin/psql
+
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+dotnet ef database update
+```
+
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
 <!--
