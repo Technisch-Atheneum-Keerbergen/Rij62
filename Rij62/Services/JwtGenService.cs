@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using EFCore.NamingConventions.Internal;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Rij62.Services;
@@ -26,6 +27,7 @@ public class JwtGenService
         {
             Subject = new ClaimsIdentity(
                 [
+                    new Claim("DisplayName", user.DisplayName),
                     new Claim("UserId", user.Id.ToString()),
                     new Claim("IsAdmin", user.IsAdmin.ToString())
                 ]),
