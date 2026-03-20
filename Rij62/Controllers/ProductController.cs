@@ -26,12 +26,12 @@ namespace Rij62.Controllers
         [HttpGet()]
         public async Task<IEnumerable<ApiGetProduct>> GetProducts()
         {
-            var languages = await _context.Language.ToArrayAsync();
+            var localizer = await _localization.GetLocalizer();
 
             return _context.Products.Select(p => new ApiGetProduct
             {
-                Title = MultiLangString.FromLangEntryKey(languages, p.TitleKey),
-                Description = MultiLangString.FromLangEntryKey(languages, p.DescriptionKey),
+                Title = localizer.MultiLangStringByKey(p.TitleKey),
+                Description = localizer.MultiLangStringByKey(p.DescriptionKey),
                 Id = p.Id,
                 Price = p.PriceCent,
                 Btw = p.Btw,
@@ -46,7 +46,7 @@ namespace Rij62.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
-            var languages = await _context.Language.ToArrayAsync();
+            var localizer = await _localization.GetLocalizer();
 
             var product = await _context.Products.FindAsync(id);
             if (product == null)
@@ -55,8 +55,8 @@ namespace Rij62.Controllers
             }
             return Ok(new ApiGetProduct
             {
-                Title = MultiLangString.FromLangEntryKey(languages, product.TitleKey),
-                Description = MultiLangString.FromLangEntryKey(languages, product.DescriptionKey),
+                Title = localizer.MultiLangStringByKey(product.TitleKey),
+                Description = localizer.MultiLangStringByKey(product.DescriptionKey),
                 Id = product.Id,
                 Price = product.PriceCent,
                 Btw = product.Btw,

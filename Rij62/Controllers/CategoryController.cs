@@ -25,9 +25,10 @@ namespace Rij62.Controllers
 
 
         [HttpGet("")]
-        public async Task<IEnumerable<ProductCategory>> GetCategories()
+        public async Task<IEnumerable<ApiGetCategory>> GetCategories()
         {
-            return await _context.ProductCategories.ToArrayAsync();
+            var localizationEntries = await _localization.GetLocalizer();
+            return _context.ProductCategories.Select((c) => ApiGetCategory.FromCategory(c, localizationEntries));
         }
 
         [HttpGet("{id}")]
@@ -38,7 +39,7 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            return Ok(cat);
+            return Ok(ApiGetCategory.FromCategory(cat, await _localization.GetLocalizer()));
         }
 
         [HttpPost("")]

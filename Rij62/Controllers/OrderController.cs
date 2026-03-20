@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
 using Rij62.Models;
+using Rij62.Models.Api;
+using Rij62.Services;
 
 namespace Rij62.Controllers
 {
@@ -17,89 +19,75 @@ namespace Rij62.Controllers
     public class OrderController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly LocalizationService _localization;
 
-        public OrderController(AppDbContext context)
+        public OrderController(AppDbContext context, LocalizationService localization)
         {
             _context = context;
+            _localization = localization;
         }
-        
-        // ************************************************************
-        //                      *** CREATE ***
-        //       POST: api/orders/AddOrder - Add a new order
-        // ************************************************************
 
-        [HttpPost("AddOrder")]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+
+        [HttpPost("")]
+        public async Task<ActionResult> PostOrder([FromBody] ApiPostOrder apiOrder)
         {
+            var order = Order.FromApiPostOrder(apiOrder);
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetOrders", new { id = order.Id }, order);        
+
+            var orderItems = new List<OrderItem>();
+            foreach (var item in apiOrder.Items)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product == null)
+                {
+                    return BadRequest("Unknown product id " + item.ProductId);
+                }
+                orderItems.Add(await OrderItem.FromProduct(product, _localization, order.Id));
+
+            }
+
+            _context.OrderItems.AddRange(orderItems);
+
+            await _context.SaveChangesAsync();
+            return Ok(order.Id);
         }
 
-        // ************************************************************ 
-        //                      *** READ ***
-        //   GET: api/orders/GetOrders - Get all orders or with id
-        // ************************************************************
-
-        [HttpGet("GetOrders/{id?}")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders(int? id = null)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrder(int id)
         {
-            var orders = await _context.Orders.ToListAsync();
-            if (orders == null || orders.Count == 0)
-            {
-                return NotFound();
-            }
-            if (id.HasValue)
-            {
-                orders = orders.Where(s => s.Id == id.Value).ToList();
-            }
-            return Ok(orders);
-        }
-        // ************************************************************
-        //                      *** UPDATE ***
-        //       PUT: api/orders/UpdateOrder/{id} - Update an order
-        // ************************************************************
-        [HttpPut("UpdateOrder/{id}")]
-        public async Task<IActionResult> UpdateOrder(int id, Order updatedOrder)
-        {
-            if (id != updatedOrder.Id)
-            {
-                return BadRequest();
-            }
-
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders.Include((o) => o.OrderItems).FirstOrDefaultAsync((o) => o.Id == id);
             if (order == null)
             {
                 return NotFound();
             }
+            var localizer = await _localization.GetLocalizer();
+            return Ok(ApiGetOrder.FromOrder(order, localizer));
+        }
 
-            order.TableId = updatedOrder.TableId;
-            order.PickupTime = updatedOrder.PickupTime;
-            order.Status = updatedOrder.Status;
-
-            _context.Entry(order).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }   
-
-        // ************************************************************
-        //                      *** DELETE ***
-        //       DELETE: api/orders/DeleteOrder/{id} - Delete an order
-        // ************************************************************
-        [HttpDelete("DeleteOrder/{id}")]
-        public async Task<IActionResult> DeleteOrder(int id)
+        [HttpGet("{id}/status")]
+        public async Task<IActionResult> GetOrderStatus(int id)
         {
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
                 return NotFound();
             }
-
-            _context.Orders.Remove(order);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok(order.Status);
         }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> SetOrderStatus(int id, [FromBody] OrderStatus status)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            order.Status = status;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 }
