@@ -5,6 +5,7 @@
 // File: Controllers/OrderController.cs
 // **********************************
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
@@ -52,7 +53,8 @@ namespace Rij62.Controllers
             await _context.SaveChangesAsync();
             return Ok(order.Id);
         }
-
+        
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder(int id)
         {
