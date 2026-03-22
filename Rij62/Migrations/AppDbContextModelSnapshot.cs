@@ -295,6 +295,7 @@ namespace Rij62.Migrations
                     b.ToTable("users", (string)null);
                 });
 
+
             modelBuilder.Entity("Rij62.Models.OrderItem", b =>
                 {
                     b.HasOne("Rij62.Models.Order", "Order")

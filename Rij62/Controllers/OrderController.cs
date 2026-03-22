@@ -51,9 +51,9 @@ namespace Rij62.Controllers
             _context.OrderItems.AddRange(orderItems);
 
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok(order.Id);
         }
-
+        
         [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder(int id)
