@@ -1,4 +1,5 @@
 using System.Reflection.PortableExecutable;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +42,8 @@ namespace Rij62.Controllers
             }
             return Ok(ApiGetCategory.FromCategory(cat, await _localization.GetLocalizer()));
         }
-
+        
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost("")]
         public async Task<IActionResult> PostCategory([FromBody] ApiPutCategory apiCat)
         {
@@ -59,6 +61,7 @@ namespace Rij62.Controllers
             return Ok(cat.Id);
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, [FromBody] ApiPutCategory apiCat)
         {
@@ -78,6 +81,7 @@ namespace Rij62.Controllers
             return NoContent();
         } 
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

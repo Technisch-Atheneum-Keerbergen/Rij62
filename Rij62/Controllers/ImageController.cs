@@ -5,6 +5,7 @@
 // File: Controllers/OrderController.cs
 // **********************************
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,7 @@ namespace Rij62.Controllers
 
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost("")]
         public async Task<IActionResult> PostImage([FromForm] IFormFile image)
         {
@@ -54,6 +56,7 @@ namespace Rij62.Controllers
             return Ok(imageId);
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteImage(Guid id)
         {

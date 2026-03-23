@@ -5,6 +5,7 @@
 // File: Rij62\Controllers\TableController.cs
 // **********************************
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
@@ -27,7 +28,7 @@ namespace Rij62.Controllers
         //                      *** CREATE ***
         //              POST: /api/tables - Add a new table
         // ************************************************************
-
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<ActionResult<Table>> CreateTable(Table table)
         {
@@ -41,7 +42,7 @@ namespace Rij62.Controllers
         //                      *** READ ***
         //             GET: /api/tables - Get all tables
         // ************************************************************
-
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Table>>> GetTables()
         {
@@ -59,7 +60,7 @@ namespace Rij62.Controllers
         //                      *** READ ***
         //           GET: /api/tables/{id} - Get a specific table
         // ************************************************************
-
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Table>> GetTable(int id)
         {
@@ -78,6 +79,7 @@ namespace Rij62.Controllers
         //        GET: /api/tables/{id}/qrcode - Generate table QR
         // ************************************************************
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}/qrcode")]
         public async Task<IActionResult> GetTableQrCode(int id)
         {
@@ -103,6 +105,7 @@ namespace Rij62.Controllers
         //           DELETE: /api/tables/{id} - Delete a table
         // ************************************************************
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTable(int id)
         {

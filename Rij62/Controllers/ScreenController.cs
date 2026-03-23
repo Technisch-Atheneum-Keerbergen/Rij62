@@ -6,6 +6,7 @@
 // ************************************
 
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
@@ -29,6 +30,7 @@ namespace Rij62.Controllers
         //       POST: api/screens/AddScreen - Add a new screen
         // ************************************************************
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost("AddScreen")]
         public async Task<ActionResult<Screen>> PostScreen(Screen screen)
         {
@@ -43,6 +45,7 @@ namespace Rij62.Controllers
         //   GET: api/screens/GetScreens - Get all screens or with id
         // ************************************************************
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet("GetScreens/{id?}")]
         public async Task<ActionResult<IEnumerable<Screen>>> GetScreens(int? id = null)
         {
@@ -62,6 +65,8 @@ namespace Rij62.Controllers
         //                      *** UPDATE ***
         //      UPDATE: api/screens/UpdateScreen/{id} - Update a screen by ID
         // ************************************************************
+        
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut("UpdateScreen/{id}")] 
         public async Task<IActionResult> UpdateScreen(int id, Screen updatedScreen)
         {
@@ -90,6 +95,7 @@ namespace Rij62.Controllers
         //                      *** DELETE ***
         //      DELETE: api/screens/{id} - Delete a screen by ID
         // ************************************************************
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("screens/RemoveScreen/{id}")] 
         public async Task<IActionResult> DeleteScreen(int id)
         {

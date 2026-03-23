@@ -23,5 +23,6 @@ namespace Rij62.Data
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductHistory> ProductHistories { get; set; }
 
+        public DbSet<User> Users {get; set;}
     }
 }
