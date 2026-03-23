@@ -27,7 +27,6 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddSingleton<JwtGenService>();
 
-
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
@@ -51,6 +50,18 @@ var app = builder.Build();
 
 app.UseRouting();
 
+//Print all registered routes for debugging
+// Go to http://localhost:5148/routes to see the list of routes
+app.MapGet("/routes", (IEnumerable<EndpointDataSource> sources) =>
+{
+    var routes = sources
+        .SelectMany(s => s.Endpoints)
+        .OfType<RouteEndpoint>()
+        .Select(e => e.RoutePattern.RawText);
+
+    return routes;
+});
+
 app.UseCors(DebugCorsPolicy);
 
 
@@ -58,5 +69,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();
