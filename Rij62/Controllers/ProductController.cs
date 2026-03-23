@@ -29,18 +29,7 @@ namespace Rij62.Controllers
         {
             var localizer = await _localization.GetLocalizer();
 
-            return _context.Products.Select(p => new ApiGetProduct
-            {
-                Title = localizer.MultiLangStringByKey(p.TitleKey),
-                Description = localizer.MultiLangStringByKey(p.DescriptionKey),
-                Id = p.Id,
-                Price = p.PriceCent,
-                Btw = p.Btw,
-                Stock = p.Stock,
-                IsAvailable = p.IsAvailable,
-                ImgURL = p.ImgUrl,
-                CategoryId = p.CategoryId,
-            });
+            return _context.Products.Include((p) => p.Steps).Select((p)=> ApiGetProduct.FromProduct(p, localizer));
         }
 
 
@@ -49,31 +38,19 @@ namespace Rij62.Controllers
         {
             var localizer = await _localization.GetLocalizer();
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products.Include((p)=> p.Steps).Where((p)=>p.Id==id).FirstOrDefaultAsync();
             if (product == null)
             {
                 return NotFound();
             }
-            return Ok(new ApiGetProduct
-            {
-                Title = localizer.MultiLangStringByKey(product.TitleKey),
-                Description = localizer.MultiLangStringByKey(product.DescriptionKey),
-                Id = product.Id,
-                Price = product.PriceCent,
-                Btw = product.Btw,
-                Stock = product.Stock,
-                IsAvailable = product.IsAvailable,
-                ImgURL = product.ImgUrl,
-                CategoryId = product.CategoryId,
-            });
+            return Ok(ApiGetProduct.FromProduct(product, localizer));
         }
 
         [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> PostProduct(ApiPutProduct apiProduct)
         {
-            var uniqueId = Guid.NewGuid().ToString();
-            var descriptionKey = "ProductDescription-"+uniqueId;
-            var titleKey = "ProductTitle-"+uniqueId;
+            var descriptionKey = _localization.UniqueKey("ProductDescription");
+            var titleKey = _localization.UniqueKey("ProductTitle");
             var createdProduct = new Product
             {
                 Id = 0,
@@ -90,6 +67,35 @@ namespace Rij62.Controllers
 
             _localization.UpdateLanguageEntry(apiProduct.Title, titleKey);
             _localization.UpdateLanguageEntry(apiProduct.Description, descriptionKey);
+            
+            await _context.SaveChangesAsync();
+
+            foreach (var step in apiProduct.Steps)
+            {
+                var stepTitleKey = _localization.UniqueKey("ProductStep");
+                var createdProductStep = new ProductStep
+                {
+                    Id= 0,
+                    ProductId = createdProduct.Id,
+                    DefaultOptionId = step.DefaultOptionId,
+                    MultipleChoice = step.MultipleChoice,
+                    TitleKey = stepTitleKey
+                };
+                _context.ProductSteps.Add(createdProductStep);
+                _localization.UpdateLanguageEntry(step.Title, stepTitleKey);
+
+                await _context.SaveChangesAsync();
+
+                foreach (var option in step.Options)
+                {
+                    _context.ProductStepOptions.Add(new ProductStepOption
+                    {
+                        ProductStepId = createdProductStep.Id,
+                        ProductId = option,
+                    });
+                }
+            }
+           
 
             await _context.SaveChangesAsync();
             return Ok(createdProduct.Id);

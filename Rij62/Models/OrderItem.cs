@@ -17,6 +17,8 @@ namespace Rij62.Models
         [ForeignKey("OrderId")]
         public Order Order { get; set; }
 
+        public IEnumerable<OrderItemChoice>? Choices {get; set;}
+
 
         public static async Task<OrderItem> FromProduct(Product product, LocalizationService localizationService, int OrderId)
         {
