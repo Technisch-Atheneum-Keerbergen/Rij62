@@ -23,7 +23,7 @@ public class Product
     public required string ImgUrl { get; set; }
     public int CategoryId { get; set; }
 
-    public IEnumerable<ProductStep>? Steps { get; set; }
+    public ICollection<ProductStep> Steps { get; set; }
 
 
     public static Product FromApiPutProduct(ApiPutProduct apiProduct)

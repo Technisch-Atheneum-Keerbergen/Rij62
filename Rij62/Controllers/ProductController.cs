@@ -1,10 +1,6 @@
-using System.Diagnostics;
-using System.Reflection.PortableExecutable;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Rij62.Data;
 using Rij62.Models;
 using Rij62.Models.Api;
@@ -30,7 +26,7 @@ namespace Rij62.Controllers
         {
             var localizer = await _localization.GetLocalizer();
 
-            return _context.Products.Include((p) => p.Steps).Select((p) => ApiGetProduct.FromProduct(p, localizer));
+            return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProduct.FromProduct(p, localizer));
         }
 
 
@@ -39,7 +35,7 @@ namespace Rij62.Controllers
         {
             var localizer = await _localization.GetLocalizer();
 
-            var product = await _context.Products.Include((p) => p.Steps).Where((p) => p.Id == id).FirstOrDefaultAsync();
+            var product = await _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Where((p) => p.Id == id).FirstOrDefaultAsync();
             if (product == null)
             {
                 return NotFound();
@@ -51,6 +47,11 @@ namespace Rij62.Controllers
         [HttpPost("")]
         public async Task<IActionResult> PostProduct([FromBody] ApiPutProduct apiProduct)
         {
+            var category = await _context.ProductCategories.FindAsync(apiProduct.CategoryId);
+            if (category == null)
+            {
+                return BadRequest($"not category with id {apiProduct.CategoryId} exits");
+            }
             var createdProduct = Product.FromApiPutProduct(apiProduct);
             _context.Products.Add(createdProduct);
 
@@ -90,6 +91,11 @@ namespace Rij62.Controllers
 
                 foreach (var option in apiStep.Options)
                 {
+                    var optionalProduct = await _context.Products.FindAsync(option);
+                    if (optionalProduct == null)
+                    {
+                        return BadRequest($"Product with id {option} doesn't exit");
+                    }
                     _context.ProductStepOptions.Add(new ProductStepOption
                     {
                         ProductStepId = createdProductStep.Id,
@@ -162,7 +168,7 @@ namespace Rij62.Controllers
             await _localization.DeleteLanguageEntry(product.DescriptionKey);
             _context.Products.Remove(product);
 
-            await _context.ProductSteps.Select((p) => p.ProductId == product.Id).ExecuteDeleteAsync();
+            await _context.ProductSteps.Where((p) => p.ProductId == product.Id).ExecuteDeleteAsync();
 
             await _context.SaveChangesAsync();
             return Ok();

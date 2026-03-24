@@ -18,12 +18,18 @@ public class ApiGetProduct
     public required List<ApiGetStep> Steps { get; set; }
 
 
-    public static ApiGetProduct FromProduct(Product product, Localizer localizer)
+    public static ApiGetProduct FromProduct(Product product, Localizer localizer, bool includeSteps = true)
     {
-        if (product.Steps == null)
+        if (includeSteps && product.Steps == null)
         {
             throw new ArgumentNullException("Product.Steps is null make shure you load it from the database");
         }
+        var steps = new List<ApiGetStep>();
+        if (includeSteps)
+        {
+            steps = product.Steps.Select((s) => ApiGetStep.FromProductStep(s, localizer)).ToList();
+        }
+
         return new ApiGetProduct
         {
             Title = localizer.MultiLangStringByKey(product.TitleKey),
@@ -35,7 +41,7 @@ public class ApiGetProduct
             IsAvailable = product.IsAvailable,
             ImgURL = product.ImgUrl,
             CategoryId = product.CategoryId,
-            Steps = product.Steps.Select((s) => ApiGetStep.FromProductStep(s, localizer)).ToList()
+            Steps = steps,
         };
     }
 }

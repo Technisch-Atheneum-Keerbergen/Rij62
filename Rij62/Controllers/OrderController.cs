@@ -99,7 +99,7 @@ namespace Rij62.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder(int id)
         {
-            var order = await _context.Orders.Include((o) => o.OrderItems).FirstOrDefaultAsync((o) => o.Id == id);
+            var order = await _context.Orders.Include((o) => o.OrderItems).ThenInclude((i) => i.Choices).FirstOrDefaultAsync((o) => o.Id == id);
             if (order == null)
             {
                 return NotFound();
@@ -119,6 +119,7 @@ namespace Rij62.Controllers
             return Ok(order.Status);
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}/status")]
         public async Task<IActionResult> SetOrderStatus(int id, [FromBody] OrderStatus status)
         {

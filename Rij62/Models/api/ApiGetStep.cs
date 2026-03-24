@@ -5,6 +5,7 @@ namespace Rij62.Models.Api;
 
 public class ApiGetStep
 {
+    public required int Id { get; set; }
     public required MultiLangString Title { get; set; }
     public required bool MultipleChoice { get; set; }
     public int? DefaultOptionId { get; set; }
@@ -20,6 +21,7 @@ public class ApiGetStep
         }
         return new ApiGetStep
         {
+            Id = step.Id,
             Title = localizer.MultiLangStringByKey(step.TitleKey),
             MultipleChoice = step.MultipleChoice,
             DefaultOptionId = step.DefaultOptionId,
@@ -29,7 +31,7 @@ public class ApiGetStep
                 {
                     throw new ArgumentNullException("ProductStepOption.Product is null make shure you load it from the database");
                 }
-                return ApiGetProduct.FromProduct(o.Product, localizer);
+                return ApiGetProduct.FromProduct(o.Product, localizer, false);
             }).ToList(),
         };
     }
