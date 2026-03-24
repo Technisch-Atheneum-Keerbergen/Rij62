@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection.PortableExecutable;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace Rij62.Controllers
         {
             var localizer = await _localization.GetLocalizer();
 
-            return _context.Products.Include((p) => p.Steps).Select((p)=> ApiGetProduct.FromProduct(p, localizer));
+            return _context.Products.Include((p) => p.Steps).Select((p) => ApiGetProduct.FromProduct(p, localizer));
         }
 
 
@@ -38,7 +39,7 @@ namespace Rij62.Controllers
         {
             var localizer = await _localization.GetLocalizer();
 
-            var product = await _context.Products.Include((p)=> p.Steps).Where((p)=>p.Id==id).FirstOrDefaultAsync();
+            var product = await _context.Products.Include((p) => p.Steps).Where((p) => p.Id == id).FirstOrDefaultAsync();
             if (product == null)
             {
                 return NotFound();
@@ -47,46 +48,47 @@ namespace Rij62.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> PostProduct(ApiPutProduct apiProduct)
+        [HttpPost("")]
+        public async Task<IActionResult> PostProduct([FromBody] ApiPutProduct apiProduct)
         {
-            var descriptionKey = _localization.UniqueKey("ProductDescription");
-            var titleKey = _localization.UniqueKey("ProductTitle");
-            var createdProduct = new Product
-            {
-                Id = 0,
-                TitleKey=titleKey,
-                DescriptionKey=descriptionKey,
-                PriceCent = apiProduct.Price,
-                Btw = apiProduct.Btw,
-                Stock = apiProduct.Stock,
-                IsAvailable = apiProduct.IsAvailable,
-                ImgUrl = apiProduct.ImgURL,
-                CategoryId = apiProduct.CategoryId,
-            };
+            var createdProduct = Product.FromApiPutProduct(apiProduct);
             _context.Products.Add(createdProduct);
 
-            _localization.UpdateLanguageEntry(apiProduct.Title, titleKey);
-            _localization.UpdateLanguageEntry(apiProduct.Description, descriptionKey);
-            
+            _localization.UpdateLanguageEntry(apiProduct.Title, createdProduct.TitleKey);
+            _localization.UpdateLanguageEntry(apiProduct.Description, createdProduct.DescriptionKey);
+
             await _context.SaveChangesAsync();
 
-            foreach (var step in apiProduct.Steps)
+            return Ok(createdProduct.Id);
+        }
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost("{productId}/step")]
+        public async Task<IActionResult> PostStep(int productId, [FromBody] ApiPutStep apiStep)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
             {
-                var stepTitleKey = _localization.UniqueKey("ProductStep");
-                var createdProductStep = new ProductStep
-                {
-                    Id= 0,
-                    ProductId = createdProduct.Id,
-                    DefaultOptionId = step.DefaultOptionId,
-                    MultipleChoice = step.MultipleChoice,
-                    TitleKey = stepTitleKey
-                };
+                return NotFound();
+            }
+
+            var stepTitleKey = Localizer.UniqueKey("ProductStep");
+            var createdProductStep = new ProductStep
+            {
+                Id = 0,
+                ProductId = productId,
+                DefaultOptionId = apiStep.DefaultOptionId,
+                MultipleChoice = apiStep.MultipleChoice,
+                TitleKey = stepTitleKey
+            };
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
                 _context.ProductSteps.Add(createdProductStep);
-                _localization.UpdateLanguageEntry(step.Title, stepTitleKey);
+                _localization.UpdateLanguageEntry(apiStep.Title, stepTitleKey);
 
                 await _context.SaveChangesAsync();
 
-                foreach (var option in step.Options)
+                foreach (var option in apiStep.Options)
                 {
                     _context.ProductStepOptions.Add(new ProductStepOption
                     {
@@ -94,13 +96,32 @@ namespace Rij62.Controllers
                         ProductId = option,
                     });
                 }
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return Ok(createdProductStep.Id);
             }
-           
 
-            await _context.SaveChangesAsync();
-            return Ok(createdProduct.Id);
         }
-        
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpDelete("{productId}/step/{stepId}")]
+        public async Task<IActionResult> DeleteStep(int productId, int stepId)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                var step = await _context.ProductSteps.Where((s) => s.ProductId == productId && s.Id == stepId).Include((s) => s.Options).FirstOrDefaultAsync();
+                if (step == null)
+                {
+                    return NotFound();
+                }
+                await _context.ProductStepOptions.Where((s) => s.ProductStepId == step.Id).ExecuteDeleteAsync();
+                await _context.ProductSteps.Where((s) => s.Id == stepId).ExecuteDeleteAsync();
+                await transaction.CommitAsync();
+            }
+
+            return Ok();
+        }
+
         [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, ApiPutProduct apiProduct)
@@ -109,7 +130,7 @@ namespace Rij62.Controllers
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
-               return NotFound();
+                return NotFound();
             }
 
             _localization.UpdateLanguageEntry(apiProduct.Title, product.TitleKey);
@@ -140,6 +161,8 @@ namespace Rij62.Controllers
             await _localization.DeleteLanguageEntry(product.TitleKey);
             await _localization.DeleteLanguageEntry(product.DescriptionKey);
             _context.Products.Remove(product);
+
+            await _context.ProductSteps.Select((p) => p.ProductId == product.Id).ExecuteDeleteAsync();
 
             await _context.SaveChangesAsync();
             return Ok();

@@ -12,6 +12,11 @@ public class Localizer
         _entries = entries;
     }
 
+    public static string UniqueKey(string key)
+    {
+        return key+"-"+Guid.NewGuid().ToString();
+    }
+
     public MultiLangString MultiLangStringByKey(string key)
     {
         var languages = _entries.Where((l)=>l.Key==key);

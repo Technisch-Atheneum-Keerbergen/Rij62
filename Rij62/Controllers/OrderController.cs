@@ -5,6 +5,7 @@
 // File: Controllers/OrderController.cs
 // **********************************
 
+using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,28 +33,68 @@ namespace Rij62.Controllers
         [HttpPost("")]
         public async Task<ActionResult> PostOrder([FromBody] ApiPostOrder apiOrder)
         {
-            var order = Order.FromApiPostOrder(apiOrder);
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
 
-            var orderItems = new List<OrderItem>();
-            foreach (var item in apiOrder.Items)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                var product = await _context.Products.FindAsync(item.ProductId);
-                if (product == null)
+                foreach (var item in apiOrder.Items)
                 {
-                    return BadRequest("Unknown product id " + item.ProductId);
-                }
-                orderItems.Add(await OrderItem.FromProduct(product, _localization, order.Id));
+                    var product = await _context.Products.FindAsync(item.ProductId);
+                    if (product == null)
+                    {
+                        return BadRequest($"Unknown product with id {item.ProductId}");
+                    }
 
+                    foreach (var choice in item.Choices)
+                    {
+                        // Check if the option exists on the product
+                        var chosenStepOption = await _context.ProductStepOptions.Include((o) => o.ProductStep).Where((stepOption) => stepOption.ProductId == choice && stepOption.ProductStep.ProductId == item.ProductId).FirstOrDefaultAsync();
+                        if (chosenStepOption == null)
+                        {
+                            return BadRequest($"Unknown product choice {choice} on product with id {item.ProductId}");
+                        }
+                    }
+                }
+
+                var order = Order.FromApiPostOrder(apiOrder);
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                foreach (var item in apiOrder.Items)
+                {
+                    var product = await _context.Products.FindAsync(item.ProductId);
+                    if (product == null)
+                    {
+                        throw new UnreachableException("Validation has already happened above");
+                    }
+                    var orderItem = await OrderItem.FromProduct(product, _localization, order.Id);
+                    _context.OrderItems.Add(orderItem);
+                    await _context.SaveChangesAsync();
+
+                    foreach (var choice in item.Choices)
+                    {
+                        var chosenProduct = await _context.Products.FindAsync(choice);
+                        if (chosenProduct == null)
+                        {
+                            return BadRequest($"Unknown choice {choice} on product {item.ProductId}");
+                        }
+                        var orderItemChoice = new OrderItemChoice
+                        {
+                            OrderItemId = orderItem.Id,
+                            StepNumber = 0,
+                            ChosenProductId = choice,
+                        };
+
+                        _context.OrderItemChoices.Add(orderItemChoice);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return Ok(order.Id);
             }
 
-            _context.OrderItems.AddRange(orderItems);
-
-            await _context.SaveChangesAsync();
-            return Ok(order.Id);
         }
-        
+
         [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder(int id)

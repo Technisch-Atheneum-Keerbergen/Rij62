@@ -17,11 +17,6 @@ namespace Rij62.Services
             _context = context;
         }
 
-        public string UniqueKey(string key)
-        {
-            return key+"-"+Guid.NewGuid().ToString();
-        }
-
         public async Task<Localizer> GetLocalizer()
         {
             if (_localizer == null)

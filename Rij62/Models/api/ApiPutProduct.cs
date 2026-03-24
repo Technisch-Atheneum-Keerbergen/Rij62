@@ -11,7 +11,6 @@ public class ApiPutProduct
     public required bool IsAvailable { get; set; }
     public required int CategoryId { get; set; }
 
-    public required List<ApiPutStep> Steps { get; set; }
 }
 
 

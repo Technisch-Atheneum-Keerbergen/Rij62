@@ -23,9 +23,8 @@ namespace Rij62.Models
         public static async Task<OrderItem> FromProduct(Product product, LocalizationService localizationService, int OrderId)
         {
             
-            var id = Guid.NewGuid().ToString();
-            var titleKey = "OrderItemTitle-"+id;
-            var descriptionKey="OrderItemDescription-"+id;
+            var titleKey = Localizer.UniqueKey("OrderItemTitle");
+            var descriptionKey = Localizer.UniqueKey("OrderItemDescription");
             await localizationService.CopyLanguageEntry(product.TitleKey, titleKey);
             await localizationService.CopyLanguageEntry(product.DescriptionKey, descriptionKey);
             return new OrderItem
