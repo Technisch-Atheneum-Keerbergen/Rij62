@@ -1,6 +1,3 @@
-
-using Rij62.Services;
-
 namespace Rij62.Models.Api;
 
 public class ApiGetOrderItem
@@ -10,7 +7,9 @@ public class ApiGetOrderItem
     public MultiLangString Description { get; set; }
     public int Price { get; set; }
     public int Btw { get; set; }
-    public required List<int> Choices {get; set;}
+    public required List<int> Choices { get; set; }
+    public OrderStatus Status { get; set; }
+
     public static ApiGetOrderItem FromOrderItem(OrderItem orderItem, Localizer localizer)
     {
         if (orderItem.Choices == null)
@@ -20,12 +19,13 @@ public class ApiGetOrderItem
 
         return new ApiGetOrderItem
         {
-            Id= orderItem.Id,
+            Id = orderItem.Id,
             Title = localizer.MultiLangStringByKey(orderItem.TitleKey),
-            Description=localizer.MultiLangStringByKey(orderItem.DescriptionKey),
-            Price=orderItem.Price,
-            Btw=orderItem.Btw,
-            Choices=orderItem.Choices.Select((c)=>c.ChosenProductId).ToList()
+            Description = localizer.MultiLangStringByKey(orderItem.DescriptionKey),
+            Price = orderItem.Price,
+            Btw = orderItem.Btw,
+            Choices = orderItem.Choices.Select((c) => c.ChosenProductId).ToList(),
+            Status = orderItem.Status
         };
     }
 }

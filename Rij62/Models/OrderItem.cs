@@ -13,6 +13,9 @@ namespace Rij62.Models
         public int Price { get; set; }
         public int Btw { get; set; }
         public int OrderId { get; set; }
+
+        public OrderStatus Status { get; set; }
+
         [ForeignKey("OrderId")]
         public Order Order { get; set; }
 

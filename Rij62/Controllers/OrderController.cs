@@ -116,8 +116,7 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            var orderItems = _context.OrderItems.Where((oi)=>oi.Id == id).Select((oi)=>ApiOrderItemStatus.FromOrderItem(oi));
-           
+            var orderItems = _context.OrderItems.Where((oi) => oi.Id == id).Select((oi) => ApiOrderItemStatus.FromOrderItem(oi));
             return Ok(orderItems);
         }
 
@@ -125,13 +124,13 @@ namespace Rij62.Controllers
         [HttpPut("{id}/status/{orderItemid}")]
         public async Task<IActionResult> SetOrderStatus(int id, int orderItemid, [FromBody] OrderStatus status)
         {
-          
+
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
                 return NotFound("Order was found");
             }
-            var item = await _context.OrderItems.Where((oi)=>oi.Id == orderItemid && oi.OrderId == id).FirstOrDefaultAsync();
+            var item = await _context.OrderItems.Where((oi) => oi.Id == orderItemid && oi.OrderId == id).FirstOrDefaultAsync();
             if (item == null)
             {
                 return NotFound("Order item was not found");
