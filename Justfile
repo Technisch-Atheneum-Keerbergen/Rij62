@@ -15,5 +15,6 @@ clear-db:
 
 load-db-test-data: clear-db
   cat testData.sql | docker compose exec --no-tty db /bin/psql
+  python testDataImages.py
 
 init: load-db-test-data

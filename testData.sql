@@ -12,171 +12,175 @@ VALUES
 (6),
 (7);
 
-INSERT INTO product_categories (screen_id, name_key)
-VALUES
-((SELECT id FROM screens WHERE name = 'Bar'), 'CategoryName-coffee'),
-((SELECT id FROM screens WHERE name = 'Kitchen'), 'CategoryName-snacks'),
-((SELECT id FROM screens WHERE name = 'Bar'), 'CategoryName-beer');
+-- =========================================================
+-- LANGUAGE ENTRIES FOR NEW CATEGORIES
+-- =========================================================
 
 INSERT INTO language (key, language, value)
 VALUES
-('CategoryName-coffee', 0, 'Koffie'), ('CategoryName-coffee', 1, 'Coffee'),
+-- Category Names
 ('CategoryName-snacks', 0, 'Snacks'), ('CategoryName-snacks', 1, 'Snacks'),
-('CategoryName-beer', 0, 'Bier'), ('CategoryName-beer', 1, 'Beer');
-
+('CategoryName-croques', 0, 'Croques'), ('CategoryName-croques', 1, 'Croques'),
+('CategoryName-coldSnacks', 0, 'Koude snacks'), ('CategoryName-coldSnacks', 1, 'Cold snacks'),
+('CategoryName-warmSnacks', 0, 'Warme snacks'), ('CategoryName-warmSnacks', 1, 'Warm snacks'),
+('CategoryName-dishes', 0, 'Gerechten'), ('CategoryName-dishes', 1, 'Dishes'),
+('CategoryName-suggestions', 0, 'Suggesties'), ('CategoryName-suggestions', 1, 'Suggestions');
 
 -- =========================================================
--- COFFEE CATEGORY PRODUCTS (10)
+-- INSERT PRODUCT CATEGORIES
 -- =========================================================
 
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+INSERT INTO product_categories (screen_id, name_key)
 VALUES
-('ProductTitle-coffee-1', 'ProductDescription-coffee-1', 2.50, 21, 100, true, '/images/coffee-espresso.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee')),
-('ProductTitle-coffee-2', 'ProductDescription-coffee-2', 3.00, 21, 100, true, '/images/coffee-latte.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee')),
-('ProductTitle-coffee-3', 'ProductDescription-coffee-3', 3.20, 21, 100, true, '/images/coffee-cappuccino.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee')),
-('ProductTitle-coffee-4', 'ProductDescription-coffee-4', 2.80, 21, 100, true, '/images/coffee-americano.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee')),
-('ProductTitle-coffee-5', 'ProductDescription-coffee-5', 3.50, 21, 100, true, '/images/coffee-mocha.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee')),
-('ProductTitle-coffee-6', 'ProductDescription-coffee-6', 3.00, 21, 100, true, '/images/coffee-flatwhite.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee')),
-('ProductTitle-coffee-7', 'ProductDescription-coffee-7', 2.70, 21, 100, true, '/images/coffee-ristretto.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee')),
-('ProductTitle-coffee-8', 'ProductDescription-coffee-8', 3.30, 21, 100, true, '/images/coffee-macchiato.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee')),
-('ProductTitle-coffee-9', 'ProductDescription-coffee-9', 3.80, 21, 100, true, '/images/coffee-iced.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee')),
-('ProductTitle-coffee-10', 'ProductDescription-coffee-10', 4.00, 21, 100, true, '/images/coffee-special.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-coffee'));
+(NULL, 'CategoryName-snacks'),
+(NULL, 'CategoryName-croques'),
+(NULL, 'CategoryName-coldSnacks'),
+(NULL, 'CategoryName-warmSnacks'),
+(NULL, 'CategoryName-dishes'),
+(NULL, 'CategoryName-suggestions');
 
 -- =========================================================
--- SNACKS CATEGORY PRODUCTS (10)
+-- PRODUCT TITLES AND DESCRIPTIONS (LANGUAGE ENTRIES)
 -- =========================================================
 
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
-VALUES
-('ProductTitle-snacks-1', 'ProductDescription-snacks-1', 4.50, 21, 100, true, '/images/snack-fries.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks')),
-('ProductTitle-snacks-2', 'ProductDescription-snacks-2', 5.50, 21, 100, true, '/images/snack-bitterballen.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks')),
-('ProductTitle-snacks-3', 'ProductDescription-snacks-3', 6.00, 21, 100, true, '/images/snack-nachos.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks')),
-('ProductTitle-snacks-4', 'ProductDescription-snacks-4', 7.50, 21, 100, true, '/images/snack-burger.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks')),
-('ProductTitle-snacks-5', 'ProductDescription-snacks-5', 5.00, 21, 100, true, '/images/snack-sandwich.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks')),
-('ProductTitle-snacks-6', 'ProductDescription-snacks-6', 6.50, 21, 100, true, '/images/snack-wrap.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks')),
-('ProductTitle-snacks-7', 'ProductDescription-snacks-7', 8.00, 21, 100, true, '/images/snack-pizza.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks')),
-('ProductTitle-snacks-8', 'ProductDescription-snacks-8', 4.00, 21, 100, true, '/images/snack-salad.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks')),
-('ProductTitle-snacks-9', 'ProductDescription-snacks-9', 5.75, 21, 100, true, '/images/snack-cheese.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks')),
-('ProductTitle-snacks-10', 'ProductDescription-snacks-10', 6.25, 21, 100, true, '/images/snack-mix.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-snacks'));
-
-
-BEGIN;
-
--- =========================================================
--- BEER CATEGORY PRODUCTS (10)
--- =========================================================
-
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
-VALUES
-('ProductTitle-beer-1', 'ProductDescription-beer-1', 3.50, 21, 100, true, '/images/beer-bolleke.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer')),
-('ProductTitle-beer-2', 'ProductDescription-beer-2', 4.50, 21, 100, true, '/images/beer-tripel.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer')),
-('ProductTitle-beer-3', 'ProductDescription-beer-3', 4.00, 21, 100, true, '/images/beer-blond.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer')),
-('ProductTitle-beer-4', 'ProductDescription-beer-4', 4.20, 21, 100, true, '/images/beer-amber.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer')),
-('ProductTitle-beer-5', 'ProductDescription-beer-5', 4.80, 21, 100, true, '/images/beer-mira.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer')),
-('ProductTitle-beer-6', 'ProductDescription-beer-6', 5.00, 21, 100, true, '/images/beer-duvel.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer')),
-('ProductTitle-beer-7', 'ProductDescription-beer-7', 4.30, 21, 100, true, '/images/beer-hoegaarden.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer')),
-('ProductTitle-beer-8', 'ProductDescription-beer-8', 4.60, 21, 100, true, '/images/beer-leffe.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer')),
-('ProductTitle-beer-9', 'ProductDescription-beer-9', 3.80, 21, 100, true, '/images/beer-stella.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer')),
-('ProductTitle-beer-10', 'ProductDescription-beer-10', 5.20, 21, 100, true, '/images/beer-westmalle.jpg', (SELECT id FROM product_categories WHERE name_key = 'CategoryName-beer'));
-
-
--- =========================================================
--- LANGUAGE ENTRIES (TRANSLATIONS)
--- =========================================================
-
+-- Snacks / Sides
 INSERT INTO language (key, language, value) VALUES
+('ProductTitle-pita-bread-1', 0, 'Pita brood (1st.)'), ('ProductTitle-pita-bread-1', 1, 'Pita bread (1pc)'),
+('ProductDescription-pita-bread-1', 0, ''), ('ProductDescription-pita-bread-1', 1, ''),
+('ProductTitle-pita-bread-2', 0, 'Pita brood (2st.)'), ('ProductTitle-pita-bread-2', 1, 'Pita bread (2pcs)'),
+('ProductDescription-pita-bread-2', 0, ''), ('ProductDescription-pita-bread-2', 1, ''),
+('ProductTitle-sweet-potato-fries', 0, 'Zoete aardappel frietjes'), ('ProductTitle-sweet-potato-fries', 1, 'Sweet potato fries'),
+('ProductDescription-sweet-potato-fries', 0, 'Met mayo'), ('ProductDescription-sweet-potato-fries', 1, 'With mayo'),
+('ProductTitle-soap-of-day', 0, 'Verse soep v/d dag'), ('ProductTitle-soap-of-day', 1, 'Soup of the day'),
+('ProductDescription-soap-of-day', 0, 'Met brood & boter'), ('ProductDescription-soap-of-day', 1, 'With bread & butter');
 
--- Coffee titles + descriptions
-('ProductTitle-coffee-1', 0, 'Espresso'), ('ProductTitle-coffee-1', 1, 'Espresso'),
-('ProductDescription-coffee-1', 0, 'Sterke koffie shot'), ('ProductDescription-coffee-1', 1, 'Strong coffee shot'),
+-- Croques
+INSERT INTO language (key, language, value) VALUES
+('ProductTitle-croque-ham-cheese', 0, 'Croque ham/kaas'), ('ProductTitle-croque-ham-cheese', 1, 'Croque ham/cheese'),
+('ProductDescription-croque-ham-cheese', 0, 'Huisgemaakt brood, ketchup & mayo'), ('ProductDescription-croque-ham-cheese', 1, 'Homemade bread, ketchup & mayo'),
+('ProductTitle-croque-2-cheese', 0, 'Croque met 2 kazen'), ('ProductTitle-croque-2-cheese', 1, 'Croque with 2 cheeses'),
+('ProductDescription-croque-2-cheese', 0, 'Gouda & cheddar'), ('ProductDescription-croque-2-cheese', 1, 'Gouda & cheddar'),
+('ProductTitle-croque-vegan', 0, 'Vegan croque'), ('ProductTitle-croque-vegan', 1, 'Vegan croque'),
+('ProductDescription-croque-vegan', 0, 'Met zongedroogde tomaatjes, vegan feta, spinazie & tomaat'), ('ProductDescription-croque-vegan', 1, 'With sun-dried tomatoes, vegan feta, spinach & tomato'),
+('ProductTitle-croque-kipp-haloumi', 0, 'Kip & haloumi croque'), ('ProductTitle-croque-kipp-haloumi', 1, 'Chicken & haloumi croque'),
+('ProductDescription-croque-kipp-haloumi', 0, 'Rode pesto, kipfiletjes, haloumi kaas, zongedroogde tomaatjes, pesto mayo'), ('ProductDescription-croque-kipp-haloumi', 1, 'Red pesto, chicken fillet, haloumi cheese, sun-dried tomatoes, pesto mayo'),
+('ProductTitle-croque-brie', 0, 'Brie Croque'), ('ProductTitle-croque-brie', 1, 'Brie Croque'),
+('ProductDescription-croque-brie', 0, 'Brie, walnoten, tijm & uienconfijt'), ('ProductDescription-croque-brie', 1, 'Brie, walnuts, thyme & onion confit');
 
-('ProductTitle-coffee-2', 0, 'Latte'), ('ProductTitle-coffee-2', 1, 'Latte'),
-('ProductDescription-coffee-2', 0, 'Koffie met melk'), ('ProductDescription-coffee-2', 1, 'Coffee with milk'),
+-- Cold Snacks
+INSERT INTO language (key, language, value) VALUES
+('ProductTitle-labneh', 0, 'Labneh'), ('ProductTitle-labneh', 1, 'Labneh'),
+('ProductDescription-labneh', 0, 'Met zongedroogde tomaatjes, pijnboompitten, olijfolie & dadeslaus'), ('ProductDescription-labneh', 1, 'With sun-dried tomatoes, pine nuts, olive oil & date sauce'),
+('ProductTitle-hummus', 0, 'Hummus'), ('ProductTitle-hummus', 1, 'Hummus'),
+('ProductDescription-hummus', 0, 'Standaard'), ('ProductDescription-hummus', 1, 'Standard'),
+('ProductTitle-hummus-chili', 0, 'Hummus'), ('ProductTitle-hummus-chili', 1, 'Hummus'),
+('ProductDescription-hummus-chili', 0, 'Met chili, olijven, gepekelde ui'), ('ProductDescription-hummus-chili', 1, 'With chili, olives, pickled onion'),
+('ProductTitle-salad-croques', 0, 'Slaatje voor bij de croques'), ('ProductTitle-salad-croques', 1, 'Side salad for croques'),
+('ProductDescription-salad-croques', 0, ''), ('ProductDescription-salad-croques', 1, '');
 
-('ProductTitle-coffee-3', 0, 'Cappuccino'), ('ProductTitle-coffee-3', 1, 'Cappuccino'),
-('ProductDescription-coffee-3', 0, 'Espresso met schuim'), ('ProductDescription-coffee-3', 1, 'Espresso with foam'),
+-- Warm Snacks
+INSERT INTO language (key, language, value) VALUES
+('ProductTitle-stuffed-pastry', 0, 'Gebakken gevulde deeghapje'), ('ProductTitle-stuffed-pastry', 1, 'Fried stuffed pastry'),
+('ProductDescription-stuffed-pastry', 0, 'Met feta in een krokant "jasje" met honing en sesamzaadjes'), ('ProductDescription-stuffed-pastry', 1, 'With feta in a crispy "jacket" with honey and sesame seeds'),
+('ProductTitle-grilled-haloumi', 0, 'Gegrilde haloumi kaas'), ('ProductTitle-grilled-haloumi', 1, 'Grilled haloumi cheese'),
+('ProductDescription-grilled-haloumi', 0, 'Met zongedroogde tomaatjes & verse munt'), ('ProductDescription-grilled-haloumi', 1, 'With sun-dried tomatoes & fresh mint');
 
-('ProductTitle-coffee-4', 0, 'Americano'), ('ProductTitle-coffee-4', 1, 'Americano'),
-('ProductDescription-coffee-4', 0, 'Verdunning van espresso'), ('ProductDescription-coffee-4', 1, 'Diluted espresso'),
+-- Dishes
+INSERT INTO language (key, language, value) VALUES
+('ProductTitle-smoked-salmon-sandwich', 0, 'Boterham gerookte zalm'), ('ProductTitle-smoked-salmon-sandwich', 1, 'Smoked salmon sandwich'),
+('ProductDescription-smoked-salmon-sandwich', 0, 'Sla, avocado, komkommer, tartaarsaus, gepekelde ajuin, soja sesamsaus en sesamzaadjes op een zachte of geroosterde boterham'), ('ProductDescription-smoked-salmon-sandwich', 1, 'Lettuce, avocado, cucumber, tartar sauce, pickled onion, soy sesame sauce and sesame seeds on a soft or toasted sandwich'),
+('ProductTitle-falafel', 0, 'Falafel balletjes'), ('ProductTitle-falafel', 1, 'Falafel balls'),
+('ProductDescription-falafel', 0, 'Vegan kikkererwten balletjes om te dippen in een yoghurt-tahini sausje'), ('ProductDescription-falafel', 1, 'Vegan chickpea balls to dip in a yogurt-tahini sauce'),
+('ProductTitle-focaccia-rosemary', 0, 'Focaccia rozemarijn'), ('ProductTitle-focaccia-rosemary', 1, 'Rosemary focaccia'),
+('ProductDescription-focaccia-rosemary', 0, 'Met mozzarella, kerstomaatjes, prosciutto, pijnboompitjes & rucola. Geserveerd met slaatje & potje pesto mayo.'), ('ProductDescription-focaccia-rosemary', 1, 'With mozzarella, cherry tomatoes, prosciutto, pine nuts & arugula. Served with side salad & pot of pesto mayo.'),
+('ProductTitle-focaccia-rosemary-veg', 0, 'Focaccia rozemarijn (vegetarisch)'), ('ProductTitle-focaccia-rosemary-veg', 1, 'Rosemary focaccia (vegetarian)'),
+('ProductDescription-focaccia-rosemary-veg', 0, 'Met mozzarella, kerstomaatjes, pijnboompitjes & rucola. Geserveerd met slaatje & potje pesto mayo.'), ('ProductDescription-focaccia-rosemary-veg', 1, 'With mozzarella, cherry tomatoes, pine nuts & arugula. Served with side salad & pot of pesto mayo.'),
+('ProductTitle-curry-chicken', 0, 'Carrieban kip'), ('ProductTitle-curry-chicken', 1, 'Curry chicken'),
+('ProductDescription-curry-chicken', 0, 'Krokante kippenhaasjes met verse gegrilde ananas, koolslaatje, zoete chilisaus, honing mosterd saus'), ('ProductDescription-curry-chicken', 1, 'Crispy chicken tenders with fresh grilled pineapple, coleslaw, sweet chili sauce, honey mustard sauce'),
+('ProductTitle-salad-rij62', 0, 'Salade Rij62'), ('ProductTitle-salad-rij62', 1, 'Salad Rij62'),
+('ProductDescription-salad-rij62', 0, 'Sla, geitenkaas, kerstomaatjes, komkommer, appel, noten, gedroogde vijgen & honing mosterd saus, met brood'), ('ProductDescription-salad-rij62', 1, 'Lettuce, goat cheese, cherry tomatoes, cucumber, apple, nuts, dried figs & honey mustard sauce, with bread');
 
-('ProductTitle-coffee-5', 0, 'Mocha'), ('ProductTitle-coffee-5', 1, 'Mocha'),
-('ProductDescription-coffee-5', 0, 'Koffie met chocolade'), ('ProductDescription-coffee-5', 1, 'Coffee with chocolate'),
+-- Suggestions
+INSERT INTO language (key, language, value) VALUES
+('ProductTitle-bacon-cheese-burger', 0, 'Bacon Cheese Burger'), ('ProductTitle-bacon-cheese-burger', 1, 'Bacon Cheese Burger'),
+('ProductDescription-bacon-cheese-burger', 0, 'Huisgemaakte rundsburger (puur) met cheddarkaas, spek, sla, tomaat, gepekelde ui & saus'), ('ProductDescription-bacon-cheese-burger', 1, 'Homemade beef burger (pure) with cheddar cheese, bacon, lettuce, tomato, pickled onion & sauce');
 
-('ProductTitle-coffee-6', 0, 'Flat White'), ('ProductTitle-coffee-6', 1, 'Flat White'),
-('ProductDescription-coffee-6', 0, 'Sterke melk koffie'), ('ProductDescription-coffee-6', 1, 'Strong milk coffee'),
+-- Extras
+INSERT INTO language (key, language, value)
+VALUES
+('ProductTitle-ketchup', 0, 'Ketchup'), ('ProductTitle-ketchup', 1, 'Ketchup'),
+('ProductDescription-ketchup', 0, ''), ('ProductDescription-ketchup', 1, ''),
+('ProductTitle-mayo', 0, 'Mayonaise'), ('ProductTitle-mayo', 1, 'Mayonnaise'),
+('ProductDescription-mayo', 0, ''), ('ProductDescription-mayo', 1, '');
 
-('ProductTitle-coffee-7', 0, 'Ristretto'), ('ProductTitle-coffee-7', 1, 'Ristretto'),
-('ProductDescription-coffee-7', 0, 'Korte espresso'), ('ProductDescription-coffee-7', 1, 'Short espresso'),
+-- =========================================================
+-- INSERT PRODUCTS
+-- =========================================================
 
-('ProductTitle-coffee-8', 0, 'Macchiato'), ('ProductTitle-coffee-8', 1, 'Macchiato'),
-('ProductDescription-coffee-8', 0, 'Espresso met melk schuim'), ('ProductDescription-coffee-8', 1, 'Espresso with milk foam'),
+-- Snacks / Sides (category_id = 1, assuming snacks category gets id 1)
+INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+VALUES
+('ProductTitle-pita-bread-1','ProductDescription-pita-bread-1',350,21,100,true,'/images/pita-bread-1.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
+('ProductTitle-pita-bread-2','ProductDescription-pita-bread-2',650,21,100,true,'/images/pita-bread-2.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
+('ProductTitle-sweet-potato-fries','ProductDescription-sweet-potato-fries',890,21,100,true,'/images/sweet-potato-fries.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
+('ProductTitle-soap-of-day','ProductDescription-soap-of-day',800,21,100,true,'/images/soup-of-day.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks'));
 
-('ProductTitle-coffee-9', 0, 'Iced Coffee'), ('ProductTitle-coffee-9', 1, 'Iced Coffee'),
-('ProductDescription-coffee-9', 0, 'Koude koffie'), ('ProductDescription-coffee-9', 1, 'Cold coffee'),
+-- Croques (category_id for croques)
+INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+VALUES
+('ProductTitle-croque-ham-cheese','ProductDescription-croque-ham-cheese',0,21,100,true,'/images/croque-ham-cheese.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
+('ProductTitle-croque-2-cheese','ProductDescription-croque-2-cheese',0,21,100,true,'/images/croque-2-cheese.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
+('ProductTitle-croque-vegan','ProductDescription-croque-vegan',0,21,100,true,'/images/croque-vegan.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
+('ProductTitle-croque-kipp-haloumi','ProductDescription-croque-kipp-haloumi',0,21,100,true,'/images/croque-chicken-haloumi.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
+('ProductTitle-croque-brie','ProductDescription-croque-brie',0,21,100,true,'/images/croque-brie.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques'));
 
-('ProductTitle-coffee-10', 0, 'Special Coffee'), ('ProductTitle-coffee-10', 1, 'Special Coffee'),
-('ProductDescription-coffee-10', 0, 'Huis specialiteit'), ('ProductDescription-coffee-10', 1, 'House specialty'),
+-- Cold Snacks
+INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+VALUES
+('ProductTitle-labneh','ProductDescription-labneh',890,21,100,true,'/images/labneh.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks')),
+('ProductTitle-hummus','ProductDescription-hummus',690,21,100,true,'/images/hummus.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks')),
+('ProductTitle-hummus-chili','ProductDescription-hummus-chili',790,21,100,true,'/images/hummus-chili.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks')),
+('ProductTitle-salad-croques','ProductDescription-salad-croques',0,21,100,true,'/images/side-salad.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks'));
 
--- Snacks titles + descriptions
-('ProductTitle-snacks-1', 0, 'Frieten'), ('ProductTitle-snacks-1', 1, 'Fries'),
-('ProductDescription-snacks-1', 0, 'Knapperige frieten'), ('ProductDescription-snacks-1', 1, 'Crispy fries'),
+-- Warm Snacks
+INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+VALUES
+('ProductTitle-stuffed-pastry','ProductDescription-stuffed-pastry',950,21,100,true,'/images/stuffed-pastry.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-warmSnacks')),
+('ProductTitle-grilled-haloumi','ProductDescription-grilled-haloumi',950,21,100,true,'/images/grilled-haloumi.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-warmSnacks'));
 
-('ProductTitle-snacks-2', 0, 'Bitterballen'), ('ProductTitle-snacks-2', 1, 'Bitterballen'),
-('ProductDescription-snacks-2', 0, 'Gefrituurde snacks'), ('ProductDescription-snacks-2', 1, 'Fried snacks'),
+-- Dishes
+INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+VALUES
+('ProductTitle-smoked-salmon-sandwich','ProductDescription-smoked-salmon-sandwich',0,21,100,true,'/images/smoked-salmon-sandwich.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-falafel','ProductDescription-falafel',1000,21,100,true,'/images/falafel.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-focaccia-rosemary','ProductDescription-focaccia-rosemary',0,21,100,true,'/images/focaccia-rosemary.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-focaccia-rosemary-veg','ProductDescription-focaccia-rosemary-veg',0,21,100,true,'/images/focaccia-rosemary-veg.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-curry-chicken','ProductDescription-curry-chicken',1790,21,100,true,'/images/curry-chicken.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-salad-rij62','ProductDescription-salad-rij62',0,21,100,true,'/images/salad-rij62.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes'));
 
-('ProductTitle-snacks-3', 0, 'Nachos'), ('ProductTitle-snacks-3', 1, 'Nachos'),
-('ProductDescription-snacks-3', 0, 'Met kaas en saus'), ('ProductDescription-snacks-3', 1, 'With cheese and sauce'),
+-- Suggestions
+INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+VALUES
+('ProductTitle-bacon-cheese-burger','ProductDescription-bacon-cheese-burger',0,21,100,true,'/images/bacon-cheese-burger.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-suggestions'));
 
-('ProductTitle-snacks-4', 0, 'Burger'), ('ProductTitle-snacks-4', 1, 'Burger'),
-('ProductDescription-snacks-4', 0, 'Rundvlees burger'), ('ProductDescription-snacks-4', 1, 'Beef burger'),
+-- Extras
+INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+VALUES
+('ProductTitle-ketchup', 'ProductDescription-ketchup', 0, 21, 100, true, 'http://localhost:5148/api/image/02f88d3c-e899-440f-840f-396eed4af598', (SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
+('ProductTitle-mayo', 'ProductDescription-mayo', 0, 21, 100, true, 'http://localhost:5148/api/image/35fe8882-d8cb-4a0e-a896-a2b06b63d1b8', (SELECT id FROM product_categories WHERE name_key='CategoryName-snacks'));
 
-('ProductTitle-snacks-5', 0, 'Sandwich'), ('ProductTitle-snacks-5', 1, 'Sandwich'),
-('ProductDescription-snacks-5', 0, 'Belegde sandwich'), ('ProductDescription-snacks-5', 1, 'Filled sandwich'),
 
-('ProductTitle-snacks-6', 0, 'Wrap'), ('ProductTitle-snacks-6', 1, 'Wrap'),
-('ProductDescription-snacks-6', 0, 'Wrap met vulling'), ('ProductDescription-snacks-6', 1, 'Filled wrap'),
+-- =========================================================
+-- INSERT PRODUCT STEPS
+-- =========================================================
 
-('ProductTitle-snacks-7', 0, 'Pizza'), ('ProductTitle-snacks-7', 1, 'Pizza'),
-('ProductDescription-snacks-7', 0, 'Italiaanse pizza'), ('ProductDescription-snacks-7', 1, 'Italian pizza'),
+INSERT INTO product_steps(title_key, product_id, default_option_id, multiple_choice)
+VALUES
+('ProductStep-choose-a-sauce', (SELECT id FROM products WHERE title_key='ProductTitle-croque-ham-cheese'), NULL, TRUE);
 
-('ProductTitle-snacks-8', 0, 'Salade'), ('ProductTitle-snacks-8', 1, 'Salad'),
-('ProductDescription-snacks-8', 0, 'Verse salade'), ('ProductDescription-snacks-8', 1, 'Fresh salad'),
+INSERT INTO product_step_options(product_step_id, product_id)
+VALUES
+((SELECT id FROM product_steps WHERE title_key='ProductStep-choose-a-sauce'), (SELECT id FROM products WHERE title_key='ProductTitle-ketchup')),
+((SELECT id FROM product_steps WHERE title_key='ProductStep-choose-a-sauce'), (SELECT id FROM products WHERE title_key='ProductTitle-mayo'));
 
-('ProductTitle-snacks-9', 0, 'Kaasplank'), ('ProductTitle-snacks-9', 1, 'Cheese plate'),
-('ProductDescription-snacks-9', 0, 'Selectie van kazen'), ('ProductDescription-snacks-9', 1, 'Selection of cheeses'),
-
-('ProductTitle-snacks-10', 0, 'Snack Mix'), ('ProductTitle-snacks-10', 1, 'Snack Mix'),
-('ProductDescription-snacks-10', 0, 'Gemengde snacks'), ('ProductDescription-snacks-10', 1, 'Mixed snacks'),
-
--- Beer titles + descriptions
-('ProductTitle-beer-1', 0, 'Bolleke De Koninck'), ('ProductTitle-beer-1', 1, 'Bolleke De Koninck'),
-('ProductDescription-beer-1', 0, 'Klassiek amber bier'), ('ProductDescription-beer-1', 1, 'Classic amber beer'),
-
-('ProductTitle-beer-2', 0, 'Tripel Koninck'), ('ProductTitle-beer-2', 1, 'Tripel Koninck'),
-('ProductDescription-beer-2', 0, 'Krachtige tripel'), ('ProductDescription-beer-2', 1, 'Strong tripel'),
-
-('ProductTitle-beer-3', 0, 'Blond Bier'), ('ProductTitle-beer-3', 1, 'Blond Beer'),
-('ProductDescription-beer-3', 0, 'Licht en fris'), ('ProductDescription-beer-3', 1, 'Light and fresh'),
-
-('ProductTitle-beer-4', 0, 'Amber Bier'), ('ProductTitle-beer-4', 1, 'Amber Beer'),
-('ProductDescription-beer-4', 0, 'Rijke smaak'), ('ProductDescription-beer-4', 1, 'Rich flavor'),
-
-('ProductTitle-beer-5', 0, 'Mira'), ('ProductTitle-beer-5', 1, 'Mira'),
-('ProductDescription-beer-5', 0, 'Speciaal bier'), ('ProductDescription-beer-5', 1, 'Special beer'),
-
-('ProductTitle-beer-6', 0, 'Duvel'), ('ProductTitle-beer-6', 1, 'Duvel'),
-('ProductDescription-beer-6', 0, 'Sterk blond bier'), ('ProductDescription-beer-6', 1, 'Strong blond beer'),
-
-('ProductTitle-beer-7', 0, 'Hoegaarden'), ('ProductTitle-beer-7', 1, 'Hoegaarden'),
-('ProductDescription-beer-7', 0, 'Witbier met citrus'), ('ProductDescription-beer-7', 1, 'Wheat beer with citrus'),
-
-('ProductTitle-beer-8', 0, 'Leffe Blond'), ('ProductTitle-beer-8', 1, 'Leffe Blond'),
-('ProductDescription-beer-8', 0, 'Abdijbier'), ('ProductDescription-beer-8', 1, 'Abbey beer'),
-
-('ProductTitle-beer-9', 0, 'Stella Artois'), ('ProductTitle-beer-9', 1, 'Stella Artois'),
-('ProductDescription-beer-9', 0, 'Licht pils'), ('ProductDescription-beer-9', 1, 'Light lager'),
-
-('ProductTitle-beer-10', 0, 'Westmalle Tripel'), ('ProductTitle-beer-10', 1, 'Westmalle Tripel'),
-('ProductDescription-beer-10', 0, 'Trappistenbier'), ('ProductDescription-beer-10', 1, 'Trappist beer');
-
-COMMIT;
+COMMIT
