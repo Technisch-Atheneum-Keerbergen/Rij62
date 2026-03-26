@@ -33,6 +33,7 @@ namespace Rij62.Models
                 Price = product.PriceCent,
                 Btw = product.Btw,
                 OrderId = OrderId,
+                Status = OrderStatus.Pending,
             };
         }
     }
