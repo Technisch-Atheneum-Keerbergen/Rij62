@@ -6,6 +6,7 @@
 // **********************************
 
 using System.Diagnostics;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -94,7 +95,7 @@ namespace Rij62.Controllers
             }
 
         }
-
+        
         [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder(int id)
@@ -116,19 +117,27 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            return Ok(order.Status);
+            var orderItems = _context.OrderItems.Where((oi)=>oi.Id == id).Select((oi)=>ApiOrderItemStatus.FromOrderItem(oi));
+           
+            return Ok(orderItems);
         }
 
         [Authorize(Policy = "AdminOnly")]
-        [HttpPut("{id}/status")]
-        public async Task<IActionResult> SetOrderStatus(int id, [FromBody] OrderStatus status)
+        [HttpPut("{id}/status/{orderItemid}")]
+        public async Task<IActionResult> SetOrderStatus(int id, int orderItemid, [FromBody] OrderStatus status)
         {
+          
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
             {
-                return NotFound();
+                return NotFound("Order was found");
             }
-            order.Status = status;
+            var item = await _context.OrderItems.Where((oi)=>oi.Id == orderItemid && oi.OrderId == id).FirstOrDefaultAsync();
+            if (item == null)
+            {
+                return NotFound("Order item was not found");
+            }
+            item.Status = status;
             await _context.SaveChangesAsync();
             return Ok();
         }

@@ -15,7 +15,6 @@ namespace Rij62.Models
 
         public DateTimeOffset CreatedTime {get; set;}
         public DateTimeOffset PickupTime { get; set; }
-        public OrderStatus Status { get; set; }
         public int TableNumber { get; set; }
 
         public ICollection<OrderItem> OrderItems { get; set; }
@@ -27,7 +26,6 @@ namespace Rij62.Models
                 Id= 0,
                 CreatedTime= DateTimeOffset.Now.ToUniversalTime(),
                 PickupTime = DateTimeOffset.FromUnixTimeSeconds(order.PickupTime),
-                Status = OrderStatus.Pending,
                 TableNumber=order.TableNumber
             };
 

@@ -10,7 +10,6 @@ public class ApiGetOrder
     public long CreatedTime {get; set;}
     public long PickupTime {get; set;}
 
-    public OrderStatus Status {get; set;}
     public List<ApiGetOrderItem> Items {get; set;}
 
     public static ApiGetOrder FromOrder(Order order, Localizer localizer)
@@ -22,7 +21,6 @@ public class ApiGetOrder
             TableNumber =order.TableNumber,
             CreatedTime=order.CreatedTime.ToUnixTimeSeconds(),
             PickupTime=order.PickupTime.ToUnixTimeSeconds(),
-            Status=order.Status,
             Items=items.ToList(),
 
         };
