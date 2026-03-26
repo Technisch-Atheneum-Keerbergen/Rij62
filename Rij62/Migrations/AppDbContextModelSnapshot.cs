@@ -60,10 +60,6 @@ namespace Rij62.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("pickup_time");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
-
                     b.Property<int>("TableNumber")
                         .HasColumnType("integer")
                         .HasColumnName("table_number");
@@ -99,6 +95,10 @@ namespace Rij62.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("integer")
                         .HasColumnName("price");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
 
                     b.Property<string>("TitleKey")
                         .IsRequired()
