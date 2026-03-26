@@ -2,6 +2,16 @@ BEGIN;
 
 INSERT INTO users(id, display_name, is_admin) VALUES (1, 'Mr delux', true);
 
+INSERT INTO tables (table_number)
+VALUES
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7);
+
 INSERT INTO product_categories (screen_id, name_key)
 VALUES
 ((SELECT id FROM screens WHERE name = 'Bar'), 'CategoryName-coffee'),
