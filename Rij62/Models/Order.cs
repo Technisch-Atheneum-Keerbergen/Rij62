@@ -13,9 +13,9 @@ namespace Rij62.Models
     {
         public int Id { get; set; }
 
-        public DateTimeOffset CreatedTime {get; set;}
+        public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset PickupTime { get; set; }
-        public int TableNumber { get; set; }
+        public int? TableNumber { get; set; }
 
         public ICollection<OrderItem> OrderItems { get; set; }
 
@@ -23,10 +23,10 @@ namespace Rij62.Models
         {
             return new Order
             {
-                Id= 0,
-                CreatedTime= DateTimeOffset.Now.ToUniversalTime(),
+                Id = 0,
+                CreatedTime = DateTimeOffset.Now.ToUniversalTime(),
                 PickupTime = DateTimeOffset.FromUnixTimeSeconds(order.PickupTime),
-                TableNumber=order.TableNumber
+                TableNumber = order.TableNumber
             };
 
         }
