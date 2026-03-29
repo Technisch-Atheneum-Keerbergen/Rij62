@@ -36,6 +36,15 @@ namespace Rij62.Controllers
 
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
+                if (apiOrder.TableNumber != null)
+                {
+                    var table = await _context.Tables.Where((t) => t.TableNumber == apiOrder.TableNumber).FirstOrDefaultAsync();
+                    if (table == null)
+                    {
+                        return BadRequest("Invalid table number");
+                    }
+                }
+
                 foreach (var item in apiOrder.Items)
                 {
                     var product = await _context.Products.FindAsync(item.ProductId);

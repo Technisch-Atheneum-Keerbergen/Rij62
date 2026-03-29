@@ -28,6 +28,11 @@ namespace Rij62.Controllers
         [HttpPost]
         public async Task<ActionResult<Table>> CreateTable(Table table)
         {
+            var existingTable = await _context.Tables.Where((t) => t.TableNumber == table.TableNumber).FirstOrDefaultAsync();
+            if (existingTable != null)
+            {
+                return Conflict("Table with number already exists");
+            }
             _context.Tables.Add(table);
             await _context.SaveChangesAsync();
 
