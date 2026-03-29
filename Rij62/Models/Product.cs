@@ -16,7 +16,7 @@ public class Product
     public int Id { get; set; }
     public required string TitleKey { get; set; }
     public required string DescriptionKey { get; set; }
-    public required int PriceCent { get; set; }
+    public required decimal Price { get; set; }
     public required int Btw { get; set; }
     public int Stock { get; set; }
     public bool IsAvailable { get; set; }
@@ -35,7 +35,7 @@ public class Product
             Id = 0,
             TitleKey = titleKey,
             DescriptionKey = descriptionKey,
-            PriceCent = apiProduct.Price,
+            Price = apiProduct.Price,
             Btw = apiProduct.Btw,
             Stock = apiProduct.Stock,
             IsAvailable = apiProduct.IsAvailable,

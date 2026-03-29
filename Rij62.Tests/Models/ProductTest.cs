@@ -31,7 +31,7 @@ namespace Rij62.Tests.Models
                 Id = id,
                 TitleKey = TitleKey,
                 DescriptionKey = DescriptionKey,
-                PriceCent = priceCent,
+                Price = priceCent,
                 Stock = stock,
                 IsAvailable = isAvailable,
                 ImgUrl = imgUrl,

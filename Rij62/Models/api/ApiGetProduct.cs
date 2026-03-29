@@ -7,7 +7,7 @@ public class ApiGetProduct
 
     public required MultiLangString Title { get; set; }
     public required MultiLangString Description { get; set; }
-    public required int Price { get; set; }
+    public required decimal Price { get; set; }
     public required int Btw { get; set; }
     public required int Stock { get; set; }
 
@@ -35,7 +35,7 @@ public class ApiGetProduct
             Title = localizer.MultiLangStringByKey(product.TitleKey),
             Description = localizer.MultiLangStringByKey(product.DescriptionKey),
             Id = product.Id,
-            Price = product.PriceCent,
+            Price = product.Price,
             Btw = product.Btw,
             Stock = product.Stock,
             IsAvailable = product.IsAvailable,

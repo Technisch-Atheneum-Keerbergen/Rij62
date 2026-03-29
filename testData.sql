@@ -118,53 +118,53 @@ VALUES
 -- =========================================================
 
 -- Snacks / Sides (category_id = 1, assuming snacks category gets id 1)
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+INSERT INTO products (title_key, description_key, price, btw, stock, is_available, img_url, category_id)
 VALUES
-('ProductTitle-pita-bread-1','ProductDescription-pita-bread-1',350,21,100,true,'/images/pita-bread-1.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
-('ProductTitle-pita-bread-2','ProductDescription-pita-bread-2',650,21,100,true,'/images/pita-bread-2.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
-('ProductTitle-sweet-potato-fries','ProductDescription-sweet-potato-fries',890,21,100,true,'/images/sweet-potato-fries.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
-('ProductTitle-soap-of-day','ProductDescription-soap-of-day',800,21,100,true,'/images/soup-of-day.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks'));
+('ProductTitle-pita-bread-1','ProductDescription-pita-bread-1',3.50,21,100,true,'/images/pita-bread-1.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
+('ProductTitle-pita-bread-2','ProductDescription-pita-bread-2',6.50,21,100,true,'/images/pita-bread-2.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
+('ProductTitle-sweet-potato-fries','ProductDescription-sweet-potato-fries',8.90,21,100,true,'/images/sweet-potato-fries.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
+('ProductTitle-soap-of-day','ProductDescription-soap-of-day',8.00,21,100,true,'/images/soup-of-day.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-snacks'));
 
 -- Croques (category_id for croques)
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+INSERT INTO products (title_key, description_key, price, btw, stock, is_available, img_url, category_id)
 VALUES
-('ProductTitle-croque-ham-cheese','ProductDescription-croque-ham-cheese',800,21,100,true,'http://localhost:5148/api/image/4061ea5c-d341-483f-bce6-4750f4b750d2',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
-('ProductTitle-croque-2-cheese','ProductDescription-croque-2-cheese',0,21,100,true,'/images/croque-2-cheese.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
-('ProductTitle-croque-vegan','ProductDescription-croque-vegan',0,21,100,true,'/images/croque-vegan.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
-('ProductTitle-croque-kipp-haloumi','ProductDescription-croque-kipp-haloumi',0,21,100,true,'/images/croque-chicken-haloumi.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
-('ProductTitle-croque-brie','ProductDescription-croque-brie',0,21,100,true,'/images/croque-brie.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques'));
+('ProductTitle-croque-ham-cheese','ProductDescription-croque-ham-cheese',8.00,21,100,true,'http://localhost:5148/api/image/4061ea5c-d341-483f-bce6-4750f4b750d2',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
+('ProductTitle-croque-2-cheese','ProductDescription-croque-2-cheese',8.00,21,100,true,'/images/croque-2-cheese.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
+('ProductTitle-croque-vegan','ProductDescription-croque-vegan',8.00,21,100,true,'/images/croque-vegan.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
+('ProductTitle-croque-kipp-haloumi','ProductDescription-croque-kipp-haloumi',8.00,21,100,true,'/images/croque-chicken-haloumi.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
+('ProductTitle-croque-brie','ProductDescription-croque-brie',8.00,21,100,true,'/images/croque-brie.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques'));
 
 -- Cold Snacks
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+INSERT INTO products (title_key, description_key, price, btw, stock, is_available, img_url, category_id)
 VALUES
-('ProductTitle-labneh','ProductDescription-labneh',890,21,100,true,'/images/labneh.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks')),
-('ProductTitle-hummus','ProductDescription-hummus',690,21,100,true,'/images/hummus.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks')),
-('ProductTitle-hummus-chili','ProductDescription-hummus-chili',790,21,100,true,'/images/hummus-chili.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks')),
-('ProductTitle-salad-croques','ProductDescription-salad-croques',0,21,100,true,'/images/side-salad.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks'));
+('ProductTitle-labneh','ProductDescription-labneh',8.90,21,100,true,'/images/labneh.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks')),
+('ProductTitle-hummus','ProductDescription-hummus',6.90,21,100,true,'/images/hummus.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks')),
+('ProductTitle-hummus-chili','ProductDescription-hummus-chili',7.90,21,100,true,'/images/hummus-chili.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks')),
+('ProductTitle-salad-croques','ProductDescription-salad-croques',5.00,21,100,true,'/images/side-salad.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-coldSnacks'));
 
 -- Warm Snacks
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+INSERT INTO products (title_key, description_key, price, btw, stock, is_available, img_url, category_id)
 VALUES
-('ProductTitle-stuffed-pastry','ProductDescription-stuffed-pastry',950,21,100,true,'/images/stuffed-pastry.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-warmSnacks')),
-('ProductTitle-grilled-haloumi','ProductDescription-grilled-haloumi',950,21,100,true,'/images/grilled-haloumi.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-warmSnacks'));
+('ProductTitle-stuffed-pastry','ProductDescription-stuffed-pastry',9.50,21,100,true,'/images/stuffed-pastry.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-warmSnacks')),
+('ProductTitle-grilled-haloumi','ProductDescription-grilled-haloumi',9.50,21,100,true,'/images/grilled-haloumi.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-warmSnacks'));
 
 -- Dishes
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+INSERT INTO products (title_key, description_key, price, btw, stock, is_available, img_url, category_id)
 VALUES
-('ProductTitle-smoked-salmon-sandwich','ProductDescription-smoked-salmon-sandwich',0,21,100,true,'/images/smoked-salmon-sandwich.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
-('ProductTitle-falafel','ProductDescription-falafel',1000,21,100,true,'/images/falafel.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
-('ProductTitle-focaccia-rosemary','ProductDescription-focaccia-rosemary',0,21,100,true,'/images/focaccia-rosemary.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
-('ProductTitle-focaccia-rosemary-veg','ProductDescription-focaccia-rosemary-veg',0,21,100,true,'/images/focaccia-rosemary-veg.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
-('ProductTitle-curry-chicken','ProductDescription-curry-chicken',1790,21,100,true,'/images/curry-chicken.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
-('ProductTitle-salad-rij62','ProductDescription-salad-rij62',0,21,100,true,'/images/salad-rij62.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes'));
+('ProductTitle-smoked-salmon-sandwich','ProductDescription-smoked-salmon-sandwich',16.0,21,100,true,'/images/smoked-salmon-sandwich.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-falafel','ProductDescription-falafel',10.00,21,100,true,'/images/falafel.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-focaccia-rosemary','ProductDescription-focaccia-rosemary',16.9,21,100,true,'/images/focaccia-rosemary.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-focaccia-rosemary-veg','ProductDescription-focaccia-rosemary-veg',16.9,21,100,true,'/images/focaccia-rosemary-veg.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-curry-chicken','ProductDescription-curry-chicken',17.90,21,100,true,'/images/curry-chicken.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes')),
+('ProductTitle-salad-rij62','ProductDescription-salad-rij62',23.5,21,100,true,'/images/salad-rij62.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-dishes'));
 
 -- Suggestions
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+INSERT INTO products (title_key, description_key, price, btw, stock, is_available, img_url, category_id)
 VALUES
-('ProductTitle-bacon-cheese-burger','ProductDescription-bacon-cheese-burger',0,21,100,true,'/images/bacon-cheese-burger.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-suggestions'));
+('ProductTitle-bacon-cheese-burger','ProductDescription-bacon-cheese-burger',13.5,21,100,true,'/images/bacon-cheese-burger.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-suggestions'));
 
 -- Extras
-INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
+INSERT INTO products (title_key, description_key, price, btw, stock, is_available, img_url, category_id)
 VALUES
 ('ProductTitle-ketchup', 'ProductDescription-ketchup', 0, 21, 100, true, 'http://localhost:5148/api/image/35fe8882-d8cb-4a0e-a896-a2b06b63d1b8', (SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
 ('ProductTitle-mayo', 'ProductDescription-mayo', 0, 21, 100, true, 'http://localhost:5148/api/image/02f88d3c-e899-440f-840f-396eed4af598', (SELECT id FROM product_categories WHERE name_key='CategoryName-snacks'));

@@ -5,7 +5,7 @@ public class ApiGetOrderItem
     public int Id { get; set; }
     public MultiLangString Title { get; set; }
     public MultiLangString Description { get; set; }
-    public int Price { get; set; }
+    public decimal Price { get; set; }
     public int Btw { get; set; }
     public required List<int> Choices { get; set; }
     public OrderStatus Status { get; set; }
