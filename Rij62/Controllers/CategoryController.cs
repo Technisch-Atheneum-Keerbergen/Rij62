@@ -42,18 +42,17 @@ namespace Rij62.Controllers
             }
             return Ok(ApiGetCategory.FromCategory(cat, await _localization.GetLocalizer()));
         }
-        
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("")]
         public async Task<IActionResult> PostCategory([FromBody] ApiPutCategory apiCat)
         {
             var uniqueId = Guid.NewGuid().ToString();
-            var nameKey = "ProductCategoryName-"+uniqueId;
+            var nameKey = "ProductCategoryName-" + uniqueId;
             _localization.UpdateLanguageEntry(apiCat.Name, nameKey);
             var cat = new ProductCategory
             {
-                NameKey=nameKey, 
-                ScreenId=apiCat.ScreenId,
+                NameKey = nameKey,
+                ScreenId = apiCat.ScreenId,
             };
             _context.ProductCategories.Add(cat);
 
@@ -65,10 +64,10 @@ namespace Rij62.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, [FromBody] ApiPutCategory apiCat)
         {
-             var cat = await _context.ProductCategories.FindAsync(id);
+            var cat = await _context.ProductCategories.FindAsync(id);
             if (cat == null)
             {
-               return NotFound();
+                return NotFound();
             }
 
             _localization.UpdateLanguageEntry(apiCat.Name, cat.NameKey);
@@ -79,23 +78,37 @@ namespace Rij62.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        } 
+        }
 
+        /* moveProducts: Category id of the category to move all the products of the deleted category to*/
         [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        public async Task<IActionResult> DeleteCategory(int id, [FromQuery] int moveProducts)
         {
-
-            var cat = await _context.ProductCategories.FindAsync(id);
-            if (cat == null)
+            using (var trans = await _context.Database.BeginTransactionAsync())
             {
-                return NotFound();
-            }
-            await _localization.DeleteLanguageEntry(cat.NameKey);
-            _context.ProductCategories.Remove(cat);
 
-            await _context.SaveChangesAsync();
-            return Ok();
+                var destCat = await _context.ProductCategories.FindAsync(moveProducts);
+                if (destCat == null)
+                {
+                    return NotFound("Destination category not found");
+                }
+
+                var cat = await _context.ProductCategories.FindAsync(id);
+                if (cat == null)
+                {
+                    return NotFound();
+                }
+                // Move all products
+                await _context.Products.Where((p) => p.CategoryId == cat.Id).ExecuteUpdateAsync((p) => p.SetProperty((p) => p.CategoryId, destCat.Id));
+
+                await _localization.DeleteLanguageEntry(cat.NameKey);
+                _context.ProductCategories.Remove(cat);
+
+                await _context.SaveChangesAsync();
+                await trans.CommitAsync();
+                return Ok();
+            }
         }
     }
 }
