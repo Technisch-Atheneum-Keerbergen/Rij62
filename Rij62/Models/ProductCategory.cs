@@ -7,10 +7,10 @@
 namespace Rij62.Models
 {
     public class ProductCategory
-    { 
+    {
         public int Id { get; set; }
-        public int? ScreenId { get; set; }
         public required string NameKey { get; set; }
+        public required RootCategory RootCategory { get; set; }
 
     }
 }

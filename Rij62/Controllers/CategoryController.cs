@@ -1,9 +1,6 @@
-using System.Reflection.PortableExecutable;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Rij62.Data;
 using Rij62.Models;
 using Rij62.Models.Api;
@@ -52,7 +49,7 @@ namespace Rij62.Controllers
             var cat = new ProductCategory
             {
                 NameKey = nameKey,
-                ScreenId = apiCat.ScreenId,
+                RootCategory = apiCat.RootCategory,
             };
             _context.ProductCategories.Add(cat);
 
@@ -72,14 +69,14 @@ namespace Rij62.Controllers
 
             _localization.UpdateLanguageEntry(apiCat.Name, cat.NameKey);
 
-            cat.ScreenId = apiCat.ScreenId;
+            cat.RootCategory = apiCat.RootCategory;
 
             _context.Entry(cat).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-
+        
         /* moveProducts: Category id of the category to move all the products of the deleted category to*/
         [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]

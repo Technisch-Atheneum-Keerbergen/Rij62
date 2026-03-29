@@ -30,14 +30,14 @@ VALUES
 -- INSERT PRODUCT CATEGORIES
 -- =========================================================
 
-INSERT INTO product_categories (screen_id, name_key)
+INSERT INTO product_categories (root_category, name_key)
 VALUES
-(NULL, 'CategoryName-snacks'),
-(NULL, 'CategoryName-croques'),
-(NULL, 'CategoryName-coldSnacks'),
-(NULL, 'CategoryName-warmSnacks'),
-(NULL, 'CategoryName-dishes'),
-(NULL, 'CategoryName-suggestions');
+(0, 'CategoryName-snacks'),
+(0, 'CategoryName-croques'),
+(0, 'CategoryName-coldSnacks'),
+(0, 'CategoryName-warmSnacks'),
+(0, 'CategoryName-dishes'),
+(0, 'CategoryName-suggestions');
 
 -- =========================================================
 -- PRODUCT TITLES AND DESCRIPTIONS (LANGUAGE ENTRIES)

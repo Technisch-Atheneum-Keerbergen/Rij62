@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Rij62.Data;
@@ -11,9 +12,11 @@ using Rij62.Data;
 namespace Rij62.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260329094958_rootCategories")]
+    partial class rootCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,8 +95,8 @@ namespace Rij62.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("order_id");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
+                    b.Property<int>("Price")
+                        .HasColumnType("integer")
                         .HasColumnName("price");
 
                     b.Property<int>("Status")
@@ -175,9 +178,9 @@ namespace Rij62.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_available");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
-                        .HasColumnName("price");
+                    b.Property<int>("PriceCent")
+                        .HasColumnType("integer")
+                        .HasColumnName("price_cent");
 
                     b.Property<int>("Stock")
                         .HasColumnType("integer")
