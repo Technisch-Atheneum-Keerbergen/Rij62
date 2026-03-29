@@ -128,7 +128,7 @@ VALUES
 -- Croques (category_id for croques)
 INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
 VALUES
-('ProductTitle-croque-ham-cheese','ProductDescription-croque-ham-cheese',0,21,100,true,'/images/croque-ham-cheese.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
+('ProductTitle-croque-ham-cheese','ProductDescription-croque-ham-cheese',800,21,100,true,'http://localhost:5148/api/image/4061ea5c-d341-483f-bce6-4750f4b750d2',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
 ('ProductTitle-croque-2-cheese','ProductDescription-croque-2-cheese',0,21,100,true,'/images/croque-2-cheese.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
 ('ProductTitle-croque-vegan','ProductDescription-croque-vegan',0,21,100,true,'/images/croque-vegan.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
 ('ProductTitle-croque-kipp-haloumi','ProductDescription-croque-kipp-haloumi',0,21,100,true,'/images/croque-chicken-haloumi.jpg',(SELECT id FROM product_categories WHERE name_key='CategoryName-croques')),
@@ -166,9 +166,17 @@ VALUES
 -- Extras
 INSERT INTO products (title_key, description_key, price_cent, btw, stock, is_available, img_url, category_id)
 VALUES
-('ProductTitle-ketchup', 'ProductDescription-ketchup', 0, 21, 100, true, 'http://localhost:5148/api/image/02f88d3c-e899-440f-840f-396eed4af598', (SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
-('ProductTitle-mayo', 'ProductDescription-mayo', 0, 21, 100, true, 'http://localhost:5148/api/image/35fe8882-d8cb-4a0e-a896-a2b06b63d1b8', (SELECT id FROM product_categories WHERE name_key='CategoryName-snacks'));
+('ProductTitle-ketchup', 'ProductDescription-ketchup', 0, 21, 100, true, 'http://localhost:5148/api/image/35fe8882-d8cb-4a0e-a896-a2b06b63d1b8', (SELECT id FROM product_categories WHERE name_key='CategoryName-snacks')),
+('ProductTitle-mayo', 'ProductDescription-mayo', 0, 21, 100, true, 'http://localhost:5148/api/image/02f88d3c-e899-440f-840f-396eed4af598', (SELECT id FROM product_categories WHERE name_key='CategoryName-snacks'));
 
+
+-- =========================================================
+-- INSERT PRODUCT STEP TITLES (LANGUAGE ENTRIES)
+-- =========================================================
+
+INSERT INTO language (key, language, value)
+VALUES
+('ProductStep-choose-a-sauce', 0, 'Kies een saus'), ('ProductStep-choose-a-sauce', 1, 'Choose a sauce');
 
 -- =========================================================
 -- INSERT PRODUCT STEPS
