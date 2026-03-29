@@ -142,7 +142,7 @@ namespace Rij62.Controllers
             _localization.UpdateLanguageEntry(apiProduct.Title, product.TitleKey);
             _localization.UpdateLanguageEntry(apiProduct.Description, product.DescriptionKey);
 
-            product.PriceCent = apiProduct.Price;
+            product.Price = apiProduct.Price;
             product.Btw = apiProduct.Btw;
             product.Stock = apiProduct.Stock;
             product.IsAvailable = apiProduct.IsAvailable;

@@ -10,7 +10,7 @@ namespace Rij62.Models
         public int Id { get; set; }
         public string TitleKey { get; set; }
         public string DescriptionKey { get; set; }
-        public int Price { get; set; }
+        public decimal Price { get; set; }
         public int Btw { get; set; }
         public int OrderId { get; set; }
 
@@ -33,7 +33,7 @@ namespace Rij62.Models
                 Id = 0,
                 TitleKey = titleKey,
                 DescriptionKey = descriptionKey,
-                Price = product.PriceCent,
+                Price = product.Price,
                 Btw = product.Btw,
                 OrderId = OrderId,
                 Status = OrderStatus.Pending,
