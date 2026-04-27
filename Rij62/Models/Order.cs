@@ -12,7 +12,7 @@ namespace Rij62.Models
     public class Order
     {
         public int Id { get; set; }
-
+        public Guid PublicId { get; set; } // Use a UUID for the client side so other people can't guess order ID's.
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset PickupTime { get; set; }
         public int? TableNumber { get; set; }
@@ -24,6 +24,7 @@ namespace Rij62.Models
             return new Order
             {
                 Id = 0,
+                PublicId = Guid.NewGuid(),
                 CreatedTime = DateTimeOffset.Now.ToUniversalTime(),
                 PickupTime = DateTimeOffset.FromUnixTimeSeconds(order.PickupTime),
                 TableNumber = order.TableNumber

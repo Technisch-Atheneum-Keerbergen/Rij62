@@ -5,7 +5,7 @@ namespace Rij62.Models.Api;
 
 public class ApiGetOrder
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public int? TableNumber { get; set; }
     public long CreatedTime { get; set; }
     public long PickupTime { get; set; }
@@ -17,7 +17,7 @@ public class ApiGetOrder
         var items = order.OrderItems.Select((i) => ApiGetOrderItem.FromOrderItem(i, localizer));
         return new ApiGetOrder
         {
-            Id = order.Id,
+            Id = order.PublicId,
             TableNumber = order.TableNumber,
             CreatedTime = order.CreatedTime.ToUnixTimeSeconds(),
             PickupTime = order.PickupTime.ToUnixTimeSeconds(),

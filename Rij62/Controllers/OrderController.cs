@@ -99,16 +99,16 @@ namespace Rij62.Controllers
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return Ok(order.Id);
+                return Ok(order.PublicId);
             }
 
         }
 
         [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrder(int id)
+        public async Task<IActionResult> GetOrder(Guid id)
         {
-            var order = await _context.Orders.Include((o) => o.OrderItems).ThenInclude((i) => i.Choices).FirstOrDefaultAsync((o) => o.Id == id);
+            var order = await _context.Orders.Include((o) => o.OrderItems).ThenInclude((i) => i.Choices).FirstOrDefaultAsync((o) => o.PublicId == id);
             if (order == null)
             {
                 return NotFound();
@@ -118,28 +118,28 @@ namespace Rij62.Controllers
         }
 
         [HttpGet("{id}/status")]
-        public async Task<IActionResult> GetOrderStatus(int id)
+        public async Task<IActionResult> GetOrderStatus(Guid id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders.Where((o)=>o.PublicId == id).FirstOrDefaultAsync();
             if (order == null)
             {
                 return NotFound();
             }
-            var orderItems = _context.OrderItems.Where((oi) => oi.Id == id).Select((oi) => ApiOrderItemStatus.FromOrderItem(oi));
+            var orderItems = _context.OrderItems.Where((oi) => oi.OrderId == order.Id).Select((oi) => ApiOrderItemStatus.FromOrderItem(oi));
             return Ok(orderItems);
         }
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}/status/{orderItemid}")]
-        public async Task<IActionResult> SetOrderStatus(int id, int orderItemid, [FromBody] OrderStatus status)
+        public async Task<IActionResult> SetOrderStatus(Guid id, int orderItemid, [FromBody] OrderStatus status)
         {
 
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders.Where((o)=>o.PublicId == id).FirstOrDefaultAsync();
             if (order == null)
             {
                 return NotFound("Order was found");
             }
-            var item = await _context.OrderItems.Where((oi) => oi.Id == orderItemid && oi.OrderId == id).FirstOrDefaultAsync();
+            var item = await _context.OrderItems.Where((oi) => oi.Id == orderItemid && oi.OrderId == order.Id).FirstOrDefaultAsync();
             if (item == null)
             {
                 return NotFound("Order item was not found");
