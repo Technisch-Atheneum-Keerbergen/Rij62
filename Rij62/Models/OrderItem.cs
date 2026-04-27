@@ -14,6 +14,7 @@ namespace Rij62.Models
         public int Btw { get; set; }
         public string ImgUrl { get; set; }
         public int OrderId { get; set; }
+        public required string ImgUrl { get; set; }
 
         public required OrderStatus Status { get; set; }
         public required int Quantity { get; set; }
