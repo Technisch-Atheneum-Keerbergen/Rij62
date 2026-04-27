@@ -12,6 +12,7 @@ namespace Rij62.Models
         public string DescriptionKey { get; set; }
         public decimal Price { get; set; }
         public int Btw { get; set; }
+        public string ImgUrl { get; set; }
         public int OrderId { get; set; }
 
         public OrderStatus Status { get; set; }
@@ -35,6 +36,7 @@ namespace Rij62.Models
                 DescriptionKey = descriptionKey,
                 Price = product.Price,
                 Btw = product.Btw,
+                ImgUrl = product.ImgUrl,
                 OrderId = OrderId,
                 Status = OrderStatus.Pending,
             };
