@@ -104,7 +104,6 @@ namespace Rij62.Controllers
 
         }
 
-        [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder(Guid id)
         {
