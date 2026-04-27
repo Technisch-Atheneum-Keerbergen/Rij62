@@ -110,6 +110,46 @@ namespace Rij62.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
+        [HttpPut("{productId}/step/{stepId}")]
+        public async Task<IActionResult> PutStep(int productId, int stepId, [FromBody] ApiPutStep apiStep)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                var step = await _context.ProductSteps.Where((s) => s.ProductId == productId && s.Id == stepId).Include((s) => s.Options).FirstOrDefaultAsync();
+                if (step == null)
+                {
+                    return NotFound();
+                }
+
+                _localization.UpdateLanguageEntry(apiStep.Title, step.TitleKey);
+                step.MultipleChoice = apiStep.MultipleChoice;
+                step.DefaultOptionId = apiStep.DefaultOptionId;
+                _context.Entry(step).State = EntityState.Modified;
+                
+                
+                await _context.ProductStepOptions.Where((s) => s.ProductStepId == step.Id).ExecuteDeleteAsync();
+                await _context.SaveChangesAsync();
+                
+                foreach (var option in apiStep.Options)
+                {
+                    var optionalProduct = await _context.Products.FindAsync(option);
+                    if (optionalProduct == null)
+                    {
+                        return BadRequest($"Product with id {option} doesn't exit");
+                    }
+                    _context.ProductStepOptions.Add(new ProductStepOption
+                    {
+                        ProductStepId = step.Id,
+                        ProductId = option,
+                    });
+                }
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            return Ok();
+        }
+
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{productId}/step/{stepId}")]
         public async Task<IActionResult> DeleteStep(int productId, int stepId)
         {
