@@ -7,6 +7,7 @@ public class ApiGetOrderItem
     public MultiLangString Description { get; set; }
     public decimal Price { get; set; }
     public int Btw { get; set; }
+    public string ImgUrl { get; set; }
     public required List<int> Choices { get; set; }
     public OrderStatus Status { get; set; }
 
@@ -20,6 +21,7 @@ public class ApiGetOrderItem
         return new ApiGetOrderItem
         {
             Id = orderItem.Id,
+            ImgUrl = orderItem.ImgUrl,
             Title = localizer.MultiLangStringByKey(orderItem.TitleKey),
             Description = localizer.MultiLangStringByKey(orderItem.DescriptionKey),
             Price = orderItem.Price,
