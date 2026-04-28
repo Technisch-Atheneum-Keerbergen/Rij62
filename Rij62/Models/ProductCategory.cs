@@ -11,6 +11,6 @@ namespace Rij62.Models
         public int Id { get; set; }
         public required string NameKey { get; set; }
         public required RootCategory RootCategory { get; set; }
-
+        public required string ImgUrl { get; set; }
     }
 }

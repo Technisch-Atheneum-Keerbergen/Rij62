@@ -30,14 +30,14 @@ VALUES
 -- INSERT PRODUCT CATEGORIES
 -- =========================================================
 
-INSERT INTO product_categories (root_category, name_key)
+INSERT INTO product_categories (root_category, name_key, img_url)
 VALUES
-(0, 'CategoryName-snacks'),
-(0, 'CategoryName-croques'),
-(0, 'CategoryName-coldSnacks'),
-(0, 'CategoryName-warmSnacks'),
-(0, 'CategoryName-dishes'),
-(0, 'CategoryName-suggestions');
+(0, 'CategoryName-snacks', 'http://localhost:5148/api/image/4061ea5c-d341-483f-bce6-4750f4b750d2'), -- TODO: Change these to better images
+(0, 'CategoryName-croques', 'http://localhost:5148/api/image/4061ea5c-d341-483f-bce6-4750f4b750d2'),
+(0, 'CategoryName-coldSnacks', 'http://localhost:5148/api/image/4061ea5c-d341-483f-bce6-4750f4b750d2'),
+(0, 'CategoryName-warmSnacks', 'http://localhost:5148/api/image/4061ea5c-d341-483f-bce6-4750f4b750d2'),
+(0, 'CategoryName-dishes', 'http://localhost:5148/api/image/4061ea5c-d341-483f-bce6-4750f4b750d2'),
+(0, 'CategoryName-suggestions', 'http://localhost:5148/api/image/4061ea5c-d341-483f-bce6-4750f4b750d2');
 
 -- =========================================================
 -- PRODUCT TITLES AND DESCRIPTIONS (LANGUAGE ENTRIES)

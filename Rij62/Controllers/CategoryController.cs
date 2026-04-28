@@ -49,6 +49,7 @@ namespace Rij62.Controllers
             var cat = new ProductCategory
             {
                 NameKey = nameKey,
+                ImgUrl = apiCat.ImgUrl,
                 RootCategory = apiCat.RootCategory,
             };
             _context.ProductCategories.Add(cat);
@@ -70,13 +71,14 @@ namespace Rij62.Controllers
             _localization.UpdateLanguageEntry(apiCat.Name, cat.NameKey);
 
             cat.RootCategory = apiCat.RootCategory;
+            cat.ImgUrl = apiCat.ImgUrl;
 
             _context.Entry(cat).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
-        
+
         /* moveProducts: Category id of the category to move all the products of the deleted category to*/
         [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]

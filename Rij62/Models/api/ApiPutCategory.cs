@@ -4,6 +4,7 @@ public class ApiPutCategory
 {
     public required MultiLangString Name { get; set; }
     public required RootCategory RootCategory { get; set; }
+    public required string ImgUrl { get; set; }
 }
 
 
