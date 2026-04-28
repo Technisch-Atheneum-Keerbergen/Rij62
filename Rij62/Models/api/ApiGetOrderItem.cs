@@ -9,7 +9,8 @@ public class ApiGetOrderItem
     public int Btw { get; set; }
     public string ImgUrl { get; set; }
     public required List<int> Choices { get; set; }
-    public OrderStatus Status { get; set; }
+    public required OrderStatus Status { get; set; }
+    public required int Quantity { get; set; }
 
     public static ApiGetOrderItem FromOrderItem(OrderItem orderItem, Localizer localizer)
     {
@@ -27,7 +28,8 @@ public class ApiGetOrderItem
             Price = orderItem.Price,
             Btw = orderItem.Btw,
             Choices = orderItem.Choices.Select((c) => c.ChosenProductId).ToList(),
-            Status = orderItem.Status
+            Status = orderItem.Status,
+            Quantity = orderItem.Quantity
         };
     }
 }

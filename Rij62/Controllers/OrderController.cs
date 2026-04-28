@@ -47,6 +47,10 @@ namespace Rij62.Controllers
 
                 foreach (var item in apiOrder.Items)
                 {
+                    if (item.Quantity < 1)
+                    {
+                        return BadRequest("Order quantity has to be larger or equal to 1");
+                    }
                     var product = await _context.Products.FindAsync(item.ProductId);
                     if (product == null)
                     {
@@ -76,6 +80,7 @@ namespace Rij62.Controllers
                         throw new UnreachableException("Validation has already happened above");
                     }
                     var orderItem = await OrderItem.FromProduct(product, _localization, order.Id);
+                    orderItem.Quantity = item.Quantity;
                     _context.OrderItems.Add(orderItem);
                     await _context.SaveChangesAsync();
 
@@ -119,7 +124,7 @@ namespace Rij62.Controllers
         [HttpGet("{id}/status")]
         public async Task<IActionResult> GetOrderStatus(Guid id)
         {
-            var order = await _context.Orders.Where((o)=>o.PublicId == id).FirstOrDefaultAsync();
+            var order = await _context.Orders.Where((o) => o.PublicId == id).FirstOrDefaultAsync();
             if (order == null)
             {
                 return NotFound();
@@ -133,7 +138,7 @@ namespace Rij62.Controllers
         public async Task<IActionResult> SetOrderStatus(Guid id, int orderItemid, [FromBody] OrderStatus status)
         {
 
-            var order = await _context.Orders.Where((o)=>o.PublicId == id).FirstOrDefaultAsync();
+            var order = await _context.Orders.Where((o) => o.PublicId == id).FirstOrDefaultAsync();
             if (order == null)
             {
                 return NotFound("Order was found");

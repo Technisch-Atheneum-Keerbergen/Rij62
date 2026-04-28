@@ -15,7 +15,8 @@ namespace Rij62.Models
         public string ImgUrl { get; set; }
         public int OrderId { get; set; }
 
-        public OrderStatus Status { get; set; }
+        public required OrderStatus Status { get; set; }
+        public required int Quantity { get; set; }
 
         [ForeignKey("OrderId")]
         public Order Order { get; set; }
@@ -39,6 +40,7 @@ namespace Rij62.Models
                 ImgUrl = product.ImgUrl,
                 OrderId = OrderId,
                 Status = OrderStatus.Pending,
+                Quantity = 1,
             };
         }
     }
