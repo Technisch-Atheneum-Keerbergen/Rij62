@@ -27,6 +27,7 @@ namespace Rij62.Controllers
         public async Task<IEnumerable<ApiGetProduct>> GetProducts()
         {
             var localizer = await _localization.GetLocalizer();
+            _presetService.GetPresets(); // Warm up the cache
 
             return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProduct.FromProduct(p, _presetService, localizer));
         }
@@ -36,6 +37,7 @@ namespace Rij62.Controllers
         public async Task<IActionResult> GetProduct(int id)
         {
             var localizer = await _localization.GetLocalizer();
+            _presetService.GetPresets(); // Warm up the cache
 
             var product = await _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Where((p) => p.Id == id).FirstOrDefaultAsync();
             if (product == null)
