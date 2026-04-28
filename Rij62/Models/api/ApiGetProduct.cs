@@ -1,3 +1,5 @@
+using Rij62.Services;
+
 namespace Rij62.Models.Api;
 
 public class ApiGetProduct
@@ -12,13 +14,14 @@ public class ApiGetProduct
     public required int Stock { get; set; }
 
     public required bool IsAvailable { get; set; }
+    public bool EnabledByPreset { get; set; }
     public required string ImgURL { get; set; }
     public required int CategoryId { get; set; }
 
     public required List<ApiGetStep> Steps { get; set; }
 
 
-    public static ApiGetProduct FromProduct(Product product, Localizer localizer, bool includeSteps = true)
+    public static ApiGetProduct FromProduct(Product product, MenuPresetService presetService, Localizer localizer, bool includeSteps = true)
     {
         if (includeSteps && product.Steps == null)
         {
@@ -27,7 +30,7 @@ public class ApiGetProduct
         var steps = new List<ApiGetStep>();
         if (includeSteps)
         {
-            steps = product.Steps.Select((s) => ApiGetStep.FromProductStep(s, localizer)).ToList();
+            steps = product.Steps.Select((s) => ApiGetStep.FromProductStep(s, presetService, localizer)).ToList();
         }
 
         return new ApiGetProduct
@@ -39,6 +42,7 @@ public class ApiGetProduct
             Btw = product.Btw,
             Stock = product.Stock,
             IsAvailable = product.IsAvailable,
+            EnabledByPreset = presetService.IsProductActive(product),
             ImgURL = product.ImgUrl,
             CategoryId = product.CategoryId,
             Steps = steps,

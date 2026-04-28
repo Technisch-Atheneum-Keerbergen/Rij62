@@ -17,16 +17,17 @@ namespace Rij62.Data
         public DbSet<LangEntry> Language { get; set; }
         public DbSet<Screen> Screens { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrderItems {get; set;}
+        public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Table> Tables { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductHistory> ProductHistories { get; set; }
-        public DbSet<ProductStep> ProductSteps {get; set;}
-        public DbSet<OrderItemChoice> OrderItemChoices {get; set;}
+        public DbSet<ProductStep> ProductSteps { get; set; }
+        public DbSet<OrderItemChoice> OrderItemChoices { get; set; }
 
         public DbSet<ProductStepOption> ProductStepOptions { get; set; }
 
-        public DbSet<User> Users {get; set;}
+        public DbSet<User> Users { get; set; }
+        public DbSet<MenuPreset> MenuPresets { get; set; }
     }
 }

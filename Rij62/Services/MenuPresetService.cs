@@ -7,7 +7,8 @@ public class MenuPresetService
 {
     private readonly AppDbContext _context;
 
-    private MenuPreset[] _presets;
+    private MenuPreset[]? _presets;
+
     public MenuPresetService(AppDbContext context)
     {
         _context = context;
@@ -24,7 +25,7 @@ public class MenuPresetService
         return _presets;
     }
 
-    public bool IsPresetActive(MenuPreset preset, DateTime? date=null)
+    public bool IsPresetActive(MenuPreset preset, DateTime? date = null)
     {
         if (!preset.Enabled)
         {
@@ -35,38 +36,27 @@ public class MenuPresetService
         {
             date = DateTime.UtcNow;
         }
-        
-        switch(date.Value.DayOfWeek)
-        {
-            case DayOfWeek.Monday:
-                Weekday.Monday;
-                break;
-        }
-        if (preset.Repeat.HasFlag(Weekday.Monday))
-                {
-                    
-                }
 
+        var weekDayRepeat = WeekDayRepeatHelper.FromDayOfWeek(date.Value.DayOfWeek);
+        return preset.Repeat.HasFlag(weekDayRepeat);
     }
 
-    public bool IsProductActive(Product product, DateTime? date=null)
+    public bool IsProductActive(Product product, DateTime? date = null)
     {
+        // Products that are not in a preset will always be enabled.
+        if (product.MenuPresetId == null)
+        {
+            return true;
+        }
 
 
-        var InPreset = false;
         foreach (var preset in GetPresets())
         {
-            if (product.MenuPresetId == preset.Id)
+            if (product.MenuPresetId == preset.Id && IsPresetActive(preset, date))
             {
-                InPreset = true;
-                if (IsPresetActive(date))
-                {
-                    return true;
-                }
+                return true;
             }
-           
         }
-        // Products that are not in a preset will always be enabled.
-        return !InPreset;
+        return false;
     }
 }

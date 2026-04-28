@@ -12,7 +12,6 @@ namespace Rij62.Models
         public string DescriptionKey { get; set; }
         public decimal Price { get; set; }
         public int Btw { get; set; }
-        public string ImgUrl { get; set; }
         public int OrderId { get; set; }
         public required string ImgUrl { get; set; }
 

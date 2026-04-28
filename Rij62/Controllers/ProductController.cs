@@ -14,11 +14,13 @@ namespace Rij62.Controllers
     {
         private readonly AppDbContext _context;
         private readonly LocalizationService _localization;
+        private readonly MenuPresetService _presetService;
 
-        public ProductController(AppDbContext context, LocalizationService localization)
+        public ProductController(AppDbContext context, LocalizationService localization, MenuPresetService presetService)
         {
             _context = context;
             _localization = localization;
+            _presetService = presetService;
         }
 
         [HttpGet()]
@@ -26,7 +28,7 @@ namespace Rij62.Controllers
         {
             var localizer = await _localization.GetLocalizer();
 
-            return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProduct.FromProduct(p, localizer));
+            return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProduct.FromProduct(p, _presetService, localizer));
         }
 
 
@@ -40,7 +42,7 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            return Ok(ApiGetProduct.FromProduct(product, localizer));
+            return Ok(ApiGetProduct.FromProduct(product, _presetService, localizer));
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -125,11 +127,9 @@ namespace Rij62.Controllers
                 step.MultipleChoice = apiStep.MultipleChoice;
                 step.DefaultOptionId = apiStep.DefaultOptionId;
                 _context.Entry(step).State = EntityState.Modified;
-                
-                
+
                 await _context.ProductStepOptions.Where((s) => s.ProductStepId == step.Id).ExecuteDeleteAsync();
                 await _context.SaveChangesAsync();
-                
                 foreach (var option in apiStep.Options)
                 {
                     var optionalProduct = await _context.Products.FindAsync(option);
@@ -188,6 +188,7 @@ namespace Rij62.Controllers
             product.IsAvailable = apiProduct.IsAvailable;
             product.CategoryId = apiProduct.CategoryId;
             product.ImgUrl = apiProduct.ImgURL;
+            product.MenuPresetId = apiProduct.MenuPresetId;
 
             _context.Entry(product).State = EntityState.Modified;
             await _context.SaveChangesAsync();

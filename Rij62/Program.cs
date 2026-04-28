@@ -25,6 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
            .UseSnakeCaseNamingConvention());
 builder.Services.AddControllers();
 builder.Services.AddScoped<LocalizationService>();
+builder.Services.AddScoped<MenuPresetService>();
 builder.Services.AddSingleton<JwtGenService>();
 
 builder.Services.AddAuthentication("Bearer")

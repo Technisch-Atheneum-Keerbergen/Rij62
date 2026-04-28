@@ -9,6 +9,7 @@ public class ApiPutProduct
     public required int Stock { get; set; }
     public required string ImgURL { get; set; }
     public required bool IsAvailable { get; set; }
+    public required int? MenuPresetId { get; set; }
     public required int CategoryId { get; set; }
 
 }
