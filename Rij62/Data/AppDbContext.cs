@@ -28,6 +28,7 @@ namespace Rij62.Data
         public DbSet<ProductStepOption> ProductStepOptions { get; set; }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<LinkKey> LinkKeys { get; set; }
         public DbSet<MenuPreset> MenuPresets { get; set; }
     }
 }

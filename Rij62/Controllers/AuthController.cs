@@ -25,13 +25,16 @@ namespace Rij62.Controllers
     {
         private AppDbContext _context;
         private JwtGenService _jwtGen;
+
+        private UserService _userService;
         private bool _allowDebugLogin;
 
-        public AuthController(AppDbContext context, JwtGenService jwtGen, IConfiguration config)
+        public AuthController(AppDbContext context, JwtGenService jwtGen, IConfiguration config, UserService userService)
         {
             _allowDebugLogin = config.GetValue<bool>("Jwt:AllowDebugLogin");
             _jwtGen = jwtGen;
             _context = context;
+            _userService = userService;
         }
 
         [HttpPost("debug")]
@@ -61,12 +64,30 @@ namespace Rij62.Controllers
            
             var googleId = payload.Subject;
 
-            var user = await _context.Users.FirstOrDefaultAsync((u) => u.GoogleId == googleId);
-            //TODO: Create a new user here once we add support for non admin users 
-            if (user == null)
+            User? user;
+            if (info.LinkKey != null)
             {
-                return Unauthorized();
+                user = await _userService.ConsumeLinkKey(info.LinkKey.Value);
+                if (user == null)
+                {
+                    return BadRequest("Invalid link key");
+                }
+                user.GoogleId = googleId;
+                user.Email = payload.Email;
+                user.DisplayName = payload.Name;
+                await _context.SaveChangesAsync();
             }
+            else
+            {
+                user = await _context.Users.FirstOrDefaultAsync((u) => u.GoogleId == googleId);
+                //TODO: Create a new user here once we add support for non admin users 
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+            }
+
+           
 
             return Ok(new { token = await _jwtGen.GenerateToken(user) });
         }

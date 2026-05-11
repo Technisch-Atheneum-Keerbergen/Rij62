@@ -26,7 +26,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<MenuPresetService>();
+builder.Services.AddScoped<UserService>();
 builder.Services.AddSingleton<JwtGenService>();
+
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
