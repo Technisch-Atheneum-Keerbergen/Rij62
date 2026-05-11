@@ -27,9 +27,9 @@ namespace Rij62.Controllers
         public async Task<IEnumerable<ApiGetProduct>> GetProducts()
         {
             var localizer = await _localization.GetLocalizer();
-            _presetService.GetPresets(); // Warm up the cache
+            var presets = await _presetService.GetPresets();
 
-            return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProduct.FromProduct(p, _presetService, localizer));
+            return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProduct.FromProduct(p, presets, localizer));
         }
 
 
@@ -37,14 +37,14 @@ namespace Rij62.Controllers
         public async Task<IActionResult> GetProduct(int id)
         {
             var localizer = await _localization.GetLocalizer();
-            _presetService.GetPresets(); // Warm up the cache
+            var presets = await _presetService.GetPresets();
 
             var product = await _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Where((p) => p.Id == id).FirstOrDefaultAsync();
             if (product == null)
             {
                 return NotFound();
             }
-            return Ok(ApiGetProduct.FromProduct(product, _presetService, localizer));
+            return Ok(ApiGetProduct.FromProduct(product, presets, localizer));
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -212,6 +212,8 @@ namespace Rij62.Controllers
             _context.Products.Remove(product);
 
             await _context.ProductSteps.Where((p) => p.ProductId == product.Id).ExecuteDeleteAsync();
+            // Delete the product from all product steps where it is an option.
+            await _context.ProductStepOptions.Where((o)=>o.ProductId == product.Id).ExecuteDeleteAsync();
 
             await _context.SaveChangesAsync();
             return Ok();

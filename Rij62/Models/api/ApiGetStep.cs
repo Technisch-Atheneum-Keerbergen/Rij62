@@ -12,7 +12,7 @@ public class ApiGetStep
     public required List<ApiGetProduct> Options { get; set; }
 
 
-    public static ApiGetStep FromProductStep(ProductStep step, MenuPresetService presetService, Localizer localizer)
+    public static ApiGetStep FromProductStep(ProductStep step, MenuPresets presets, Localizer localizer)
     {
         if (step.Options == null)
         {
@@ -31,7 +31,7 @@ public class ApiGetStep
                 {
                     throw new ArgumentNullException("ProductStepOption.Product is null make shure you load it from the database");
                 }
-                return ApiGetProduct.FromProduct(o.Product, presetService, localizer, false);
+                return ApiGetProduct.FromProduct(o.Product, presets, localizer, false);
             }).ToList(),
         };
     }

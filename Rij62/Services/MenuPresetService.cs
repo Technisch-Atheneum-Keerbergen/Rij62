@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
 using Rij62.Models;
 
@@ -7,7 +8,7 @@ public class MenuPresetService
 {
     private readonly AppDbContext _context;
 
-    private MenuPreset[]? _presets;
+    private MenuPresets? _presets;
 
     public MenuPresetService(AppDbContext context)
     {
@@ -15,48 +16,15 @@ public class MenuPresetService
     }
 
 
-    public MenuPreset[] GetPresets()
+    public async Task<MenuPresets> GetPresets()
     {
         if (_presets == null)
         {
-            _presets = _context.MenuPresets.ToArray();
+            _presets = new MenuPresets(await _context.MenuPresets.ToArrayAsync());
         }
 
         return _presets;
     }
 
-    public bool IsPresetActive(MenuPreset preset, DateTime? date = null)
-    {
-        if (!preset.Enabled)
-        {
-            return false;
-        }
-
-        if (date == null)
-        {
-            date = DateTime.UtcNow;
-        }
-
-        var weekDayRepeat = WeekDayRepeatHelper.FromDayOfWeek(date.Value.DayOfWeek);
-        return preset.Repeat.HasFlag(weekDayRepeat);
-    }
-
-    public bool IsProductActive(Product product, DateTime? date = null)
-    {
-        // Products that are not in a preset will always be enabled.
-        if (product.MenuPresetId == null)
-        {
-            return true;
-        }
-
-
-        foreach (var preset in GetPresets())
-        {
-            if (product.MenuPresetId == preset.Id && IsPresetActive(preset, date))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+   
 }

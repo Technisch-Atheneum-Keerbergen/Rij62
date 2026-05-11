@@ -7,6 +7,7 @@
 
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
@@ -23,17 +24,23 @@ namespace Rij62.Controllers
         private readonly AppDbContext _context;
         private readonly LocalizationService _localization;
 
-        public OrderController(AppDbContext context, LocalizationService localization)
+        private readonly MenuPresetService _presetService;
+
+        private readonly ILogger _logger;
+        public OrderController(AppDbContext context, LocalizationService localization, MenuPresetService presetService, ILogger logger)
         {
             _context = context;
             _localization = localization;
+            _presetService = presetService;
+            _logger = logger;
         }
 
 
         [HttpPost("")]
         public async Task<ActionResult> PostOrder([FromBody] ApiPostOrder apiOrder)
         {
-
+            var date = DateTime.Now;
+            var presets = await _presetService.GetPresets();
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 if (apiOrder.TableNumber != null)
@@ -54,16 +61,30 @@ namespace Rij62.Controllers
                     var product = await _context.Products.FindAsync(item.ProductId);
                     if (product == null)
                     {
-                        return BadRequest($"Unknown product with id {item.ProductId}");
+                        return BadRequest($"Invalid product id {item.ProductId}");
                     }
-
+                    if (!presets.IsProductActiveAndAvailable(product, date))
+                    {
+                        return BadRequest($"Product {item.ProductId} is not active and available");
+                    }
                     foreach (var choice in item.Choices)
                     {
                         // Check if the option exists on the product
                         var chosenStepOption = await _context.ProductStepOptions.Include((o) => o.ProductStep).Where((stepOption) => stepOption.ProductId == choice && stepOption.ProductStep.ProductId == item.ProductId).FirstOrDefaultAsync();
+
                         if (chosenStepOption == null)
                         {
-                            return BadRequest($"Unknown product choice {choice} on product with id {item.ProductId}");
+                            return BadRequest($"Unknown product with id {choice} chosen on product with id {item.ProductId}");
+                        }
+                        var chosenProduct = await _context.Products.FindAsync(chosenStepOption.ProductId);
+                        if (chosenProduct == null)
+                        {
+                            _logger.LogError($"BUG: Product step option in the database that points to non existant product {chosenProduct}.");
+                            continue;
+                        }
+                        if (!presets.IsProductActiveAndAvailable(product, date))
+                        {
+                            return BadRequest($"Product chosen product {chosenStepOption.ProductId} is not active and available");
                         }
                     }
                 }
