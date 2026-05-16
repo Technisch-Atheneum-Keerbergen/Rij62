@@ -1,0 +1,16 @@
+[Unit]
+Description=Rij62
+
+[Service]
+ExecStart=/opt/Rij62/Rij62
+WorkingDirectory=/opt/Rij62
+Environment="ASPNETCORE_ENVIRONMENT=Production"
+User=nightflavor
+Group=nightflavor
+
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target

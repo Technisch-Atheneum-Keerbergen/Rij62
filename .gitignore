@@ -428,3 +428,5 @@ FodyWeavers.xsd
 *.msp
 
 image-db
+Rij62.tar.gz
+migrate.sql

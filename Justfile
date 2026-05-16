@@ -18,3 +18,7 @@ load-db-test-data: clear-db
   python testDataImages.py
 
 init: load-db-test-data
+
+[positional-arguments]
+deploy server_address:
+  ./deploy.sh $1
