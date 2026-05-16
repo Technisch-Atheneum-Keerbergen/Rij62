@@ -28,19 +28,22 @@ public class UserController : ControllerBase
             DisplayName = "Pending User"
         };
         _context.Users.Add(user);
+        await _context.SaveChangesAsync();
 
         var key = Guid.NewGuid();
         var linkKey = new LinkKey
         {
-            Key=key,
-            UserId=user.Id,
+            Key = key,
+            UserId = user.Id,
             CreatedTime = DateTime.UtcNow,
         };
         _context.LinkKeys.Add(linkKey);
         await _context.SaveChangesAsync();
-        return Ok(new ApiPostUserResponse {
+        return Ok(new ApiPostUserResponse
+        {
             Id = user.Id,
             LinkKey = key,
+            User = ApiGetUser.FromUser(user),
         });
     }
 
@@ -48,7 +51,7 @@ public class UserController : ControllerBase
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> GetUsers()
     {
-        return Ok(_context.Users.Select((u)=>ApiGetUser.FromUser(u)));
+        return Ok(_context.Users.Select((u) => ApiGetUser.FromUser(u)));
     }
 
     [HttpGet("{id}")]
@@ -84,7 +87,7 @@ public class UserController : ControllerBase
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var result = await _context.Users.Where((u)=>u.Id == id).ExecuteDeleteAsync();
+        var result = await _context.Users.Where((u) => u.Id == id).ExecuteDeleteAsync();
         if (result == 0)
         {
             return NotFound();

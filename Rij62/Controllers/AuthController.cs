@@ -51,7 +51,7 @@ namespace Rij62.Controllers
                 return Unauthorized();
             }
 
-            return Ok(new { token=await _jwtGen.GenerateToken(user)});
+            return Ok(new { token = await _jwtGen.GenerateToken(user) });
         }
 
 
@@ -61,7 +61,7 @@ namespace Rij62.Controllers
         {
 
             var payload = await GoogleJsonWebSignature.ValidateAsync(info.Token);
-           
+
             var googleId = payload.Subject;
 
             User? user;
@@ -87,7 +87,7 @@ namespace Rij62.Controllers
                 }
             }
 
-           
+
 
             return Ok(new { token = await _jwtGen.GenerateToken(user) });
         }

@@ -17,7 +17,7 @@ public class UserService
 
     public async Task<User?> ConsumeLinkKey(Guid linkKey)
     {
-        var link = await _context.LinkKeys.Where((k)=>k.Key == linkKey).FirstOrDefaultAsync();
+        var link = await _context.LinkKeys.Where((k) => k.Key == linkKey).FirstOrDefaultAsync();
         if (link == null)
         {
             return null;
@@ -25,10 +25,9 @@ public class UserService
 
         _context.LinkKeys.Remove(link);
 
-        var user = await _context.Users.FirstOrDefaultAsync((u)=> u.Id == link.UserId);
+        var user = await _context.Users.FirstOrDefaultAsync((u) => u.Id == link.UserId);
 
         await _context.SaveChangesAsync();
         return user;
     }
-    
 }

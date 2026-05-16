@@ -23,11 +23,10 @@ namespace Rij62.Controllers
     {
         private readonly AppDbContext _context;
         private readonly LocalizationService _localization;
-
         private readonly MenuPresetService _presetService;
+        private readonly ILogger<OrderController> _logger;
 
-        private readonly ILogger _logger;
-        public OrderController(AppDbContext context, LocalizationService localization, MenuPresetService presetService, ILogger logger)
+        public OrderController(AppDbContext context, LocalizationService localization, MenuPresetService presetService, ILogger<OrderController> logger)
         {
             _context = context;
             _localization = localization;
