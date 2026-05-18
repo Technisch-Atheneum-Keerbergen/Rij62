@@ -14,7 +14,9 @@ public class ApiGetProduct
     public required int Stock { get; set; }
 
     public required bool IsAvailable { get; set; }
-    public bool EnabledByPreset { get; set; }
+
+    public required int? MenuPresetId { get; set; }
+    public required bool EnabledByPreset { get; set; }
     public required string ImgURL { get; set; }
     public required int CategoryId { get; set; }
 
@@ -43,6 +45,7 @@ public class ApiGetProduct
             Stock = product.Stock,
             IsAvailable = product.IsAvailable,
             EnabledByPreset = presets.IsProductActive(product),
+            MenuPresetId = product.MenuPresetId,
             ImgURL = product.ImgUrl,
             CategoryId = product.CategoryId,
             Steps = steps,
