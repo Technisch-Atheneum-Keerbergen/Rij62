@@ -27,10 +27,11 @@ namespace Rij62.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetOrders(int count = 100)
+        public async Task<IActionResult> GetOrders(int count = 100, bool showPaymentPending = false)
         {
             var localizer = await _localization.GetLocalizer();
             var orders = await _orderService.FetchOrders()
+              .Where((o) => showPaymentPending || o.PaymentComplete == true)
               .Where((o) => !o.OrderItems.All((o) => o.Status == OrderStatus.PickedUp))
               .OrderBy((o) => o.PickupTime)
               .Take(count)
@@ -66,16 +67,6 @@ namespace Rij62.Controllers
             }
         }
 
-        [HttpPost("validate")]
-        public async Task<IActionResult> ValidateOrder([FromBody] ApiPostOrder apiOrder)
-        {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
-            {
-                var errors =  await _orderService.ValidateOrder(apiOrder);
-                await transaction.CommitAsync();
-                return Ok(errors);
-            }
-        }
 
         [HttpPost("")]
         public async Task<IActionResult> PostOrder([FromBody] ApiPostOrder apiOrder)

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Rij62.Data;
@@ -11,9 +12,11 @@ using Rij62.Data;
 namespace Rij62.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260518194312_Payments")]
+    partial class Payments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,10 +241,6 @@ namespace Rij62.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("product_id");
 
-                    b.Property<int>("RootCategory")
-                        .HasColumnType("integer")
-                        .HasColumnName("root_category");
-
                     b.Property<string>("TitleKey")
                         .IsRequired()
                         .HasColumnType("text")
@@ -303,9 +302,6 @@ namespace Rij62.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_products");
-
-                    b.HasIndex("CategoryId")
-                        .HasDatabaseName("ix_products_category_id");
 
                     b.ToTable("products", (string)null);
                 });
@@ -550,18 +546,6 @@ namespace Rij62.Migrations
                     b.Navigation("ChosenOrderProduct");
 
                     b.Navigation("OrderItem");
-                });
-
-            modelBuilder.Entity("Rij62.Models.Product", b =>
-                {
-                    b.HasOne("Rij62.Models.ProductCategory", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_products_product_categories_category_id");
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Rij62.Models.ProductStep", b =>

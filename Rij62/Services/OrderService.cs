@@ -77,6 +77,39 @@ public class OrderService
         _logger = logger;
     }
 
+    public decimal CalcTotalOrderPayAmount(Order order)
+    {
+        if (order.OrderItems == null)
+        {
+            throw new ArgumentNullException("Order.OrderItems is null make shure you load it from the database");
+        }
+
+        decimal total = 0;
+        foreach (var item in order.OrderItems)
+        {
+
+            if (item.OrderProduct == null)
+            {
+                throw new ArgumentNullException("Order.OrderItems is null make shure you load it from the database");
+            }
+            if (item.Choices == null)
+            {
+                throw new ArgumentNullException("Order.OrderItems is null make shure you load it from the database");
+            }
+
+            total += item.OrderProduct.Price;
+            foreach (var choice in item.Choices)
+            {
+                if (choice.ChosenOrderProduct == null)
+                {
+                    throw new ArgumentNullException("Order.OrderItems is null make shure you load it from the database");
+                }
+                total += choice.ChosenOrderProduct.Price;
+            }
+        }
+        return total;
+    }
+
     public IIncludableQueryable<Order, OrderProduct> FetchOrders()
     {
         return _context.Orders

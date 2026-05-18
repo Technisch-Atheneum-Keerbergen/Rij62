@@ -31,6 +31,9 @@ builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<UrlService>();
 builder.Services.AddSingleton<JwtGenService>();
 
+builder.Services.AddHttpClient<PaymentService>();
+builder.Services.AddSingleton<PaymentService>();
+
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
