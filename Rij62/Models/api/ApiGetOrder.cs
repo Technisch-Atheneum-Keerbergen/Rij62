@@ -19,7 +19,7 @@ public class ApiGetOrder
         {
             Id = order.PublicId,
             TableNumber = order.TableNumber,
-            PaymentStatus = order.PaymentComplete,
+            PaymentStatus = order.PaymentStatus,
             CreatedTime = order.CreatedTime.ToUnixTimeSeconds(),
             PickupTime = order.PickupTime.ToUnixTimeSeconds(),
             Items = items.ToList(),
