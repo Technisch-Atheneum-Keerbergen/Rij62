@@ -83,7 +83,7 @@ namespace Rij62.Controllers
                         }
                         if (!presets.IsProductActiveAndAvailable(product, date))
                         {
-                            return BadRequest($"Product chosen product {chosenStepOption.ProductId} is not active and available");
+                            return BadRequest($"Product choice {chosenStepOption.ProductId} is not active or not available");
                         }
                     }
                 }
