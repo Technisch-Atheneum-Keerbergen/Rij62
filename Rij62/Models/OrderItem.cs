@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Rij62.Models.Api;
 using Rij62.Services;
 
 namespace Rij62.Models
@@ -7,7 +8,7 @@ namespace Rij62.Models
     public class OrderItem
     {
         [Key]
-        public required int Id { get; set; }
+        public int Id { get; set; }
 
         public required int OrderId { get; set; }
         public required int OrderProductId { get; set; }
@@ -25,14 +26,14 @@ namespace Rij62.Models
         public IEnumerable<OrderItemChoice> Choices { get; set; }
 
 
-        public static async Task<OrderItem> FromApiPostOrderItem(int OrderId)
+        public static async Task<OrderItem> FromApiPostOrderItem(ApiPostOrderItem apiOrderItem, int orderId, int orderProductId)
         {
             return new OrderItem
             {
-                Id = 0,
-                OrderId = OrderId,
+                OrderId = orderId,
+                OrderProductId = orderProductId,
                 Status = OrderStatus.Pending,
-                Quantity = 1,
+                Quantity = apiOrderItem.Quantity,
             };
         }
     }

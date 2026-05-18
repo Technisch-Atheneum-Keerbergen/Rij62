@@ -21,12 +21,13 @@ namespace Rij62.Models
 
         public static Order FromApiPostOrder(ApiPostOrder order)
         {
+            var now = DateTimeOffset.Now.ToUniversalTime();
             return new Order
             {
                 Id = 0,
                 PublicId = Guid.NewGuid(),
-                CreatedTime = DateTimeOffset.Now.ToUniversalTime(),
-                PickupTime = DateTimeOffset.FromUnixTimeSeconds(order.PickupTime),
+                CreatedTime = now,
+                PickupTime = order.PickupTime != null ? DateTimeOffset.FromUnixTimeSeconds(order.PickupTime.Value) : now,
                 TableNumber = order.TableNumber
             };
 

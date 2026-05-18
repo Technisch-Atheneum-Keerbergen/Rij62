@@ -23,69 +23,69 @@ namespace Rij62.Controllers
     {
         private readonly AppDbContext _context;
         private readonly LocalizationService _localization;
-        private readonly MenuPresetService _presetService;
-        private readonly ILogger<OrderController> _logger;
 
-        public OrderController(AppDbContext context, LocalizationService localization, MenuPresetService presetService, ILogger<OrderController> logger)
+        private readonly OrderService _orderService;
+
+        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService)
         {
             _context = context;
             _localization = localization;
-            _presetService = presetService;
-            _logger = logger;
+            _orderService = orderService;
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> GetOrders(int count = 100)
+        {
+            var localizer = await _localization.GetLocalizer();
+            var orders = await _orderService.FetchOrders()
+              .Where((o) => !o.OrderItems.All((o) => o.Status == OrderStatus.PickedUp))
+              .OrderByDescending((o) => o.PickupTime)
+              .Take(count)
+              .ToArrayAsync();
+
+            return Ok(orders.Select((o) => ApiGetOrder.FromOrder(o, localizer)));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrder(Guid id)
+        {
+
+            var order = await _orderService.FetchOrders()
+              .Where((o) => o.PublicId == id).FirstOrDefaultAsync();
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+            var localizer = await _localization.GetLocalizer();
+            return Ok(ApiGetOrder.FromOrder(order, localizer));
         }
 
 
-        [HttpPost("")]
-        public async Task<ActionResult> PostOrder([FromBody] ApiPostOrder apiOrder)
+        [HttpPost("validate")]
+        public async Task<IActionResult> ValidateOrder([FromBody] ApiPostOrder apiOrder)
         {
-            var date = DateTime.Now;
-            var presets = await _presetService.GetPresets();
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                if (apiOrder.TableNumber != null)
-                {
-                    var table = await _context.Tables.Where((t) => t.TableNumber == apiOrder.TableNumber).FirstOrDefaultAsync();
-                    if (table == null)
-                    {
-                        return BadRequest("Invalid table number");
-                    }
-                }
+                var errors = await _orderService.ValidateOrder(apiOrder);
+                await transaction.CommitAsync();
+                return Ok(errors);
+            }
+        }
 
-                foreach (var item in apiOrder.Items)
+        [HttpPost("")]
+        public async Task<IActionResult> PostOrder([FromBody] ApiPostOrder apiOrder)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                var validationErrors = await _orderService.ValidateOrder(apiOrder);
+                if (validationErrors.Count > 0)
                 {
-                    if (item.Quantity < 1)
+                    return UnprocessableEntity(new ApiPostOrderResponse
                     {
-                        return BadRequest("Order quantity has to be larger or equal to 1");
-                    }
-                    var product = await _context.Products.FindAsync(item.ProductId);
-                    if (product == null)
-                    {
-                        return BadRequest($"Invalid product id {item.ProductId}");
-                    }
-                    if (!presets.IsProductActiveAndAvailable(product, date))
-                    {
-                        return BadRequest($"Product {item.ProductId} is not active and available");
-                    }
-                    foreach (var choice in item.Choices)
-                    {
-                        // Check if the option exists on the product
-                        var chosenStepOption = await _context.ProductStepOptions.Include((o) => o.ProductStep).Where((stepOption) => stepOption.ProductId == choice && stepOption.ProductStep.ProductId == item.ProductId).FirstOrDefaultAsync();
-
-                        if (chosenStepOption == null)
-                        {
-                            return BadRequest($"Unknown product with id {choice} chosen on product with id {item.ProductId}");
-                        }
-                        var chosenProduct = await _context.Products.FindAsync(chosenStepOption.ProductId);
-                        if (chosenProduct == null)
-                        {
-                            _logger.LogError($"BUG: Product step option in the database that points to non existant product {chosenProduct}.");
-                            continue;
-                        }
-                        if (!presets.IsProductActiveAndAvailable(product, date))
-                        {
-                            return BadRequest($"Product choice {chosenStepOption.ProductId} is not active or not available");
-                        }
-                    }
+                        OrderId = null,
+                        ValidationErrors = validationErrors
+                    });
                 }
 
                 var order = Order.FromApiPostOrder(apiOrder);
@@ -99,8 +99,11 @@ namespace Rij62.Controllers
                     {
                         throw new UnreachableException("Validation has already happened above");
                     }
-                    var orderItem = await OrderItem.FromProduct(product, _localization, order.Id);
-                    orderItem.Quantity = item.Quantity;
+                    var orderProduct = await OrderProduct.FromProduct(product, _localization);
+                    _context.OrderProducts.Add(orderProduct);
+                    await _context.SaveChangesAsync();
+
+                    var orderItem = await OrderItem.FromApiPostOrderItem(item, order.Id, orderProduct.Id);
                     _context.OrderItems.Add(orderItem);
                     await _context.SaveChangesAsync();
 
@@ -109,49 +112,31 @@ namespace Rij62.Controllers
                         var chosenProduct = await _context.Products.FindAsync(choice);
                         if (chosenProduct == null)
                         {
-                            return BadRequest($"Unknown choice {choice} on product {item.ProductId}");
+                            throw new UnreachableException("Validation has already happened above");
                         }
+
+                        var chosenOrderProduct = await OrderProduct.FromProduct(product, _localization);
+                        _context.OrderProducts.Add(chosenOrderProduct);
+                        await _context.SaveChangesAsync();
+
                         var orderItemChoice = new OrderItemChoice
                         {
+                            ChosenOrderProductId = orderProduct.Id,
                             OrderItemId = orderItem.Id,
-                            StepNumber = 0,
-                            ChosenProductId = choice,
+                            StepNumber = 0, // We may in the future use this.
                         };
-
                         _context.OrderItemChoices.Add(orderItemChoice);
+                        await _context.SaveChangesAsync();
+
                     }
                 }
 
-                await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return Ok(order.PublicId);
+                return Ok(new ApiPostOrderResponse { OrderId = order.PublicId, ValidationErrors = new List<OrderValidationError>() });
             }
 
         }
 
-
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet("")]
-        public async Task<IActionResult> GetAllOrders(int count = int.MaxValue)
-        {
-            var localizer = await _localization.GetLocalizer();
-            var orders = await _context.Orders.Include((o) => o.OrderItems).ThenInclude((i) => i.Choices).Where((o) => !o.OrderItems.All((oi) => oi.Status == OrderStatus.PickedUp)).OrderBy((o) => o.PickupTime).Take(count).ToArrayAsync();
-
-            return Ok(orders.Select((o) => ApiGetOrder.FromOrder(o, localizer)));
-
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrder(Guid id)
-        {
-            var order = await _context.Orders.Include((o) => o.OrderItems).ThenInclude((i) => i.Choices).FirstOrDefaultAsync((o) => o.PublicId == id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-            var localizer = await _localization.GetLocalizer();
-            return Ok(ApiGetOrder.FromOrder(order, localizer));
-        }
 
         [HttpGet("{id}/status")]
         public async Task<IActionResult> GetOrderStatus(Guid id)

@@ -27,6 +27,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<MenuPresetService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrderService>();
 builder.Services.AddSingleton<JwtGenService>();
 
 

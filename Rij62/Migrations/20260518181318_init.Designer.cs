@@ -12,8 +12,8 @@ using Rij62.Data;
 namespace Rij62.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260324181718_productSteps")]
-    partial class productSteps
+    [Migration("20260518181318_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,6 +46,61 @@ namespace Rij62.Migrations
                     b.ToTable("language", (string)null);
                 });
 
+            modelBuilder.Entity("Rij62.Models.LinkKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_time");
+
+                    b.Property<Guid>("Key")
+                        .HasColumnType("uuid")
+                        .HasColumnName("key");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_link_keys");
+
+                    b.ToTable("link_keys", (string)null);
+                });
+
+            modelBuilder.Entity("Rij62.Models.MenuPreset", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("enabled");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Repeat")
+                        .HasColumnType("integer")
+                        .HasColumnName("repeat");
+
+                    b.HasKey("Id")
+                        .HasName("pk_menu_presets");
+
+                    b.ToTable("menu_presets", (string)null);
+                });
+
             modelBuilder.Entity("Rij62.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -63,11 +118,11 @@ namespace Rij62.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("pickup_time");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
+                    b.Property<Guid>("PublicId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("public_id");
 
-                    b.Property<int>("TableNumber")
+                    b.Property<int?>("TableNumber")
                         .HasColumnType("integer")
                         .HasColumnName("table_number");
 
@@ -86,33 +141,30 @@ namespace Rij62.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Btw")
-                        .HasColumnType("integer")
-                        .HasColumnName("btw");
-
-                    b.Property<string>("DescriptionKey")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("description_key");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("integer")
                         .HasColumnName("order_id");
 
-                    b.Property<int>("Price")
+                    b.Property<int>("OrderProductId")
                         .HasColumnType("integer")
-                        .HasColumnName("price");
+                        .HasColumnName("order_product_id");
 
-                    b.Property<string>("TitleKey")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("title_key");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
 
                     b.HasKey("Id")
                         .HasName("pk_order_items");
 
                     b.HasIndex("OrderId")
                         .HasDatabaseName("ix_order_items_order_id");
+
+                    b.HasIndex("OrderProductId")
+                        .HasDatabaseName("ix_order_items_order_product_id");
 
                     b.ToTable("order_items", (string)null);
                 });
@@ -126,9 +178,9 @@ namespace Rij62.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ChosenProductId")
+                    b.Property<int>("ChosenOrderProductId")
                         .HasColumnType("integer")
-                        .HasColumnName("chosen_product_id");
+                        .HasColumnName("chosen_order_product_id");
 
                     b.Property<int>("OrderItemId")
                         .HasColumnType("integer")
@@ -141,10 +193,55 @@ namespace Rij62.Migrations
                     b.HasKey("Id")
                         .HasName("pk_order_item_choices");
 
+                    b.HasIndex("ChosenOrderProductId")
+                        .HasDatabaseName("ix_order_item_choices_chosen_order_product_id");
+
                     b.HasIndex("OrderItemId")
                         .HasDatabaseName("ix_order_item_choices_order_item_id");
 
                     b.ToTable("order_item_choices", (string)null);
+                });
+
+            modelBuilder.Entity("Rij62.Models.OrderProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Btw")
+                        .HasColumnType("integer")
+                        .HasColumnName("btw");
+
+                    b.Property<string>("DescriptionKey")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description_key");
+
+                    b.Property<string>("ImgUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("img_url");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric")
+                        .HasColumnName("price");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer")
+                        .HasColumnName("product_id");
+
+                    b.Property<string>("TitleKey")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title_key");
+
+                    b.HasKey("Id")
+                        .HasName("pk_order_products");
+
+                    b.ToTable("order_products", (string)null);
                 });
 
             modelBuilder.Entity("Rij62.Models.Product", b =>
@@ -178,9 +275,13 @@ namespace Rij62.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_available");
 
-                    b.Property<int>("PriceCent")
+                    b.Property<int?>("MenuPresetId")
                         .HasColumnType("integer")
-                        .HasColumnName("price_cent");
+                        .HasColumnName("menu_preset_id");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric")
+                        .HasColumnName("price");
 
                     b.Property<int>("Stock")
                         .HasColumnType("integer")
@@ -206,14 +307,19 @@ namespace Rij62.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ImgUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("img_url");
+
                     b.Property<string>("NameKey")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name_key");
 
-                    b.Property<int?>("ScreenId")
+                    b.Property<int>("RootCategory")
                         .HasColumnType("integer")
-                        .HasColumnName("screen_id");
+                        .HasColumnName("root_category");
 
                     b.HasKey("Id")
                         .HasName("pk_product_categories");
@@ -401,17 +507,35 @@ namespace Rij62.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_order_items_orders_order_id");
 
+                    b.HasOne("Rij62.Models.OrderProduct", "OrderProduct")
+                        .WithMany()
+                        .HasForeignKey("OrderProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_items_order_products_order_product_id");
+
                     b.Navigation("Order");
+
+                    b.Navigation("OrderProduct");
                 });
 
             modelBuilder.Entity("Rij62.Models.OrderItemChoice", b =>
                 {
+                    b.HasOne("Rij62.Models.OrderProduct", "ChosenOrderProduct")
+                        .WithMany()
+                        .HasForeignKey("ChosenOrderProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_item_choices_order_products_chosen_order_product_id");
+
                     b.HasOne("Rij62.Models.OrderItem", "OrderItem")
                         .WithMany("Choices")
                         .HasForeignKey("OrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_order_item_choices_order_items_order_item_id");
+
+                    b.Navigation("ChosenOrderProduct");
 
                     b.Navigation("OrderItem");
                 });
