@@ -31,7 +31,7 @@ namespace Rij62.Controllers
         {
             var localizer = await _localization.GetLocalizer();
             var orders = await _orderService.FetchOrders()
-              .Where((o) => showPaymentPending || o.PaymentComplete == true)
+              .Where((o) => showPaymentPending || o.PaymentStatus == PaymentStatus.Success)
               .Where((o) => !o.OrderItems.All((o) => o.Status == OrderStatus.PickedUp))
               .OrderBy((o) => o.PickupTime)
               .Take(count)

@@ -9,7 +9,7 @@ public class ApiGetOrder
     public int? TableNumber { get; set; }
     public long CreatedTime { get; set; }
     public long PickupTime { get; set; }
-    public required bool PaymentComplete { get; set; }
+    public required PaymentStatus PaymentStatus { get; set; }
     public List<ApiGetOrderItem> Items { get; set; }
 
     public static ApiGetOrder FromOrder(Order order, Localizer localizer, UrlService urlService)
@@ -19,7 +19,7 @@ public class ApiGetOrder
         {
             Id = order.PublicId,
             TableNumber = order.TableNumber,
-            PaymentComplete = order.PaymentComplete,
+            PaymentStatus = order.PaymentComplete,
             CreatedTime = order.CreatedTime.ToUnixTimeSeconds(),
             PickupTime = order.PickupTime.ToUnixTimeSeconds(),
             Items = items.ToList(),

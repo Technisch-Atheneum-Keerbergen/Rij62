@@ -186,4 +186,19 @@ public class OrderService
         }
         return errors;
     }
+
+    public async Task DeleteOrder(Order order)
+    {
+        _context.Orders.Remove(order);
+
+        _context.OrderItems.RemoveRange(order.OrderItems);
+        _context.OrderProducts.RemoveRange(order.OrderItems.Select((oi) => oi.OrderProduct));
+
+        foreach (var item in order.OrderItems)
+        {
+            _context.OrderItemChoices.RemoveRange(item.Choices);
+            _context.OrderProducts.Remove(item.OrderProduct);
+        }
+    }
+
 }

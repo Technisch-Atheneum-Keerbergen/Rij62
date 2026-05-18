@@ -4,7 +4,7 @@ namespace Rij62.Models
     public class Order
     {
         public required string? PaymentId { get; set; }
-        public required bool PaymentComplete { get; set; }
+        public required PaymentStatus PaymentStatus { get; set; }
         public int Id { get; set; }
         public Guid PublicId { get; set; } // Use a UUID for the client side so other people can't guess order ID's.
         public DateTimeOffset CreatedTime { get; set; }
@@ -23,7 +23,7 @@ namespace Rij62.Models
                 CreatedTime = now,
                 PickupTime = order.PickupTime != null ? DateTimeOffset.FromUnixTimeSeconds(order.PickupTime.Value) : now,
                 TableNumber = order.TableNumber,
-                PaymentComplete = false,
+                PaymentStatus = PaymentStatus.NotStarted,
                 PaymentId = null,
             };
 

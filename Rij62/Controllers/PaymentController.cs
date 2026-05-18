@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
+using Rij62.Models;
 using Rij62.Models.Bancontact;
 using Rij62.Services;
 
@@ -34,9 +35,9 @@ public class PaymentController : ControllerBase
             {
                 return NotFound("Order not found");
             }
-            if (order.PaymentComplete)
+            if (order.PaymentStatus != PaymentStatus.NotStarted)
             {
-                return BadRequest("Payment has already happened for this order");
+                return BadRequest("Payment has already started for this order");
             }
             if (order.PaymentId != null)
             {
@@ -57,7 +58,9 @@ public class PaymentController : ControllerBase
     public async Task<IActionResult> BankcontactCallback([FromBody] PaymentCallbackRequest req)
     {
         //TODO: validate bancontact jwt token.
-        var order = await _context.Orders.Where((o) => !o.PaymentComplete && o.PaymentId == req.PaymentId).FirstOrDefaultAsync();
+        //TODO: fallback to Get Payment Details
+
+        var order = await _context.Orders.Where((o) => o.PaymentId == req.PaymentId).FirstOrDefaultAsync();
         if (order == null)
         {
             // mmmm this shouldn't happen.
@@ -66,8 +69,24 @@ public class PaymentController : ControllerBase
             return Ok();
         }
 
-        order.PaymentComplete = true;
-        await _context.SaveChangesAsync();
-        return Ok();
+
+        //TODO: figure this out better
+        if (req.Status == "VOIDED" || req.Status == "EXPIRED" || req.Status == "CANCELLED" || req.Status == "FAILED")
+        {
+            await _orderService.DeleteOrder(order);
+        }
+
+        if (req.Status == "SUCCEEDED")
+        {
+            if (order.PaymentStatus == PaymentStatus.Success)
+            {
+                _logger.LogError("Somehow two payments were made for the same order???? There should be validation in place when the payment gets created????");
+            }
+
+            order.PaymentStatus = PaymentStatus.Success;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
     }
 }
