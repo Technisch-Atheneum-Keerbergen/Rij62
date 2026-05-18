@@ -129,6 +129,18 @@ namespace Rij62.Controllers
 
         }
 
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet("")]
+        public async Task<IActionResult> GetAllOrders(int count=int.MaxValue)
+        {
+            var localizer = await _localization.GetLocalizer();
+            var orders = await _context.Orders.OrderBy((o) => o.PickupTime).Take(count).ToArrayAsync();
+
+            return Ok(orders.Select((o) => ApiGetOrder.FromOrder(o, localizer)));
+
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrder(Guid id)
         {
