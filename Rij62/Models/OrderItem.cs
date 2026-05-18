@@ -7,13 +7,10 @@ namespace Rij62.Models
     public class OrderItem
     {
         [Key]
-        public int Id { get; set; }
-        public string TitleKey { get; set; }
-        public string DescriptionKey { get; set; }
-        public decimal Price { get; set; }
-        public int Btw { get; set; }
-        public int OrderId { get; set; }
-        public required string ImgUrl { get; set; }
+        public required int Id { get; set; }
+
+        public required int OrderId { get; set; }
+        public required int OrderProductId { get; set; }
 
         public required OrderStatus Status { get; set; }
         public required int Quantity { get; set; }
@@ -21,23 +18,18 @@ namespace Rij62.Models
         [ForeignKey("OrderId")]
         public Order Order { get; set; }
 
+        [ForeignKey("OrderProductId")]
+        public OrderProduct OrderProduct { get; set; }
+
+
         public IEnumerable<OrderItemChoice> Choices { get; set; }
 
 
-        public static async Task<OrderItem> FromProduct(Product product, LocalizationService localizationService, int OrderId)
+        public static async Task<OrderItem> FromApiPostOrderItem(int OrderId)
         {
-            var titleKey = Localizer.UniqueKey("OrderItemTitle");
-            var descriptionKey = Localizer.UniqueKey("OrderItemDescription");
-            await localizationService.CopyLanguageEntry(product.TitleKey, titleKey);
-            await localizationService.CopyLanguageEntry(product.DescriptionKey, descriptionKey);
             return new OrderItem
             {
                 Id = 0,
-                TitleKey = titleKey,
-                DescriptionKey = descriptionKey,
-                Price = product.Price,
-                Btw = product.Btw,
-                ImgUrl = product.ImgUrl,
                 OrderId = OrderId,
                 Status = OrderStatus.Pending,
                 Quantity = 1,

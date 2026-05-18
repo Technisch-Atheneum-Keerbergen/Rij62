@@ -132,10 +132,10 @@ namespace Rij62.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         [HttpGet("")]
-        public async Task<IActionResult> GetAllOrders(int count=int.MaxValue)
+        public async Task<IActionResult> GetAllOrders(int count = int.MaxValue)
         {
             var localizer = await _localization.GetLocalizer();
-            var orders = await _context.Orders.OrderBy((o) => o.PickupTime).Take(count).ToArrayAsync();
+            var orders = await _context.Orders.Include((o) => o.OrderItems).ThenInclude((i) => i.Choices).Where((o) => !o.OrderItems.All((oi) => oi.Status == OrderStatus.PickedUp)).OrderBy((o) => o.PickupTime).Take(count).ToArrayAsync();
 
             return Ok(orders.Select((o) => ApiGetOrder.FromOrder(o, localizer)));
 
