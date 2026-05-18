@@ -18,8 +18,6 @@ public struct OrderValidationError
     public int? ChoiceProductId { get; set; }
     public required OrderValidationErrorType Type { get; set; }
 
-
-
     public static OrderValidationError InvalidTableNumber()
     {
         return new OrderValidationError { Type = OrderValidationErrorType.InvalidTableNumber };

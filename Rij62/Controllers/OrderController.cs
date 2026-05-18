@@ -1,10 +1,3 @@
-// **********************************
-//          *** CRUD  ***
-// Author: Xavier Demaerel
-// Date: 02/03/2026
-// File: Controllers/OrderController.cs
-// **********************************
-
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
