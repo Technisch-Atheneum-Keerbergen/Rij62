@@ -1,16 +1,10 @@
-// **********************************
-//     *** Order Model  ***
-// Author: Xavier Demaerel
-// Date: 02/03/2026
-// File: Models/Order.cs
-// **********************************
-
-using System.ComponentModel.DataAnnotations.Schema;
 using Rij62.Models.Api;
 namespace Rij62.Models
 {
     public class Order
     {
+        public required string? PaymentId { get; set; }
+        public required bool PaymentComplete { get; set; }
         public int Id { get; set; }
         public Guid PublicId { get; set; } // Use a UUID for the client side so other people can't guess order ID's.
         public DateTimeOffset CreatedTime { get; set; }
@@ -28,7 +22,9 @@ namespace Rij62.Models
                 PublicId = Guid.NewGuid(),
                 CreatedTime = now,
                 PickupTime = order.PickupTime != null ? DateTimeOffset.FromUnixTimeSeconds(order.PickupTime.Value) : now,
-                TableNumber = order.TableNumber
+                TableNumber = order.TableNumber,
+                PaymentComplete = false,
+                PaymentId = null,
             };
 
         }

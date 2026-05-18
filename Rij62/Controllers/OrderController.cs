@@ -66,6 +66,17 @@ namespace Rij62.Controllers
             }
         }
 
+        [HttpPost("validate")]
+        public async Task<IActionResult> ValidateOrder([FromBody] ApiPostOrder apiOrder)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                var errors =  await _orderService.ValidateOrder(apiOrder);
+                await transaction.CommitAsync();
+                return Ok(errors);
+            }
+        }
+
         [HttpPost("")]
         public async Task<IActionResult> PostOrder([FromBody] ApiPostOrder apiOrder)
         {

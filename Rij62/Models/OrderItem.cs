@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Rij62.Models.Api;
-using Rij62.Services;
 
 namespace Rij62.Models
 {
