@@ -39,7 +39,7 @@ namespace Rij62.Controllers
             var localizer = await _localization.GetLocalizer();
             var orders = await _orderService.FetchOrders()
               .Where((o) => !o.OrderItems.All((o) => o.Status == OrderStatus.PickedUp))
-              .OrderByDescending((o) => o.PickupTime)
+              .OrderBy((o) => o.PickupTime)
               .Take(count)
               .ToArrayAsync();
 
