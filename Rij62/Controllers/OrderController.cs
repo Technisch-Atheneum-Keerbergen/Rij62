@@ -121,7 +121,7 @@ namespace Rij62.Controllers
 
                         var orderItemChoice = new OrderItemChoice
                         {
-                            ChosenOrderProductId = orderProduct.Id,
+                            ChosenOrderProductId = chosenOrderProduct.Id,
                             OrderItemId = orderItem.Id,
                             StepNumber = 0, // We may in the future use this.
                         };
