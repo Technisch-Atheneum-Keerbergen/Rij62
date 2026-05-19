@@ -15,12 +15,14 @@ namespace Rij62.Controllers
         private readonly AppDbContext _context;
         private readonly LocalizationService _localization;
         private readonly MenuPresetService _presetService;
+        private readonly UrlService _urlService;
 
-        public ProductController(AppDbContext context, LocalizationService localization, MenuPresetService presetService)
+        public ProductController(AppDbContext context, LocalizationService localization, MenuPresetService presetService, UrlService urlService)
         {
             _context = context;
             _localization = localization;
             _presetService = presetService;
+            _urlService = urlService;
         }
 
         [HttpGet()]
@@ -29,7 +31,7 @@ namespace Rij62.Controllers
             var localizer = await _localization.GetLocalizer();
             var presets = await _presetService.GetPresets();
 
-            return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProduct.FromProduct(p, presets, localizer));
+            return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProduct.FromProduct(p, presets, localizer, _urlService));
         }
 
 
@@ -44,7 +46,7 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            return Ok(ApiGetProduct.FromProduct(product, presets, localizer));
+            return Ok(ApiGetProduct.FromProduct(product, presets, localizer, _urlService));
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -56,7 +58,7 @@ namespace Rij62.Controllers
             {
                 return BadRequest($"not category with id {apiProduct.CategoryId} exits");
             }
-            var createdProduct = Product.FromApiPutProduct(apiProduct);
+            var createdProduct = Product.FromApiPutProduct(apiProduct, _urlService);
             _context.Products.Add(createdProduct);
 
             _localization.UpdateLanguageEntry(apiProduct.Title, createdProduct.TitleKey);
@@ -189,7 +191,7 @@ namespace Rij62.Controllers
             product.Stock = apiProduct.Stock;
             product.IsAvailable = apiProduct.IsAvailable;
             product.CategoryId = apiProduct.CategoryId;
-            product.ImgUrl = apiProduct.ImgURL;
+            product.ImgUrl = _urlService.TryMakeRelative(apiProduct.ImgURL);
             product.MenuPresetId = apiProduct.MenuPresetId;
 
             _context.Entry(product).State = EntityState.Modified;
@@ -213,7 +215,7 @@ namespace Rij62.Controllers
 
             await _context.ProductSteps.Where((p) => p.ProductId == product.Id).ExecuteDeleteAsync();
             // Delete the product from all product steps where it is an option.
-            await _context.ProductStepOptions.Where((o)=>o.ProductId == product.Id).ExecuteDeleteAsync();
+            await _context.ProductStepOptions.Where((o) => o.ProductId == product.Id).ExecuteDeleteAsync();
 
             await _context.SaveChangesAsync();
             return Ok();

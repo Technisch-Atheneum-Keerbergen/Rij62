@@ -1,3 +1,5 @@
+using Rij62.Services;
+
 namespace Rij62.Models.Api;
 
 public class ApiGetCategory
@@ -7,12 +9,12 @@ public class ApiGetCategory
     public required RootCategory RootCategory { get; set; }
     public required string ImgUrl { get; set; }
 
-    public static ApiGetCategory FromCategory(ProductCategory cat, Localizer localizer)
+    public static ApiGetCategory FromCategory(ProductCategory cat, Localizer localizer, UrlService urlService)
     {
         return new ApiGetCategory
         {
             Id = cat.Id,
-            ImgUrl = cat.ImgUrl,
+            ImgUrl = urlService.MakeAbsolute(cat.ImgUrl),
             Name = localizer.MultiLangStringByKey(cat.NameKey),
             RootCategory = cat.RootCategory,
         };

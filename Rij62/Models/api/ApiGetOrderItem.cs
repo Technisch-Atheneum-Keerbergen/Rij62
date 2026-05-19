@@ -1,3 +1,5 @@
+using Rij62.Services;
+
 namespace Rij62.Models.Api;
 
 public class ApiGetOrderItem
@@ -9,7 +11,7 @@ public class ApiGetOrderItem
 
     public required List<ApiGetOrderItemChoice> Choices { get; set; }
 
-    public static ApiGetOrderItem FromOrderItem(OrderItem orderItem, Localizer localizer)
+    public static ApiGetOrderItem FromOrderItem(OrderItem orderItem, Localizer localizer, UrlService urlService)
     {
         if (orderItem.OrderProduct == null)
         {
@@ -25,8 +27,8 @@ public class ApiGetOrderItem
             Id = orderItem.Id,
             Status = orderItem.Status,
             Quantity = orderItem.Quantity,
-            Product = ApiGetOrderProduct.FromOrderProduct(orderItem.OrderProduct, localizer),
-            Choices = orderItem.Choices.Select((c) => ApiGetOrderItemChoice.FromOrderItemChoice(c, localizer)).ToList()
+            Product = ApiGetOrderProduct.FromOrderProduct(orderItem.OrderProduct, localizer, urlService),
+            Choices = orderItem.Choices.Select((c) => ApiGetOrderItemChoice.FromOrderItemChoice(c, localizer, urlService)).ToList()
         };
     }
 }

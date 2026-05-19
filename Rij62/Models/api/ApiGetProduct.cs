@@ -23,7 +23,7 @@ public class ApiGetProduct
     public required List<ApiGetStep> Steps { get; set; }
 
 
-    public static ApiGetProduct FromProduct(Product product, MenuPresets presets, Localizer localizer, bool includeSteps = true)
+    public static ApiGetProduct FromProduct(Product product, MenuPresets presets, Localizer localizer, UrlService urlService, bool includeSteps = true)
     {
         if (includeSteps && product.Steps == null)
         {
@@ -32,7 +32,7 @@ public class ApiGetProduct
         var steps = new List<ApiGetStep>();
         if (includeSteps)
         {
-            steps = product.Steps.Select((s) => ApiGetStep.FromProductStep(s, presets, localizer)).ToList();
+            steps = product.Steps.Select((s) => ApiGetStep.FromProductStep(s, presets, localizer, urlService)).ToList();
         }
 
         return new ApiGetProduct
@@ -46,7 +46,7 @@ public class ApiGetProduct
             IsAvailable = product.IsAvailable,
             EnabledByPreset = presets.IsProductActive(product),
             MenuPresetId = product.MenuPresetId,
-            ImgURL = product.ImgUrl,
+            ImgURL = urlService.MakeAbsolute(product.ImgUrl),
             CategoryId = product.CategoryId,
             Steps = steps,
         };

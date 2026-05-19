@@ -14,11 +14,13 @@ namespace Rij62.Controllers
     {
         private readonly AppDbContext _context;
         private readonly LocalizationService _localization;
+        private readonly UrlService _urlService;
 
-        public CategoryController(AppDbContext context, LocalizationService localization)
+        public CategoryController(AppDbContext context, LocalizationService localization, UrlService urlService)
         {
             _context = context;
             _localization = localization;
+            _urlService = urlService;
         }
 
 
@@ -26,7 +28,7 @@ namespace Rij62.Controllers
         public async Task<IEnumerable<ApiGetCategory>> GetCategories()
         {
             var localizationEntries = await _localization.GetLocalizer();
-            return _context.ProductCategories.Select((c) => ApiGetCategory.FromCategory(c, localizationEntries));
+            return _context.ProductCategories.Select((c) => ApiGetCategory.FromCategory(c, localizationEntries, _urlService));
         }
 
         [HttpGet("{id}")]
@@ -37,7 +39,7 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            return Ok(ApiGetCategory.FromCategory(cat, await _localization.GetLocalizer()));
+            return Ok(ApiGetCategory.FromCategory(cat, await _localization.GetLocalizer(), _urlService));
         }
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("")]
@@ -49,7 +51,7 @@ namespace Rij62.Controllers
             var cat = new ProductCategory
             {
                 NameKey = nameKey,
-                ImgUrl = apiCat.ImgUrl,
+                ImgUrl = _urlService.MakeAbsolute(apiCat.ImgUrl),
                 RootCategory = apiCat.RootCategory,
             };
             _context.ProductCategories.Add(cat);
@@ -71,7 +73,7 @@ namespace Rij62.Controllers
             _localization.UpdateLanguageEntry(apiCat.Name, cat.NameKey);
 
             cat.RootCategory = apiCat.RootCategory;
-            cat.ImgUrl = apiCat.ImgUrl;
+            cat.ImgUrl = _urlService.TryMakeRelative(apiCat.ImgUrl);
 
             _context.Entry(cat).State = EntityState.Modified;
             await _context.SaveChangesAsync();

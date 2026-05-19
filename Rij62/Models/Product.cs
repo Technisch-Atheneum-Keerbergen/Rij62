@@ -7,6 +7,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using Rij62.Models.Api;
+using Rij62.Services;
 
 namespace Rij62.Models;
 
@@ -27,7 +28,7 @@ public class Product
     public ICollection<ProductStep> Steps { get; set; }
 
 
-    public static Product FromApiPutProduct(ApiPutProduct apiProduct)
+    public static Product FromApiPutProduct(ApiPutProduct apiProduct, UrlService urlService)
     {
         var descriptionKey = Localizer.UniqueKey("ProductDescription");
         var titleKey = Localizer.UniqueKey("ProductTitle");
@@ -40,7 +41,7 @@ public class Product
             Btw = apiProduct.Btw,
             Stock = apiProduct.Stock,
             IsAvailable = apiProduct.IsAvailable,
-            ImgUrl = apiProduct.ImgURL,
+            ImgUrl = urlService.TryMakeRelative(apiProduct.ImgURL),
             CategoryId = apiProduct.CategoryId,
             MenuPresetId = apiProduct.MenuPresetId,
         };

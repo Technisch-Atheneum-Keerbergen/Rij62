@@ -12,9 +12,9 @@ public class ApiGetOrder
 
     public List<ApiGetOrderItem> Items { get; set; }
 
-    public static ApiGetOrder FromOrder(Order order, Localizer localizer)
+    public static ApiGetOrder FromOrder(Order order, Localizer localizer, UrlService urlService)
     {
-        var items = order.OrderItems.Select((i) => ApiGetOrderItem.FromOrderItem(i, localizer));
+        var items = order.OrderItems.Select((i) => ApiGetOrderItem.FromOrderItem(i, localizer, urlService));
         return new ApiGetOrder
         {
             Id = order.PublicId,

@@ -7,7 +7,6 @@
 
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
@@ -23,14 +22,15 @@ namespace Rij62.Controllers
     {
         private readonly AppDbContext _context;
         private readonly LocalizationService _localization;
-
         private readonly OrderService _orderService;
+        private readonly UrlService _urlService;
 
-        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService)
+        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService, UrlService urlService)
         {
             _context = context;
             _localization = localization;
             _orderService = orderService;
+            _urlService = urlService;
         }
 
         [HttpGet("")]
@@ -43,7 +43,7 @@ namespace Rij62.Controllers
               .Take(count)
               .ToArrayAsync();
 
-            return Ok(orders.Select((o) => ApiGetOrder.FromOrder(o, localizer)));
+            return Ok(orders.Select((o) => ApiGetOrder.FromOrder(o, localizer, _urlService)));
         }
 
         [HttpGet("{id}")]
@@ -58,7 +58,7 @@ namespace Rij62.Controllers
                 return NotFound();
             }
             var localizer = await _localization.GetLocalizer();
-            return Ok(ApiGetOrder.FromOrder(order, localizer));
+            return Ok(ApiGetOrder.FromOrder(order, localizer, _urlService));
         }
 
 
