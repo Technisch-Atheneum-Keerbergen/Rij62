@@ -12,6 +12,7 @@ public class ApiGetOrderProduct
     public required decimal Price { get; set; }
     public required int Btw { get; set; }
     public required string ImgUrl { get; set; }
+    public required RootCategory RootCategory { get; set; }
 
     public static ApiGetOrderProduct FromOrderProduct(OrderProduct product, Localizer localizer, UrlService urlService)
     {
@@ -22,6 +23,7 @@ public class ApiGetOrderProduct
             Description = localizer.MultiLangStringByKey(product.DescriptionKey),
             Price = product.Price,
             Btw = product.Btw,
+            RootCategory = product.RootCategory,
             ImgUrl = urlService.MakeAbsolute(product.ImgUrl)
 
         };

@@ -6,6 +6,7 @@
 // **********************************
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Rij62.Models.Api;
 using Rij62.Services;
 
@@ -26,6 +27,9 @@ public class Product
     public int? MenuPresetId { get; set; }
 
     public ICollection<ProductStep> Steps { get; set; }
+
+    [ForeignKey("CategoryId")]
+    public ProductCategory Category { get; set; }
 
 
     public static Product FromApiPutProduct(ApiPutProduct apiProduct, UrlService urlService)

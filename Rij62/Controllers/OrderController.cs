@@ -94,7 +94,11 @@ namespace Rij62.Controllers
 
                 foreach (var item in apiOrder.Items)
                 {
-                    var product = await _context.Products.FindAsync(item.ProductId);
+                    var product = await _context.Products
+                      .Include((p) => p.Category)
+                      .Where((p) => p.Id == item.ProductId)
+                      .FirstOrDefaultAsync();
+
                     if (product == null)
                     {
                         throw new UnreachableException("Validation has already happened above");
@@ -109,7 +113,11 @@ namespace Rij62.Controllers
 
                     foreach (var choice in item.Choices)
                     {
-                        var chosenProduct = await _context.Products.FindAsync(choice);
+                        var chosenProduct = await _context.Products
+                          .Include((p) => p.Category)
+                          .Where((p) => p.Id == choice)
+                          .FirstOrDefaultAsync();
+
                         if (chosenProduct == null)
                         {
                             throw new UnreachableException("Validation has already happened above");
