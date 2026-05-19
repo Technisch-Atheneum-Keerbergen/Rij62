@@ -10,7 +10,7 @@ public enum WeekDayRepeat
     Monday = 1 << 0,
     Tuesday = 1 << 1,
     Wednesday = 1 << 2,
-    Thureday = 1 << 3,
+    Thursday = 1 << 3,
     Friday = 1 << 4,
     Saturday = 1 << 5,
     Sunday = 1 << 6,
@@ -30,7 +30,7 @@ public static class WeekDayRepeatHelper
             case DayOfWeek.Wednesday:
                 return WeekDayRepeat.Wednesday;
             case DayOfWeek.Thursday:
-                return WeekDayRepeat.Thureday;
+                return WeekDayRepeat.Thursday;
             case DayOfWeek.Friday:
                 return WeekDayRepeat.Friday;
             case DayOfWeek.Saturday:
