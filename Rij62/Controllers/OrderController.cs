@@ -115,7 +115,7 @@ namespace Rij62.Controllers
                             throw new UnreachableException("Validation has already happened above");
                         }
 
-                        var chosenOrderProduct = await OrderProduct.FromProduct(product, _localization);
+                        var chosenOrderProduct = await OrderProduct.FromProduct(chosenProduct, _localization);
                         _context.OrderProducts.Add(chosenOrderProduct);
                         await _context.SaveChangesAsync();
 
