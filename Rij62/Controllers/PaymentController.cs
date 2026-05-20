@@ -15,14 +15,16 @@ public class PaymentController : ControllerBase
 
     private readonly AppDbContext _context;
     private readonly PaymentService _paymentService;
+    private readonly BancontactService _bancontactService;
     private readonly ILogger<PaymentController> _logger;
     private readonly OrderService _orderService;
-    public PaymentController(AppDbContext context, ILogger<PaymentController> logger, PaymentService paymentService, OrderService orderService)
+    public PaymentController(AppDbContext context, ILogger<PaymentController> logger, PaymentService paymentService, OrderService orderService, BancontactService bancontactService)
     {
         _context = context;
         _logger = logger;
         _paymentService = paymentService;
         _orderService = orderService;
+        _bancontactService = bancontactService;
     }
 
     [HttpPost("pay/{orderId}")]
@@ -57,36 +59,17 @@ public class PaymentController : ControllerBase
     [HttpGet("callback")]
     public async Task<IActionResult> BankcontactCallback([FromBody] PaymentCallbackRequest req)
     {
-        //TODO: validate bancontact jwt token.
-        //TODO: fallback to Get Payment Details
-
-        var order = await _context.Orders.Where((o) => o.PaymentId == req.PaymentId).FirstOrDefaultAsync();
-        if (order == null)
+        var result = await Request.BodyReader.ReadAsync();
+        string? sig = Request.Headers["signature"];
+        if (sig == null)
         {
-            // mmmm this shouldn't happen.
-            _logger.LogError("No order with PaymentId returned from Bancontact callback was found");
-            // Return OK because else Bancontact will retry the request.
-            return Ok();
+            _logger.LogError("Request made to the bancontact callback without a 'signature' header");
+            return BadRequest("'signature' header is required");
         }
+        await _bancontactService.ValidateCallbackSignature(sig, result.Buffer);
 
+        await _paymentService.ProcessPaymentStatusUpdate(req);
 
-        //TODO: figure this out better
-        if (req.Status == "VOIDED" || req.Status == "EXPIRED" || req.Status == "CANCELLED" || req.Status == "FAILED")
-        {
-            await _orderService.DeleteOrder(order);
-        }
-
-        if (req.Status == "SUCCEEDED")
-        {
-            if (order.PaymentStatus == PaymentStatus.Success)
-            {
-                _logger.LogError("Somehow two payments were made for the same order???? There should be validation in place when the payment gets created????");
-            }
-
-            order.PaymentStatus = PaymentStatus.Success;
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-
+        return Ok();
     }
 }

@@ -1,5 +1,8 @@
 
-using System.Net;
+using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using Rij62.Data;
+using Rij62.Models;
 using Rij62.Models.Bancontact;
 
 namespace Rij62.Services;
@@ -7,57 +10,75 @@ namespace Rij62.Services;
 public class PaymentService
 {
 
-    private readonly HttpClient _httpClient;
-    private readonly string _origin;
-    private readonly string _frontendOrigin;
+    private AppDbContext _context;
+    private ILogger<PaymentService> _logger;
+    private BancontactService _bancontactService;
+    private OrderService _orderService;
 
-    public PaymentService(HttpClient httpClient, IConfiguration config)
+    public PaymentService(BancontactService bancontactService, AppDbContext context, ILogger<PaymentService> logger, OrderService orderService)
     {
-        var origin = config.GetValue<string>("Origin");
-        if (origin == null)
-        {
-            throw new Exception("'Origin' option was null. Set this to the domain name and protocol where the app will run");
-        }
-        _origin = origin;
-        var frontendOrigin = config.GetValue<string>("FrontendOrigin");
-        if (frontendOrigin == null)
-        {
-            throw new Exception("'FrontendOrigin' option was null. Set this to the domain name and protocol where the app will run");
-        }
-        _frontendOrigin = frontendOrigin;
-
-        httpClient.BaseAddress = config.GetValue<Uri>("Bancontact:BaseUrl");
-        httpClient.DefaultRequestHeaders.Add("Authorization", config.GetValue<string>("Bancontact:ApiKey"));
-        _httpClient = httpClient;
+        _context = context;
+        _logger = logger;
+        _bancontactService = bancontactService;
+        _orderService = orderService;
     }
-
 
     public async Task<CreatePaymentResponse> CreatePayment(decimal amount)
     {
-        var resp = await _httpClient.PostAsJsonAsync("/v3/payments", new CreatePaymentRequest
-        {
-            Reference = "19848995",
-            BulkId = "Bulk-1-200",
-            Amount = amount.ToString(),
-            Currency = "EUR",
-            Description = "string",
-            IdentifyCallbackUrl = "/payment/callback",
-            CallbackUrl = _origin + "/payment/callback",
-            ReturnUrl = _frontendOrigin + "/checkoutComplete",
-        });
-
-        if (resp.StatusCode != HttpStatusCode.OK)
-        {
-            throw new Exception("Payments API returned status code " + resp.StatusCode);
-        }
-        var response = await resp.Content.ReadFromJsonAsync<CreatePaymentResponse>();
-        if (response == null)
-        {
-            throw new NullReferenceException("Json response returned by the Payments API is null");
-        }
-        return response;
+        return await _bancontactService.CreatePayment(amount);
     }
 
+    public async Task RecoverOrders()
+    {
+        var orders = await _context.Orders.Where((o)=>o.PaymentId != null && o.PaymentStatus == PaymentStatus.NotStarted).ToArrayAsync();
+        foreach (var order in orders)
+        {
+            _logger.LogInformation("Trying to recover order");
+            var info = await _bancontactService.GetPaymentInfo(order.PaymentId!);
+            var success = await ProcessPaymentStatusUpdate(info, order);
+            if (success)
+            {
+                _logger.LogInformation("Order successfully recovered");
+            }
+        }
+    }
 
+    public async Task<bool> ProcessPaymentStatusUpdate(PaymentCallbackRequest callbackRequest, Order? order=null)
+    {
+        if (order == null)
+        {
+            order = await _context.Orders.Where((o) => o.PaymentId == callbackRequest.PaymentId).FirstOrDefaultAsync();
+        }
+        if (order == null)
+        {
+            // mmmm this shouldn't happen.
+            _logger.LogError("BUG: No order with PaymentId returned from Bancontact callback was found");
+            return false;
+        }
+
+        var status = callbackRequest.Status;
+        
+        //TODO: figure this out better
+        if (status == "VOIDED" || status == "EXPIRED" || status == "CANCELLED" || status == "FAILED")
+        {
+            await _orderService.DeleteOrder(order);
+            return true;
+        }
+
+        if (status == "SUCCEEDED")
+        {
+            if (order.PaymentStatus == PaymentStatus.Success)
+            {
+                _logger.LogError("Somehow two payments were made for the same order???? There should be validation in place when the payment gets created????");
+                return false;
+            }
+
+            order.PaymentStatus = PaymentStatus.Success;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        return false;
+    }
+   
 
 }

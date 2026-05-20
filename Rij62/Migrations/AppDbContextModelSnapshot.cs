@@ -111,13 +111,13 @@ namespace Rij62.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_time");
 
-                    b.Property<bool>("PaymentComplete")
-                        .HasColumnType("boolean")
-                        .HasColumnName("payment_complete");
-
                     b.Property<string>("PaymentId")
                         .HasColumnType("text")
                         .HasColumnName("payment_id");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("integer")
+                        .HasColumnName("payment_status");
 
                     b.Property<DateTimeOffset>("PickupTime")
                         .HasColumnType("timestamp with time zone")

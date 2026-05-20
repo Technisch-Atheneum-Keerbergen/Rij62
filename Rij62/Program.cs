@@ -28,11 +28,14 @@ builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<MenuPresetService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<OrderService>();
-builder.Services.AddScoped<UrlService>();
+builder.Services.AddScoped<PaymentService>();
+
+builder.Services.AddSingleton<UrlService>();
 builder.Services.AddSingleton<JwtGenService>();
 
-builder.Services.AddHttpClient<PaymentService>();
-builder.Services.AddSingleton<PaymentService>();
+builder.Services.AddHostedService<PaymentRecoveryService>();
+builder.Services.AddHttpClient<BancontactService>();
+builder.Services.AddSingleton<BancontactService>();
 
 
 builder.Services.AddAuthentication("Bearer")

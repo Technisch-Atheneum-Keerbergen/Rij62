@@ -64,6 +64,7 @@ namespace Rij62.Migrations
                     product_id = table.Column<int>(type: "integer", nullable: false),
                     title_key = table.Column<string>(type: "text", nullable: false),
                     description_key = table.Column<string>(type: "text", nullable: false),
+                    root_category = table.Column<int>(type: "integer", nullable: false),
                     price = table.Column<decimal>(type: "numeric", nullable: false),
                     btw = table.Column<int>(type: "integer", nullable: false),
                     img_url = table.Column<string>(type: "text", nullable: false)
@@ -79,6 +80,8 @@ namespace Rij62.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    payment_id = table.Column<string>(type: "text", nullable: true),
+                    payment_status = table.Column<int>(type: "integer", nullable: false),
                     public_id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     pickup_time = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -118,27 +121,6 @@ namespace Rij62.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_product_histories", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "products",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    title_key = table.Column<string>(type: "text", nullable: false),
-                    description_key = table.Column<string>(type: "text", nullable: false),
-                    price = table.Column<decimal>(type: "numeric", nullable: false),
-                    btw = table.Column<int>(type: "integer", nullable: false),
-                    stock = table.Column<int>(type: "integer", nullable: false),
-                    is_available = table.Column<bool>(type: "boolean", nullable: false),
-                    img_url = table.Column<string>(type: "text", nullable: false),
-                    category_id = table.Column<int>(type: "integer", nullable: false),
-                    menu_preset_id = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_products", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -213,23 +195,28 @@ namespace Rij62.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "product_steps",
+                name: "products",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    product_id = table.Column<int>(type: "integer", nullable: false),
-                    default_option_id = table.Column<int>(type: "integer", nullable: true),
-                    multiple_choice = table.Column<bool>(type: "boolean", nullable: false),
-                    title_key = table.Column<string>(type: "text", nullable: false)
+                    title_key = table.Column<string>(type: "text", nullable: false),
+                    description_key = table.Column<string>(type: "text", nullable: false),
+                    price = table.Column<decimal>(type: "numeric", nullable: false),
+                    btw = table.Column<int>(type: "integer", nullable: false),
+                    stock = table.Column<int>(type: "integer", nullable: false),
+                    is_available = table.Column<bool>(type: "boolean", nullable: false),
+                    img_url = table.Column<string>(type: "text", nullable: false),
+                    category_id = table.Column<int>(type: "integer", nullable: false),
+                    menu_preset_id = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_product_steps", x => x.id);
+                    table.PrimaryKey("pk_products", x => x.id);
                     table.ForeignKey(
-                        name: "fk_product_steps_products_product_id",
-                        column: x => x.product_id,
-                        principalTable: "products",
+                        name: "fk_products_product_categories_category_id",
+                        column: x => x.category_id,
+                        principalTable: "product_categories",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -257,6 +244,28 @@ namespace Rij62.Migrations
                         name: "fk_order_item_choices_order_products_chosen_order_product_id",
                         column: x => x.chosen_order_product_id,
                         principalTable: "order_products",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "product_steps",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    product_id = table.Column<int>(type: "integer", nullable: false),
+                    default_option_id = table.Column<int>(type: "integer", nullable: true),
+                    multiple_choice = table.Column<bool>(type: "boolean", nullable: false),
+                    title_key = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_product_steps", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_product_steps_products_product_id",
+                        column: x => x.product_id,
+                        principalTable: "products",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -321,6 +330,11 @@ namespace Rij62.Migrations
                 name: "ix_product_steps_product_id",
                 table: "product_steps",
                 column: "product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_products_category_id",
+                table: "products",
+                column: "category_id");
         }
 
         /// <inheritdoc />
@@ -337,9 +351,6 @@ namespace Rij62.Migrations
 
             migrationBuilder.DropTable(
                 name: "order_item_choices");
-
-            migrationBuilder.DropTable(
-                name: "product_categories");
 
             migrationBuilder.DropTable(
                 name: "product_histories");
@@ -370,6 +381,9 @@ namespace Rij62.Migrations
 
             migrationBuilder.DropTable(
                 name: "products");
+
+            migrationBuilder.DropTable(
+                name: "product_categories");
         }
     }
 }

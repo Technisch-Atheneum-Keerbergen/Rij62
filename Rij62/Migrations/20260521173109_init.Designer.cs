@@ -12,7 +12,7 @@ using Rij62.Data;
 namespace Rij62.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260518181318_init")]
+    [Migration("20260521173109_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -113,6 +113,14 @@ namespace Rij62.Migrations
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_time");
+
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("text")
+                        .HasColumnName("payment_id");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("integer")
+                        .HasColumnName("payment_status");
 
                     b.Property<DateTimeOffset>("PickupTime")
                         .HasColumnType("timestamp with time zone")
@@ -233,6 +241,10 @@ namespace Rij62.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("product_id");
 
+                    b.Property<int>("RootCategory")
+                        .HasColumnType("integer")
+                        .HasColumnName("root_category");
+
                     b.Property<string>("TitleKey")
                         .IsRequired()
                         .HasColumnType("text")
@@ -294,6 +306,9 @@ namespace Rij62.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_products");
+
+                    b.HasIndex("CategoryId")
+                        .HasDatabaseName("ix_products_category_id");
 
                     b.ToTable("products", (string)null);
                 });
@@ -538,6 +553,18 @@ namespace Rij62.Migrations
                     b.Navigation("ChosenOrderProduct");
 
                     b.Navigation("OrderItem");
+                });
+
+            modelBuilder.Entity("Rij62.Models.Product", b =>
+                {
+                    b.HasOne("Rij62.Models.ProductCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_products_product_categories_category_id");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Rij62.Models.ProductStep", b =>
