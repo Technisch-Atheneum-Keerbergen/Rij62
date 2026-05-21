@@ -58,8 +58,7 @@ public class PaymentService
 
         var status = callbackRequest.Status;
         
-        //TODO: figure this out better
-        if (status == "VOIDED" || status == "EXPIRED" || status == "CANCELLED" || status == "FAILED")
+        if (status == "VOIDED" || status == "EXPIRED" || status == "CANCELLED" || status == "FAILED" || status == "AUTHORIZATION_FAILED")
         {
             await _orderService.DeleteOrder(order);
             return true;

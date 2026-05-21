@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
 using Rij62.Models;
+using Rij62.Models.Api;
 using Rij62.Models.Bancontact;
 using Rij62.Services;
 
@@ -30,6 +31,7 @@ public class PaymentController : ControllerBase
     [HttpPost("pay/{orderId}")]
     public async Task<IActionResult> Pay(Guid orderId)
     {
+        string redirectUrl;
         using (var transaction = await _context.Database.BeginTransactionAsync())
         {
             var order = await _orderService.FetchOrders().Where((o) => o.PublicId == orderId).FirstOrDefaultAsync();
@@ -49,11 +51,12 @@ public class PaymentController : ControllerBase
             var amount = _orderService.CalcTotalOrderPayAmount(order);
             var resp = await _paymentService.CreatePayment(amount);
             order.PaymentId = resp.PaymentId;
+            redirectUrl = resp.Links.Deeplink;
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
         }
 
-        return Ok();
+        return Ok(new ApiPostPaymentResponse { RedirectUrl = redirectUrl });
     }
 
     [HttpGet("callback")]
