@@ -25,7 +25,7 @@ namespace Rij62.Models
         public IEnumerable<OrderItemChoice> Choices { get; set; }
 
 
-        public static async Task<OrderItem> FromApiPostOrderItem(ApiPostOrderItem apiOrderItem, int orderId, int orderProductId)
+        public static async Task<OrderItem> FromApiPostOrderItem(ApiCreateOrderItemRequest apiOrderItem, int orderId, int orderProductId)
         {
             return new OrderItem
             {

@@ -120,7 +120,7 @@ public class OrderService
           .ThenInclude((choice) => choice.ChosenOrderProduct);
     }
 
-    public async Task<List<OrderValidationError>> ValidateOrder(ApiPostOrder order)
+    public async Task<List<OrderValidationError>> ValidateOrder(ApiCreateOrderRequest order)
     {
         var errors = new List<OrderValidationError>();
         var date = DateTime.Now;

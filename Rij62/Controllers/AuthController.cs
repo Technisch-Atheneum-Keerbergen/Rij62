@@ -38,7 +38,7 @@ namespace Rij62.Controllers
         }
 
         [HttpPost("debug")]
-        public async Task<IActionResult> DebugLogin([FromBody] DebugLoginInfo info)
+        public async Task<IActionResult> DebugLogin([FromBody] DebugLoginInfoRequest info)
         {
             if (!_allowDebugLogin)
             {
@@ -57,7 +57,7 @@ namespace Rij62.Controllers
 
         // Authenticate against the api using google login information obtained via the google api
         [HttpPost("google")]
-        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginInfo info)
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginInfoRequest info)
         {
 
             var payload = await GoogleJsonWebSignature.ValidateAsync(info.Token);

@@ -25,10 +25,10 @@ namespace Rij62.Controllers
 
 
         [HttpGet("")]
-        public async Task<IEnumerable<ApiGetCategory>> GetCategories()
+        public async Task<IEnumerable<ApiGetCategoryResponse>> GetCategories()
         {
             var localizationEntries = await _localization.GetLocalizer();
-            return _context.ProductCategories.Select((c) => ApiGetCategory.FromCategory(c, localizationEntries, _urlService));
+            return _context.ProductCategories.Select((c) => ApiGetCategoryResponse.FromCategory(c, localizationEntries, _urlService));
         }
 
         [HttpGet("{id}")]
@@ -39,11 +39,11 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            return Ok(ApiGetCategory.FromCategory(cat, await _localization.GetLocalizer(), _urlService));
+            return Ok(ApiGetCategoryResponse.FromCategory(cat, await _localization.GetLocalizer(), _urlService));
         }
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("")]
-        public async Task<IActionResult> PostCategory([FromBody] ApiPutCategory apiCat)
+        public async Task<IActionResult> PostCategory([FromBody] ApiCreateCategoryRequest apiCat)
         {
             var uniqueId = Guid.NewGuid().ToString();
             var nameKey = "ProductCategoryName-" + uniqueId;
@@ -62,7 +62,7 @@ namespace Rij62.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(int id, [FromBody] ApiPutCategory apiCat)
+        public async Task<IActionResult> PutCategory(int id, [FromBody] ApiCreateCategoryRequest apiCat)
         {
             var cat = await _context.ProductCategories.FindAsync(id);
             if (cat == null)

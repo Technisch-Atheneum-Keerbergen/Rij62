@@ -4,7 +4,7 @@ using Rij62.Services;
 namespace Rij62.Models.Api;
 
 
-public class ApiGetOrderProduct
+public class ApiGetOrderProductResponse
 {
     public required int ProductId { get; set; }
     public required MultiLangString Title { get; set; }
@@ -14,9 +14,9 @@ public class ApiGetOrderProduct
     public required string ImgUrl { get; set; }
     public required RootCategory RootCategory { get; set; }
 
-    public static ApiGetOrderProduct FromOrderProduct(OrderProduct product, Localizer localizer, UrlService urlService)
+    public static ApiGetOrderProductResponse FromOrderProduct(OrderProduct product, Localizer localizer, UrlService urlService)
     {
-        return new ApiGetOrderProduct
+        return new ApiGetOrderProductResponse
         {
             ProductId = product.ProductId,
             Title = localizer.MultiLangStringByKey(product.TitleKey),

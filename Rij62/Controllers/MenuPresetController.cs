@@ -26,7 +26,7 @@ namespace Rij62.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("")]
-        public async Task<IActionResult> PostMenuPreset([FromBody] ApiPutMenuPreset api)
+        public async Task<IActionResult> PostMenuPreset([FromBody] ApiCreateMenuPresetRequest api)
         {
             _context.MenuPresets.Add(MenuPreset.FromApiMenuPreset(api));
             await _context.SaveChangesAsync();
@@ -35,7 +35,7 @@ namespace Rij62.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMenuPreset(int id, [FromBody] ApiPutMenuPreset api)
+        public async Task<IActionResult> PutMenuPreset(int id, [FromBody] ApiCreateMenuPresetRequest api)
         {
             var preset = await _context.MenuPresets.FindAsync(id);
             if (preset == null)

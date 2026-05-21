@@ -37,7 +37,7 @@ namespace Rij62.Controllers
               .Take(count)
               .ToArrayAsync();
 
-            return Ok(orders.Select((o) => ApiGetOrder.FromOrder(o, localizer, _urlService)));
+            return Ok(orders.Select((o) => ApiGetOrderResponse.FromOrder(o, localizer, _urlService)));
         }
 
         [HttpGet("{id}")]
@@ -52,12 +52,12 @@ namespace Rij62.Controllers
                 return NotFound();
             }
             var localizer = await _localization.GetLocalizer();
-            return Ok(ApiGetOrder.FromOrder(order, localizer, _urlService));
+            return Ok(ApiGetOrderResponse.FromOrder(order, localizer, _urlService));
         }
 
 
         [HttpPost("validate")]
-        public async Task<IActionResult> ValidateOrder([FromBody] ApiPostOrder apiOrder)
+        public async Task<IActionResult> ValidateOrder([FromBody] ApiCreateOrderRequest apiOrder)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -69,14 +69,14 @@ namespace Rij62.Controllers
 
 
         [HttpPost("")]
-        public async Task<IActionResult> PostOrder([FromBody] ApiPostOrder apiOrder)
+        public async Task<IActionResult> PostOrder([FromBody] ApiCreateOrderRequest apiOrder)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 var validationErrors = await _orderService.ValidateOrder(apiOrder);
                 if (validationErrors.Count > 0)
                 {
-                    return UnprocessableEntity(new ApiPostOrderResponse
+                    return UnprocessableEntity(new ApiCreateOrderResponse
                     {
                         OrderId = null,
                         ValidationErrors = validationErrors
@@ -135,7 +135,7 @@ namespace Rij62.Controllers
                 }
 
                 await transaction.CommitAsync();
-                return Ok(new ApiPostOrderResponse { OrderId = order.PublicId, ValidationErrors = new List<OrderValidationError>() });
+                return Ok(new ApiCreateOrderResponse { OrderId = order.PublicId, ValidationErrors = new List<OrderValidationError>() });
             }
 
         }
@@ -149,7 +149,7 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            var orderItems = _context.OrderItems.Where((oi) => oi.OrderId == order.Id).Select((oi) => ApiOrderItemStatus.FromOrderItem(oi));
+            var orderItems = _context.OrderItems.Where((oi) => oi.OrderId == order.Id).Select((oi) => ApiOrderItemStatusResponse.FromOrderItem(oi));
             return Ok(orderItems);
         }
 

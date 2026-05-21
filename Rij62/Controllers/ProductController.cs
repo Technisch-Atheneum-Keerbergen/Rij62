@@ -26,12 +26,12 @@ namespace Rij62.Controllers
         }
 
         [HttpGet()]
-        public async Task<IEnumerable<ApiGetProduct>> GetProducts()
+        public async Task<IEnumerable<ApiGetProductResponse>> GetProducts()
         {
             var localizer = await _localization.GetLocalizer();
             var presets = await _presetService.GetPresets();
 
-            return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProduct.FromProduct(p, presets, localizer, _urlService));
+            return _context.Products.Include((p) => p.Steps).ThenInclude((s) => s.Options).ThenInclude((o) => o.Product).Select((p) => ApiGetProductResponse.FromProduct(p, presets, localizer, _urlService));
         }
 
 
@@ -46,12 +46,12 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            return Ok(ApiGetProduct.FromProduct(product, presets, localizer, _urlService));
+            return Ok(ApiGetProductResponse.FromProduct(product, presets, localizer, _urlService));
         }
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("")]
-        public async Task<IActionResult> PostProduct([FromBody] ApiPutProduct apiProduct)
+        public async Task<IActionResult> PostProduct([FromBody] ApiCreateProdcutRequest apiProduct)
         {
             var category = await _context.ProductCategories.FindAsync(apiProduct.CategoryId);
             if (category == null)
@@ -71,7 +71,7 @@ namespace Rij62.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("{productId}/step")]
-        public async Task<IActionResult> PostStep(int productId, [FromBody] ApiPutStep apiStep)
+        public async Task<IActionResult> PostStep(int productId, [FromBody] ApiCreateStepRequest apiStep)
         {
             var product = await _context.Products.FindAsync(productId);
             if (product == null)
@@ -117,7 +117,7 @@ namespace Rij62.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPut("{productId}/step/{stepId}")]
-        public async Task<IActionResult> PutStep(int productId, int stepId, [FromBody] ApiPutStep apiStep)
+        public async Task<IActionResult> PutStep(int productId, int stepId, [FromBody] ApiCreateStepRequest apiStep)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -174,7 +174,7 @@ namespace Rij62.Controllers
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, ApiPutProduct apiProduct)
+        public async Task<IActionResult> PutProduct(int id, ApiCreateProdcutRequest apiProduct)
         {
 
             var product = await _context.Products.FindAsync(id);

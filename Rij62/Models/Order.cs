@@ -13,7 +13,7 @@ namespace Rij62.Models
 
         public ICollection<OrderItem> OrderItems { get; set; }
 
-        public static Order FromApiPostOrder(ApiPostOrder order)
+        public static Order FromApiPostOrder(ApiCreateOrderRequest order)
         {
             var now = DateTimeOffset.Now.ToUniversalTime();
             return new Order

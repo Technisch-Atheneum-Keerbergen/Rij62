@@ -10,7 +10,7 @@ public class MenuPreset
     public WeekDayRepeat Repeat { get; set; }
     public bool Enabled { get; set; }
 
-    public static MenuPreset FromApiMenuPreset(ApiPutMenuPreset preset)
+    public static MenuPreset FromApiMenuPreset(ApiCreateMenuPresetRequest preset)
     {
         return new MenuPreset
         {

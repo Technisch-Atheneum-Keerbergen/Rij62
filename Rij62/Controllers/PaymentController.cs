@@ -69,7 +69,7 @@ public class PaymentController : ControllerBase
             }
         }
 
-        return Ok(new ApiPostPaymentResponse { RedirectUrl = redirectUrl });
+        return Ok(new ApiCreatePaymentResponse { RedirectUrl = redirectUrl });
     }
 
     [HttpPost("callback")]

@@ -2,16 +2,16 @@ using Rij62.Services;
 
 namespace Rij62.Models.Api;
 
-public class ApiGetOrderItem
+public class ApiGetOrderItemResponse
 {
     public required int Id { get; set; }
-    public required ApiGetOrderProduct Product { get; set; }
+    public required ApiGetOrderProductResponse Product { get; set; }
     public required OrderStatus Status { get; set; }
     public required int Quantity { get; set; }
 
-    public required List<ApiGetOrderItemChoice> Choices { get; set; }
+    public required List<ApiGetOrderItemChoiceResponse> Choices { get; set; }
 
-    public static ApiGetOrderItem FromOrderItem(OrderItem orderItem, Localizer localizer, UrlService urlService)
+    public static ApiGetOrderItemResponse FromOrderItem(OrderItem orderItem, Localizer localizer, UrlService urlService)
     {
         if (orderItem.OrderProduct == null)
         {
@@ -22,13 +22,13 @@ public class ApiGetOrderItem
             throw new ArgumentNullException("OrderItem.Choices is null make shure you load it from the database");
         }
 
-        return new ApiGetOrderItem
+        return new ApiGetOrderItemResponse
         {
             Id = orderItem.Id,
             Status = orderItem.Status,
             Quantity = orderItem.Quantity,
-            Product = ApiGetOrderProduct.FromOrderProduct(orderItem.OrderProduct, localizer, urlService),
-            Choices = orderItem.Choices.Select((c) => ApiGetOrderItemChoice.FromOrderItemChoice(c, localizer, urlService)).ToList()
+            Product = ApiGetOrderProductResponse.FromOrderProduct(orderItem.OrderProduct, localizer, urlService),
+            Choices = orderItem.Choices.Select((c) => ApiGetOrderItemChoiceResponse.FromOrderItemChoice(c, localizer, urlService)).ToList()
         };
     }
 }

@@ -2,7 +2,7 @@ using Rij62.Services;
 
 namespace Rij62.Models.Api;
 
-public class ApiGetProduct
+public class ApiGetProductResponse
 {
 
     public required int Id { get; set; }
@@ -20,22 +20,22 @@ public class ApiGetProduct
     public required string ImgURL { get; set; }
     public required int CategoryId { get; set; }
 
-    public required List<ApiGetStep> Steps { get; set; }
+    public required List<ApiGetStepResponse> Steps { get; set; }
 
 
-    public static ApiGetProduct FromProduct(Product product, MenuPresets presets, Localizer localizer, UrlService urlService, bool includeSteps = true)
+    public static ApiGetProductResponse FromProduct(Product product, MenuPresets presets, Localizer localizer, UrlService urlService, bool includeSteps = true)
     {
         if (includeSteps && product.Steps == null)
         {
             throw new ArgumentNullException("Product.Steps is null make shure you load it from the database");
         }
-        var steps = new List<ApiGetStep>();
+        var steps = new List<ApiGetStepResponse>();
         if (includeSteps)
         {
-            steps = product.Steps.Select((s) => ApiGetStep.FromProductStep(s, presets, localizer, urlService)).ToList();
+            steps = product.Steps.Select((s) => ApiGetStepResponse.FromProductStep(s, presets, localizer, urlService)).ToList();
         }
 
-        return new ApiGetProduct
+        return new ApiGetProductResponse
         {
             Title = localizer.MultiLangStringByKey(product.TitleKey),
             Description = localizer.MultiLangStringByKey(product.DescriptionKey),

@@ -32,7 +32,7 @@ public class Product
     public ProductCategory Category { get; set; }
 
 
-    public static Product FromApiPutProduct(ApiPutProduct apiProduct, UrlService urlService)
+    public static Product FromApiPutProduct(ApiCreateProdcutRequest apiProduct, UrlService urlService)
     {
         var descriptionKey = Localizer.UniqueKey("ProductDescription");
         var titleKey = Localizer.UniqueKey("ProductTitle");

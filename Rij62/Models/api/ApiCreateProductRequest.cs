@@ -1,6 +1,6 @@
 namespace Rij62.Models.Api;
 
-public class ApiPutProduct
+public class ApiCreateProdcutRequest
 {
     public required MultiLangString Title { get; set; }
     public required MultiLangString Description { get; set; }

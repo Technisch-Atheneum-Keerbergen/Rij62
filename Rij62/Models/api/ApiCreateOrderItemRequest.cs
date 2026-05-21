@@ -1,7 +1,7 @@
 
 namespace Rij62.Models.Api;
 
-public class ApiPostOrderItem
+public class ApiCreateOrderItemRequest
 {
     public int ProductId { get; set; }
     public required List<int> Choices { get; set; }

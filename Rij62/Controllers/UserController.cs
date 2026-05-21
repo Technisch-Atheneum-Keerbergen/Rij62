@@ -20,7 +20,7 @@ public class UserController : ControllerBase
 
     [HttpPost("")]
     [Authorize(Policy = "AdminOnly")]
-    public async Task<IActionResult> CreateUser([FromBody] ApiCreateUser apiUser)
+    public async Task<IActionResult> CreateUser([FromBody] ApiCreateUserRequest apiUser)
     {
         var user = new User
         {
@@ -39,11 +39,11 @@ public class UserController : ControllerBase
         };
         _context.LinkKeys.Add(linkKey);
         await _context.SaveChangesAsync();
-        return Ok(new ApiPostUserResponse
+        return Ok(new ApiCreateUserResponse
         {
             Id = user.Id,
             LinkKey = key,
-            User = ApiGetUser.FromUser(user),
+            User = ApiGetUserResponse.FromUser(user),
         });
     }
 
@@ -51,7 +51,7 @@ public class UserController : ControllerBase
     [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> GetUsers()
     {
-        return Ok(_context.Users.Select((u) => ApiGetUser.FromUser(u)));
+        return Ok(_context.Users.Select((u) => ApiGetUserResponse.FromUser(u)));
     }
 
     [HttpGet("{id}")]
@@ -63,12 +63,12 @@ public class UserController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(ApiGetUser.FromUser(user));
+        return Ok(ApiGetUserResponse.FromUser(user));
     }
 
     [HttpPut("{id}")]
     [Authorize(Policy = "AdminOnly")]
-    public async Task<IActionResult> PutUser(int id, [FromBody] ApiPutUser apiUser)
+    public async Task<IActionResult> PutUser(int id, [FromBody] ApiUpdateUserRequest apiUser)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null)

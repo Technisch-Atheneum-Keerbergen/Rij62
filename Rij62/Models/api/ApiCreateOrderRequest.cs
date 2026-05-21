@@ -1,8 +1,8 @@
 namespace Rij62.Models.Api;
 
-public class ApiPostOrder
+public class ApiCreateOrderRequest
 {
     public int? TableNumber { get; set; }
     public long? PickupTime { get; set; }
-    public List<ApiPostOrderItem> Items { get; set; }
+    public List<ApiCreateOrderItemRequest> Items { get; set; }
 }
