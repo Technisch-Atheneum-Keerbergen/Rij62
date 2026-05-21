@@ -12,7 +12,7 @@ using Rij62.Data;
 namespace Rij62.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260521173109_init")]
+    [Migration("20260521173218_init")]
     partial class init
     {
         /// <inheritdoc />

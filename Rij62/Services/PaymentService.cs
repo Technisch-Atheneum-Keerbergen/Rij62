@@ -67,10 +67,10 @@ public class PaymentService
 
         if (status == "SUCCEEDED")
         {
+            // The order may be picked up by the recovery service early. This may cause a callback to be summitted for an order that has an already completed payment.
             if (order.PaymentStatus == PaymentStatus.Success)
             {
-                _logger.LogError("Somehow two payments were made for the same order???? There should be validation in place when the payment gets created????");
-                return false;
+                return true;
             }
 
             order.PaymentStatus = PaymentStatus.Success;

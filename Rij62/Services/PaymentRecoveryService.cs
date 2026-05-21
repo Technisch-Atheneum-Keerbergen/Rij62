@@ -15,13 +15,16 @@ public class PaymentRecoveryService : BackgroundService
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine("tick");
-        using (var scope = _services.CreateScope())
+        while (!stoppingToken.IsCancellationRequested)
         {
-            var paymentService = scope.ServiceProvider.GetRequiredService<PaymentService>();
+            // do async work
+            using (var scope = _services.CreateScope())
+            {
+               var paymentService = scope.ServiceProvider.GetRequiredService<PaymentService>();
 
             await paymentService.RecoverOrders();
-
+            }
+            await Task.Delay(TimeSpan.FromMinutes(2), stoppingToken);
         }
     }
 
