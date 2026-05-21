@@ -19,18 +19,26 @@ public class PaymentController : ControllerBase
     private readonly BancontactService _bancontactService;
     private readonly ILogger<PaymentController> _logger;
     private readonly OrderService _orderService;
-    public PaymentController(AppDbContext context, ILogger<PaymentController> logger, PaymentService paymentService, OrderService orderService, BancontactService bancontactService)
+
+    private readonly bool _allowBypassPayment;
+    public PaymentController(AppDbContext context, ILogger<PaymentController> logger, PaymentService paymentService, OrderService orderService, BancontactService bancontactService, IConfiguration configuration)
     {
         _context = context;
         _logger = logger;
         _paymentService = paymentService;
         _orderService = orderService;
         _bancontactService = bancontactService;
+        _allowBypassPayment = configuration.GetValue<bool?>("AllowBypassPayment") ?? false;
     }
 
     [HttpPost("pay/{orderId}")]
-    public async Task<IActionResult> Pay(Guid orderId)
+    public async Task<IActionResult> Pay(Guid orderId, bool bypassPayment)
     {
+        if (bypassPayment && !_allowBypassPayment)
+        {
+            return StatusCode(418); // I'm a tea pot
+        }
+
         string redirectUrl;
         using (var transaction = await _context.Database.BeginTransactionAsync())
         {
@@ -49,11 +57,16 @@ public class PaymentController : ControllerBase
             }
 
             var amount = _orderService.CalcTotalOrderPayAmount(order);
-            var resp = await _paymentService.CreatePayment(amount, 0, order.PublicId);
+            var resp = await _paymentService.CreatePayment(amount, 0, order.PublicId, bypassPayment);
             order.PaymentId = resp.PaymentId;
             redirectUrl = resp.Links.Deeplink;
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
+
+            if (bypassPayment)
+            {
+                await _paymentService.ProcessPaymentStatusUpdate(new PaymentCallbackRequest { PaymentId = order.PaymentId, Status = "SUCCEEDED" });
+            }
         }
 
         return Ok(new ApiPostPaymentResponse { RedirectUrl = redirectUrl });

@@ -23,8 +23,22 @@ public class PaymentService
         _orderService = orderService;
     }
 
-    public async Task<CreatePaymentResponse> CreatePayment(decimal amount, int orderNumber, Guid orderId)
+    public async Task<CreatePaymentResponse> CreatePayment(decimal amount, int orderNumber, Guid orderId, bool bypassPayment = false)
     {
+        if (bypassPayment)
+        {
+            var paymentId = "bypassedPayment-" + Guid.NewGuid().ToString();
+            return new CreatePaymentResponse
+            {
+                PaymentId = paymentId,
+                Links = new CreatePaymentResponse.LinksResponse
+                {
+                    Deeplink = "/orders"
+                }
+
+            };
+        }
+
         return await _bancontactService.CreatePayment(amount, orderNumber, orderId);
     }
 
