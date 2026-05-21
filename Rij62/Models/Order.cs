@@ -23,7 +23,7 @@ namespace Rij62.Models
                 CreatedTime = now,
                 PickupTime = order.PickupTime != null ? DateTimeOffset.FromUnixTimeSeconds(order.PickupTime.Value) : now,
                 TableNumber = order.TableNumber,
-                PaymentStatus = PaymentStatus.NotStarted,
+                PaymentStatus = PaymentStatus.NotPaid,
                 PaymentId = null,
             };
 

@@ -30,7 +30,7 @@ public class PaymentService
 
     public async Task RecoverOrders()
     {
-        var orders = await _context.Orders.Where((o) => o.PaymentId != null && o.PaymentStatus == PaymentStatus.NotStarted).ToArrayAsync();
+        var orders = await _context.Orders.Where((o) => o.PaymentId != null && o.PaymentStatus == PaymentStatus.NotPaid).ToArrayAsync();
         foreach (var order in orders)
         {
             _logger.LogInformation("Trying to recover order");

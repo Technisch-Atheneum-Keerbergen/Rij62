@@ -39,7 +39,7 @@ public class PaymentController : ControllerBase
             {
                 return NotFound("Order not found");
             }
-            if (order.PaymentStatus != PaymentStatus.NotStarted)
+            if (order.PaymentStatus != PaymentStatus.NotPaid)
             {
                 return BadRequest("Payment has already started for this order");
             }
