@@ -6,6 +6,7 @@ namespace Rij62.Models;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum PaymentStatus
 {
-    NotStarted,
-    Success
+    NotPaid,
+    Success,
+    Failed
 }

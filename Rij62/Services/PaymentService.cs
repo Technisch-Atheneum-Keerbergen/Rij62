@@ -59,7 +59,8 @@ public class PaymentService
         var status = callbackRequest.Status;
         if (status == "VOIDED" || status == "EXPIRED" || status == "CANCELLED" || status == "FAILED" || status == "AUTHORIZATION_FAILED")
         {
-            await _orderService.DeleteOrder(order);
+            order.PaymentStatus = PaymentStatus.Failed;
+            await _context.SaveChangesAsync();
             return true;
         }
 
