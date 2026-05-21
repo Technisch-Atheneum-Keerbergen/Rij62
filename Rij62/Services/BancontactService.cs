@@ -11,7 +11,7 @@ namespace Rij62.Services;
 
 public class BancontactService
 {
-     private readonly HttpClient _httpClient;
+    private readonly HttpClient _httpClient;
     private readonly UrlService _urlService;
 
     private readonly string _certUrl;
@@ -41,7 +41,7 @@ public class BancontactService
         return jwks;
     }
 
-    private async Task<Jwk> GetBancontactPubKey(string kid, bool allowRefetchKeys=true)
+    private async Task<Jwk> GetBancontactPubKey(string kid, bool allowRefetchKeys = true)
     {
         JwkSet jwks = _cachedKeys ?? await RefetchKeys();
         // 3. Find the matching public key
@@ -53,7 +53,7 @@ public class BancontactService
                 throw new Exception($"KeyId '{kid}' was not found in the bancontact public keys.");
             }
             _cachedKeys = null;
-            return await GetBancontactPubKey(kid, allowRefetchKeys=false);
+            return await GetBancontactPubKey(kid, allowRefetchKeys = false);
         }
         return pubKey;
     }
@@ -79,7 +79,7 @@ public class BancontactService
 
     public async Task<PaymentCallbackRequest> GetPaymentInfo(string paymentId)
     {
-        var resp = await _httpClient.GetAsync("/v3/payments/"+paymentId);
+        var resp = await _httpClient.GetAsync("/v3/payments/" + paymentId);
         if (resp.StatusCode != HttpStatusCode.OK)
         {
             throw new Exception("Payments API returned status code " + resp.StatusCode);
@@ -93,18 +93,17 @@ public class BancontactService
     }
 
 
-    public async Task<CreatePaymentResponse> CreatePayment(decimal amount)
+    public async Task<CreatePaymentResponse> CreatePayment(decimal amount, int orderNumber, Guid orderId)
     {
+
         var resp = await _httpClient.PostAsJsonAsync("/v3/payments", new CreatePaymentRequest
         {
-            Reference = "19848995",
-            BulkId = "Bulk-1-200",
-            Amount = amount.ToString(),
+            Reference = "ORDER-" + orderNumber,
+            Amount = ((int)decimal.Round(amount * 100)), // The api want the amount in cents
             Currency = "EUR",
-            Description = "",
-            IdentifyCallbackUrl = "/payment/callback",
+            Description = "Bestelling bij Rij62. ORDER #" + orderNumber,
             CallbackUrl = _urlService.Origin + "/payment/callback",
-            ReturnUrl = _urlService.FrontendOrigin + "/checkoutComplete",
+            ReturnUrl = _urlService.FrontendOrigin + "/orders?paidOrderId=" + Uri.EscapeDataString(orderId.ToString()),
         });
 
         if (resp.StatusCode != HttpStatusCode.OK)

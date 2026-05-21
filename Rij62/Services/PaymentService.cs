@@ -23,14 +23,14 @@ public class PaymentService
         _orderService = orderService;
     }
 
-    public async Task<CreatePaymentResponse> CreatePayment(decimal amount)
+    public async Task<CreatePaymentResponse> CreatePayment(decimal amount, int orderNumber, Guid orderId)
     {
-        return await _bancontactService.CreatePayment(amount);
+        return await _bancontactService.CreatePayment(amount, orderNumber, orderId);
     }
 
     public async Task RecoverOrders()
     {
-        var orders = await _context.Orders.Where((o)=>o.PaymentId != null && o.PaymentStatus == PaymentStatus.NotStarted).ToArrayAsync();
+        var orders = await _context.Orders.Where((o) => o.PaymentId != null && o.PaymentStatus == PaymentStatus.NotStarted).ToArrayAsync();
         foreach (var order in orders)
         {
             _logger.LogInformation("Trying to recover order");
@@ -43,7 +43,7 @@ public class PaymentService
         }
     }
 
-    public async Task<bool> ProcessPaymentStatusUpdate(PaymentCallbackRequest callbackRequest, Order? order=null)
+    public async Task<bool> ProcessPaymentStatusUpdate(PaymentCallbackRequest callbackRequest, Order? order = null)
     {
         if (order == null)
         {
@@ -57,7 +57,6 @@ public class PaymentService
         }
 
         var status = callbackRequest.Status;
-        
         if (status == "VOIDED" || status == "EXPIRED" || status == "CANCELLED" || status == "FAILED" || status == "AUTHORIZATION_FAILED")
         {
             await _orderService.DeleteOrder(order);
@@ -78,6 +77,5 @@ public class PaymentService
         }
         return false;
     }
-   
 
 }

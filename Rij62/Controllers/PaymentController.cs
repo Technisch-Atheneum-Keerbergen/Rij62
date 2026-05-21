@@ -49,7 +49,7 @@ public class PaymentController : ControllerBase
             }
 
             var amount = _orderService.CalcTotalOrderPayAmount(order);
-            var resp = await _paymentService.CreatePayment(amount);
+            var resp = await _paymentService.CreatePayment(amount, 0, order.PublicId);
             order.PaymentId = resp.PaymentId;
             redirectUrl = resp.Links.Deeplink;
             await _context.SaveChangesAsync();
@@ -59,7 +59,7 @@ public class PaymentController : ControllerBase
         return Ok(new ApiPostPaymentResponse { RedirectUrl = redirectUrl });
     }
 
-    [HttpGet("callback")]
+    [HttpPost("callback")]
     public async Task<IActionResult> BankcontactCallback([FromBody] PaymentCallbackRequest req)
     {
         var result = await Request.BodyReader.ReadAsync();
