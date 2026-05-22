@@ -14,6 +14,7 @@ namespace Rij62.Models
 
         public required OrderStatus Status { get; set; }
         public required int Quantity { get; set; }
+        public required string? Comment { get; set; } 
 
         [ForeignKey("OrderId")]
         public Order Order { get; set; }
@@ -33,6 +34,7 @@ namespace Rij62.Models
                 OrderProductId = orderProductId,
                 Status = OrderStatus.Pending,
                 Quantity = apiOrderItem.Quantity,
+                Comment = apiOrderItem.Comment,
             };
         }
     }

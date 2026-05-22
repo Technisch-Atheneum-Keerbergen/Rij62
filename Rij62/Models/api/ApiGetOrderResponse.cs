@@ -9,6 +9,8 @@ public class ApiGetOrderResponse
     public long CreatedTime { get; set; }
     public long PickupTime { get; set; }
     public required PaymentStatus PaymentStatus { get; set; }
+
+    public required string? Comment { get; set; }
     public List<ApiGetOrderItemResponse> Items { get; set; }
 
     public static ApiGetOrderResponse FromOrder(Order order, Localizer localizer, UrlService urlService)
@@ -22,7 +24,7 @@ public class ApiGetOrderResponse
             CreatedTime = order.CreatedTime.ToUnixTimeSeconds(),
             PickupTime = order.PickupTime.ToUnixTimeSeconds(),
             Items = items.ToList(),
-
+            Comment = order.Comment,
         };
     }
 }

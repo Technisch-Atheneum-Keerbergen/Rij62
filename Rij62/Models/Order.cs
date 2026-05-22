@@ -10,6 +10,7 @@ namespace Rij62.Models
         public DateTimeOffset CreatedTime { get; set; }
         public DateTimeOffset PickupTime { get; set; }
         public int? TableNumber { get; set; }
+        public required string? Comment { get; set; }
 
         public ICollection<OrderItem> OrderItems { get; set; }
 
@@ -25,6 +26,7 @@ namespace Rij62.Models
                 TableNumber = order.TableNumber,
                 PaymentStatus = PaymentStatus.NotPaid,
                 PaymentId = null,
+                Comment = order.Comment,
             };
 
         }

@@ -9,6 +9,8 @@ public class ApiGetOrderItemResponse
     public required OrderStatus Status { get; set; }
     public required int Quantity { get; set; }
 
+    public required string? Comment { get; set; }
+
     public required List<ApiGetOrderItemChoiceResponse> Choices { get; set; }
 
     public static ApiGetOrderItemResponse FromOrderItem(OrderItem orderItem, Localizer localizer, UrlService urlService)
@@ -27,6 +29,7 @@ public class ApiGetOrderItemResponse
             Id = orderItem.Id,
             Status = orderItem.Status,
             Quantity = orderItem.Quantity,
+            Comment = orderItem.Comment,
             Product = ApiGetOrderProductResponse.FromOrderProduct(orderItem.OrderProduct, localizer, urlService),
             Choices = orderItem.Choices.Select((c) => ApiGetOrderItemChoiceResponse.FromOrderItemChoice(c, localizer, urlService)).ToList()
         };
