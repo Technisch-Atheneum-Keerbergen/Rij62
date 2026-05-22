@@ -23,7 +23,7 @@ public class Product
     public int Stock { get; set; }
     public bool IsAvailable { get; set; }
     public required string ImgUrl { get; set; }
-    public int CategoryId { get; set; }
+    public int? CategoryId { get; set; }
     public int? MenuPresetId { get; set; }
 
     public ICollection<ProductStep> Steps { get; set; }

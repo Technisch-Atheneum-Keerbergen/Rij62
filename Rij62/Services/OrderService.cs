@@ -30,6 +30,10 @@ public struct OrderValidationError
     {
         return new OrderValidationError { Type = OrderValidationErrorType.PickupTimeTooFar };
     }
+    public static OrderValidationError EmptyOrder()
+    {
+        return new OrderValidationError { Type = OrderValidationErrorType.EmptyOrder };
+    }
 
     public static OrderValidationError QuantityRange(int productId)
     {
@@ -60,6 +64,8 @@ public enum OrderValidationErrorType
     PastPickupTime,
 
     PickupTimeTooFar,
+
+    EmptyOrder,
 }
 
 
@@ -144,6 +150,10 @@ public class OrderService
             {
                 errors.Add(OrderValidationError.InvalidTableNumber());
             }
+        }
+        if (order.Items.Count == 0)
+        {
+            errors.Add(OrderValidationError.EmptyOrder());
         }
 
         foreach (var item in order.Items)

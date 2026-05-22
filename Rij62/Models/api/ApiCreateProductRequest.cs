@@ -11,7 +11,7 @@ public class ApiCreateProdcutRequest
     public required bool IsAvailable { get; set; }
 
     public int? MenuPresetId { get; set; }
-    public required int CategoryId { get; set; }
+    public required int? CategoryId { get; set; }
 
 }
 

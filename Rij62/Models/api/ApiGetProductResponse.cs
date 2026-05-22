@@ -18,7 +18,7 @@ public class ApiGetProductResponse
     public required int? MenuPresetId { get; set; }
     public required bool EnabledByPreset { get; set; }
     public required string ImgURL { get; set; }
-    public required int CategoryId { get; set; }
+    public required int? CategoryId { get; set; }
 
     public required List<ApiGetStepResponse> Steps { get; set; }
 

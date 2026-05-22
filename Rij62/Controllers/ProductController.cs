@@ -53,10 +53,13 @@ namespace Rij62.Controllers
         [HttpPost("")]
         public async Task<IActionResult> PostProduct([FromBody] ApiCreateProdcutRequest apiProduct)
         {
-            var category = await _context.ProductCategories.FindAsync(apiProduct.CategoryId);
-            if (category == null)
+            if (apiProduct.CategoryId != null)
             {
-                return BadRequest($"not category with id {apiProduct.CategoryId} exits");
+                var category = await _context.ProductCategories.FindAsync(apiProduct.CategoryId);
+                if (category == null)
+                {
+                    return BadRequest($"not category with id {apiProduct.CategoryId} exits");
+                }
             }
             var createdProduct = Product.FromApiPutProduct(apiProduct, _urlService);
             _context.Products.Add(createdProduct);
