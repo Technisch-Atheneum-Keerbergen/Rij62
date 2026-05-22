@@ -1,3 +1,4 @@
+set -e
 USAGE="Usage: $0 <USERNAME>@<SERVER_IP>
 Deploy code to production on the server specified
 "
