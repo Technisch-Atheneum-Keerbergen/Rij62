@@ -6,17 +6,17 @@ using Rij62.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var DebugCorsPolicy = "_debug";
+var corsPolicy = "_mainCorsPolicy";
+
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: DebugCorsPolicy,
+    options.AddPolicy(name: corsPolicy,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:5173")
+                          policy.WithOrigins(builder.Configuration.GetValue<string>("FrontendOrigin"))
                               .AllowAnyHeader()
-                              .AllowAnyMethod() // CRUD
-                              .AllowCredentials(); // Oauth
+                              .AllowAnyMethod(); // CRUD
                       });
 });
 
@@ -73,7 +73,7 @@ app.MapGet("/routes", (IEnumerable<EndpointDataSource> sources) =>
     return routes;
 });
 
-app.UseCors(DebugCorsPolicy);
+app.UseCors(corsPolicy);
 
 
 app.UseAuthentication();
