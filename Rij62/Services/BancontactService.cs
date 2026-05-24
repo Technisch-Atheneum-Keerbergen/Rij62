@@ -28,6 +28,12 @@ public class BancontactService
         }
         _certUrl = certUrl;
 
+        var apiKey = config.GetValue<string>("Bancontact:ApiKey");
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            throw new Exception("Bancontact:ApiKey was not given. If you don't have an api key. put a placeholder and set AllowBypassPayment=true");
+        }
+
         httpClient.BaseAddress = config.GetValue<Uri>("Bancontact:BaseUrl");
         httpClient.DefaultRequestHeaders.Add("Authorization", config.GetValue<string>("Bancontact:ApiKey"));
         _httpClient = httpClient;
