@@ -16,4 +16,20 @@ public class OrderItemChoice
 
     [ForeignKey("ChosenOrderProductId")]
     public OrderProduct ChosenOrderProduct { get; set; }
+
+    public static OrderItemChoice[] FromOrderItemsAndChoice(OrderItem[] orderItems, OrderProduct choice)
+    {
+        var output = new OrderItemChoice[orderItems.Length];
+        for (int i = 0; i < orderItems.Length; i++)
+        {
+            output[i] = new OrderItemChoice
+            {
+                ChosenOrderProductId = choice.Id,
+                OrderItemId = orderItems[i].Id,
+                StepNumber = 0, // We may in the future use this.
+            };
+        }
+        return output;
+
+    }
 }

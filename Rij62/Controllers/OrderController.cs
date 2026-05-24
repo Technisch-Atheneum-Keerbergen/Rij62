@@ -102,8 +102,8 @@ namespace Rij62.Controllers
                     _context.OrderProducts.Add(orderProduct);
                     await _context.SaveChangesAsync();
 
-                    var orderItem = await OrderItem.FromApiPostOrderItem(item, order.Id, orderProduct.Id);
-                    _context.OrderItems.Add(orderItem);
+                    var orderItems = await OrderItem.FromApiPostOrderItem(item, order.Id, orderProduct.Id);
+                    _context.OrderItems.AddRange(orderItems);
                     await _context.SaveChangesAsync();
 
                     foreach (var choice in item.Choices)
@@ -122,13 +122,7 @@ namespace Rij62.Controllers
                         _context.OrderProducts.Add(chosenOrderProduct);
                         await _context.SaveChangesAsync();
 
-                        var orderItemChoice = new OrderItemChoice
-                        {
-                            ChosenOrderProductId = chosenOrderProduct.Id,
-                            OrderItemId = orderItem.Id,
-                            StepNumber = 0, // We may in the future use this.
-                        };
-                        _context.OrderItemChoices.Add(orderItemChoice);
+                        _context.OrderItemChoices.AddRange(OrderItemChoice.FromOrderItemsAndChoice(orderItems, chosenOrderProduct));
                         await _context.SaveChangesAsync();
 
                     }
@@ -149,13 +143,13 @@ namespace Rij62.Controllers
             {
                 return NotFound();
             }
-            var orderItems = _context.OrderItems.Where((oi) => oi.OrderId == order.Id).Select((oi) => ApiOrderItemStatusResponse.FromOrderItem(oi));
+            var orderItems = _context.OrderItems.Where((oi) => oi.OrderId == order.Id).Select((oi) => ApiGetOrderItemStatusResponse.FromOrderItem(oi));
             return Ok(orderItems);
         }
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}/status/{orderItemid}")]
-        public async Task<IActionResult> SetOrderStatus(Guid id, int orderItemid, [FromBody] OrderStatus status)
+        public async Task<IActionResult> SetOrderStatus(Guid id, int orderItemid, [FromBody] ApiSetOrderItemStatusRequest status)
         {
 
             var order = await _context.Orders.Where((o) => o.PublicId == id).FirstOrDefaultAsync();
@@ -168,7 +162,9 @@ namespace Rij62.Controllers
             {
                 return NotFound("Order item was not found");
             }
-            item.Status = status;
+
+            item.Status = status.Status;
+
             await _context.SaveChangesAsync();
             return Ok();
         }

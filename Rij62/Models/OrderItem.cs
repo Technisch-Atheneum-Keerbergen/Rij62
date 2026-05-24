@@ -13,8 +13,7 @@ namespace Rij62.Models
         public required int OrderProductId { get; set; }
 
         public required OrderStatus Status { get; set; }
-        public required int Quantity { get; set; }
-        public required string? Comment { get; set; } 
+        public required string? Comment { get; set; }
 
         [ForeignKey("OrderId")]
         public Order Order { get; set; }
@@ -26,16 +25,20 @@ namespace Rij62.Models
         public IEnumerable<OrderItemChoice> Choices { get; set; }
 
 
-        public static async Task<OrderItem> FromApiPostOrderItem(ApiCreateOrderItemRequest apiOrderItem, int orderId, int orderProductId)
+        public static async Task<OrderItem[]> FromApiPostOrderItem(ApiCreateOrderItemRequest apiOrderItem, int orderId, int orderProductId)
         {
-            return new OrderItem
+            var items = new OrderItem[apiOrderItem.Quantity];
+            for (int i = 0; i < apiOrderItem.Quantity; i++)
             {
-                OrderId = orderId,
-                OrderProductId = orderProductId,
-                Status = OrderStatus.Pending,
-                Quantity = apiOrderItem.Quantity,
-                Comment = apiOrderItem.Comment,
-            };
+                items[i] = new OrderItem
+                {
+                    OrderId = orderId,
+                    OrderProductId = orderProductId,
+                    Status = OrderStatus.Pending,
+                    Comment = apiOrderItem.Comment,
+                };
+            }
+            return items;
         }
     }
 }
