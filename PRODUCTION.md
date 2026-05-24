@@ -35,7 +35,7 @@ GRANT ALL PRIVILEGES ON DATABASE rij62 TO rij62;
 GRANT ALL ON SCHEMA public TO rij62;
 ```
 
-## Workaround for dotnet bug
+### Workaround for dotnet bug
 
 For some reason the --idempotent script doesn't work on an empty database.
 This can be fixed by generating a normal migration and applying it manually.
@@ -43,6 +43,13 @@ This can be fixed by generating a normal migration and applying it manually.
 1. Generate the script `dotnet ef --project Rij62 migrations script  -o migrate.sql`
 2. Than copy the migrate.sql file to the server `scp migrate.sql username@server_ip:/tmp/Rij62Migrate.sql`
 3. Than apply it to the database under the rij62 user `cat /tmp/Rij62Migrate.sql | PGPASSWORD=rij62 psql -w rij62 rij62`
+
+### Loading test data
+
+Run `./testData2prod.sh <username@server_ip>` and watch the test data get uploaded.
+
+> [!NOTE] The script is currently untested
+> But I think it will work
 
 ## Nginx
 
