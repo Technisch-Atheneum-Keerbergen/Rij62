@@ -27,7 +27,9 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<MenuPresetService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrderValidationService>();
 builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<OrderEventsWebsocketService>();
 builder.Services.AddScoped<PaymentService>();
 
 builder.Services.AddSingleton<UrlService>();
@@ -36,6 +38,7 @@ builder.Services.AddSingleton<JwtGenService>();
 builder.Services.AddHostedService<PaymentRecoveryService>();
 builder.Services.AddHttpClient<BancontactService>();
 builder.Services.AddSingleton<BancontactService>();
+builder.Services.AddSingleton<OrderEventsService>();
 
 
 builder.Services.AddAuthentication("Bearer")
@@ -60,6 +63,7 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 app.UseRouting();
+app.UseWebSockets();
 
 //Print all registered routes for debugging
 // Go to http://localhost:5148/routes to see the list of routes
