@@ -18,5 +18,5 @@ public abstract record ApiOrderEvent
 }
 
 public record ApiOrderAddedEvent(ApiGetOrderResponse order) : ApiOrderEvent;
-public record ApiOrderPaymentStatusUpdatedEvent(ApiGetOrderPaymentStatusResponse paymentStatus) : ApiOrderEvent;
 public record ApiOrderItemStatusUpdatedEvent(ApiGetOrderItemStatusResponse orderItemStatus) : ApiOrderEvent;
+public record ApiOrderPaymentStatusUpdatedEvent(ApiGetOrderPaymentStatusResponse paymentStatus) : ApiOrderEvent;

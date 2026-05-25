@@ -33,7 +33,7 @@ namespace Rij62.Controllers
             _orderValidationService = orderValidationService;
         }
 
-        //[Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet("events")]
         public async Task Events([FromQuery] OrderFilter filter)
         {
