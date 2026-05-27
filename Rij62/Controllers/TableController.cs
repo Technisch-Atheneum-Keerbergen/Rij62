@@ -39,7 +39,6 @@ namespace Rij62.Controllers
             return CreatedAtAction(nameof(GetTable), new { id = table.Id }, table);
         }
 
-        [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Table>>> GetTables()
         {
