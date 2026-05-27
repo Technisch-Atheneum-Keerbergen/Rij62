@@ -11,11 +11,21 @@ using Rij62.Models.Api;
 
 namespace Rij62.Services;
 
+public struct OrderValidationProduct
+{
+    public int Id { get; set; }
+    public int Index { get; set; }
+    public OrderValidationProduct(int id, int index)
+    {
+        Id = id;
+        Index = index;
+    }
+}
 
 public struct OrderValidationError
 {
-    public int? ProductId { get; set; }
-    public int? ChoiceProductId { get; set; }
+    public OrderValidationProduct? Product { get; set; }
+    public OrderValidationProduct? ChoiceProduct { get; set; }
     public required OrderValidationErrorType Type { get; set; }
 
     public static OrderValidationError InvalidTableNumber()
@@ -35,17 +45,17 @@ public struct OrderValidationError
         return new OrderValidationError { Type = OrderValidationErrorType.EmptyOrder };
     }
 
-    public static OrderValidationError QuantityRange(int productId)
+    public static OrderValidationError QuantityRange(OrderValidationProduct product)
     {
-        return new OrderValidationError { ProductId = productId, Type = OrderValidationErrorType.QuantityRange };
+        return new OrderValidationError { Product = product, Type = OrderValidationErrorType.QuantityRange };
     }
-    public static OrderValidationError InvalidProduct(int productId, int? choiceId = null)
+    public static OrderValidationError InvalidProduct(OrderValidationProduct product, OrderValidationProduct? choice = null)
     {
-        return new OrderValidationError { ProductId = productId, ChoiceProductId = choiceId, Type = OrderValidationErrorType.InvalidProduct };
+        return new OrderValidationError { Product = product, ChoiceProduct = choice, Type = OrderValidationErrorType.InvalidProduct };
     }
-    public static OrderValidationError ProductInactiveOrDisabled(int productId, int? choiceProductId = null)
+    public static OrderValidationError ProductInactiveOrDisabled(OrderValidationProduct product, OrderValidationProduct? choiceProduct = null)
     {
-        return new OrderValidationError { ProductId = productId, ChoiceProductId = choiceProductId, Type = OrderValidationErrorType.ProductInactiveOrDisabled };
+        return new OrderValidationError { Product = product, ChoiceProduct = choiceProduct, Type = OrderValidationErrorType.ProductInactiveOrDisabled };
     }
 
 }
@@ -156,30 +166,33 @@ public class OrderService
             errors.Add(OrderValidationError.EmptyOrder());
         }
 
-        foreach (var item in order.Items)
+        for (int itemIndex = 0; itemIndex < order.Items.Count; itemIndex++)
         {
+            ApiCreateOrderItemRequest? item = order.Items[itemIndex];
+
             if (item.Quantity < 1 || item.Quantity > 50)
             {
-                errors.Add(OrderValidationError.QuantityRange(item.ProductId));
+                errors.Add(OrderValidationError.QuantityRange(new OrderValidationProduct(item.ProductId, itemIndex)));
             }
             var product = await _context.Products.FindAsync(item.ProductId);
             if (product == null)
             {
-                errors.Add(OrderValidationError.InvalidProduct(item.ProductId));
+                errors.Add(OrderValidationError.InvalidProduct(new OrderValidationProduct(item.ProductId, itemIndex)));
                 continue;
             }
             if (!presets.IsProductActiveAndAvailable(product, date))
             {
-                errors.Add(OrderValidationError.ProductInactiveOrDisabled(item.ProductId));
+                errors.Add(OrderValidationError.ProductInactiveOrDisabled(new OrderValidationProduct(item.ProductId, itemIndex)));
             }
-            foreach (var choice in item.Choices)
+            for (int choiceIndex = 0; choiceIndex < item.Choices.Count; choiceIndex++)
             {
+                int choice = item.Choices[choiceIndex];
                 // Check if the option exists on the product
                 var chosenStepOption = await _context.ProductStepOptions.Include((o) => o.ProductStep).Where((stepOption) => stepOption.ProductId == choice && stepOption.ProductStep.ProductId == item.ProductId).FirstOrDefaultAsync();
 
                 if (chosenStepOption == null)
                 {
-                    errors.Add(OrderValidationError.InvalidProduct(item.ProductId, choice));
+                    errors.Add(OrderValidationError.InvalidProduct(new OrderValidationProduct(item.ProductId, itemIndex), new OrderValidationProduct(choice, choiceIndex)));
                     continue;
                 }
                 var chosenProduct = await _context.Products.FindAsync(chosenStepOption.ProductId);
@@ -190,7 +203,7 @@ public class OrderService
                 }
                 if (!presets.IsProductActiveAndAvailable(chosenProduct, date))
                 {
-                    errors.Add(OrderValidationError.ProductInactiveOrDisabled(item.ProductId, choice));
+                    errors.Add(OrderValidationError.ProductInactiveOrDisabled(new OrderValidationProduct(item.ProductId, itemIndex), new OrderValidationProduct(choice, choiceIndex)));
                 }
             }
         }
