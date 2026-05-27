@@ -188,7 +188,7 @@ public class OrderService
                     _logger.LogError($"BUG: Product step option in the database that points to non existant product {chosenProduct}.");
                     continue;
                 }
-                if (!presets.IsProductActiveAndAvailable(product, date))
+                if (!presets.IsProductActiveAndAvailable(chosenProduct, date))
                 {
                     errors.Add(OrderValidationError.ProductInactiveOrDisabled(item.ProductId, choice));
                 }
