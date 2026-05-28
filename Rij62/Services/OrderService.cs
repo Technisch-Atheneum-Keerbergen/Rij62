@@ -102,7 +102,7 @@ public class OrderService
 
     public async Task UpdateOrderPaymentStatus(Order order, PaymentStatus status)
     {
-        order.PaymentStatus = PaymentStatus.Success;
+        order.PaymentStatus = status;
         await _orderEventsService.BroadcastEvent(new ApiOrderPaymentStatusUpdatedEvent(ApiGetOrderPaymentStatusResponse.FromOrder(order)));
         await _context.SaveChangesAsync();
     }
