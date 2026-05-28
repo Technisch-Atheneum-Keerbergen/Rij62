@@ -24,7 +24,6 @@ public class Product
     public bool IsAvailable { get; set; }
     public required string ImgUrl { get; set; }
     public int? CategoryId { get; set; }
-    public int? MenuPresetId { get; set; }
 
     public ICollection<ProductStep> Steps { get; set; }
 
@@ -47,7 +46,6 @@ public class Product
             IsAvailable = apiProduct.IsAvailable,
             ImgUrl = urlService.TryMakeRelative(apiProduct.ImgURL),
             CategoryId = apiProduct.CategoryId,
-            MenuPresetId = apiProduct.MenuPresetId,
         };
         return createdProduct;
     }

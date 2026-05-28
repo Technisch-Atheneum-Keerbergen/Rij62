@@ -18,7 +18,7 @@ namespace Rij62.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Order>()
-                .Property((o)=>o.OrderNumber)
+                .Property((o) => o.OrderNumber)
                 .HasDefaultValueSql("next_order_number()");
         }
 
@@ -40,5 +40,6 @@ namespace Rij62.Data
         public DbSet<User> Users { get; set; }
         public DbSet<LinkKey> LinkKeys { get; set; }
         public DbSet<MenuPreset> MenuPresets { get; set; }
+        public DbSet<MenuPresetLink> MenuPresetLinks { get; set; }
     }
 }
