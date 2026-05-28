@@ -22,9 +22,8 @@ namespace Rij62.Controllers
         private readonly OrderEventsService _orderEventsService;
         private readonly OrderEventsWebsocketService _orderEventsWebsocketService;
 
-        private readonly OrderNumberGeneratorService _orderNumberGeneratorService;
 
-        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService, UrlService urlService, OrderEventsService chefWebsocketService, OrderEventsWebsocketService orderEventsWebsocketService, OrderValidationService orderValidationService, OrderNumberGeneratorService orderNumberGeneratorService)
+        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService, UrlService urlService, OrderEventsService chefWebsocketService, OrderEventsWebsocketService orderEventsWebsocketService, OrderValidationService orderValidationService)
         {
             _context = context;
             _localization = localization;
@@ -33,7 +32,6 @@ namespace Rij62.Controllers
             _orderEventsService = chefWebsocketService;
             _orderEventsWebsocketService = orderEventsWebsocketService;
             _orderValidationService = orderValidationService;
-            _orderNumberGeneratorService = orderNumberGeneratorService;
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -103,7 +101,7 @@ namespace Rij62.Controllers
                     });
                 }
 
-                var order = Order.FromApiPostOrder(apiOrder, orderNumberGeneratorService);
+                var order = Order.FromApiPostOrder(apiOrder);
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
 

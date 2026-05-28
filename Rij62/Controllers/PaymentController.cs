@@ -57,7 +57,7 @@ public class PaymentController : ControllerBase
             }
 
             var amount = _orderService.CalcTotalOrderPayAmount(order);
-            var resp = await _paymentService.CreatePayment(amount, 0, order.PublicId, bypassPayment);
+            var resp = await _paymentService.CreatePayment(amount, order.OrderNumber, order.PublicId, bypassPayment);
             order.PaymentId = resp.PaymentId;
             redirectUrl = resp.Links.Deeplink;
             await _context.SaveChangesAsync();

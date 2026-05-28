@@ -4,19 +4,20 @@ namespace Rij62.Models
 {
     public class Order
     {
+        public int Id { get; set; }
+        public int OrderNumber { get; set; }
+
+        public required Guid PublicId { get; set; } // Use a UUID for the client side so other people can't guess order ID's.
         public required string? PaymentId { get; set; }
         public required PaymentStatus PaymentStatus { get; set; }
-        public int Id { get; set; }
-        public Guid PublicId { get; set; } // Use a UUID for the client side so other people can't guess order ID's.
-        public DateTimeOffset CreatedTime { get; set; }
-        public DateTimeOffset PickupTime { get; set; }
-        public int? TableNumber { get; set; }
+        public required DateTimeOffset CreatedTime { get; set; }
+        public required DateTimeOffset PickupTime { get; set; }
+        public required int? TableNumber { get; set; }
         public required string? Comment { get; set; }
-        public required int OrderNumber { get; set; }
 
         public ICollection<OrderItem> OrderItems { get; set; }
 
-        public static Order FromApiPostOrder(ApiCreateOrderRequest order, OrderNumberGeneratorService orderNumberGeneratorService)
+        public static Order FromApiPostOrder(ApiCreateOrderRequest order)
         {
             var now = DateTimeOffset.Now.ToUniversalTime();
             return new Order
@@ -27,7 +28,6 @@ namespace Rij62.Models
                 PickupTime = order.PickupTime != null ? DateTimeOffset.FromUnixTimeSeconds(order.PickupTime.Value) : now,
                 TableNumber = order.TableNumber,
                 PaymentStatus = PaymentStatus.NotPaid,
-                OrderNumber = orderNumberGeneratorService.NewOrderNumber(),
                 PaymentId = null,
                 Comment = order.Comment,
             };

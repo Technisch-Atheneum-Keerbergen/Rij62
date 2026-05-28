@@ -19,6 +19,16 @@ load-db-test-data: clear-db
 
 init: load-db-test-data
 
+
+# dotnet ef
+
+db-update:
+  dotnet ef --project Rij62 database update
+
+[positional-arguments]
+mig-add name:
+  dotnet ef --project Rij62 migrations add $1
+
 [positional-arguments]
 deploy server_address:
   ./deploy.sh $1

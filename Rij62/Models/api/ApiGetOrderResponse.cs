@@ -4,10 +4,11 @@ namespace Rij62.Models.Api;
 
 public class ApiGetOrderResponse
 {
-    public Guid Id { get; set; }
-    public int? TableNumber { get; set; }
-    public long CreatedTime { get; set; }
-    public long PickupTime { get; set; }
+    public required Guid Id { get; set; }
+    public required int? TableNumber { get; set; }
+    public required long CreatedTime { get; set; }
+    public required long PickupTime { get; set; }
+    public required int OrderNumber { get; set; }
     public required PaymentStatus PaymentStatus { get; set; }
 
     public required string? Comment { get; set; }
@@ -25,6 +26,7 @@ public class ApiGetOrderResponse
             PickupTime = order.PickupTime.ToUnixTimeSeconds(),
             Items = items.ToList(),
             Comment = order.Comment,
+            OrderNumber = order.OrderNumber,
         };
     }
 }
