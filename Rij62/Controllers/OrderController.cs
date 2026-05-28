@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net.WebSockets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,27 +17,43 @@ namespace Rij62.Controllers
         private readonly AppDbContext _context;
         private readonly LocalizationService _localization;
         private readonly OrderService _orderService;
+        private readonly OrderValidationService _orderValidationService;
         private readonly UrlService _urlService;
+        private readonly OrderEventsService _orderEventsService;
+        private readonly OrderEventsWebsocketService _orderEventsWebsocketService;
 
-        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService, UrlService urlService)
+        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService, UrlService urlService, OrderEventsService chefWebsocketService, OrderEventsWebsocketService orderEventsWebsocketService, OrderValidationService orderValidationService)
         {
             _context = context;
             _localization = localization;
             _orderService = orderService;
             _urlService = urlService;
+            _orderEventsService = chefWebsocketService;
+            _orderEventsWebsocketService = orderEventsWebsocketService;
+            _orderValidationService = orderValidationService;
         }
 
-        [HttpGet("")]
-        public async Task<IActionResult> GetOrders(int count = 100, bool showPaymentPending = false)
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet("events")]
+        public async Task Events([FromQuery] OrderFilter filter)
         {
-            var localizer = await _localization.GetLocalizer();
-            var orders = await _orderService.FetchOrders()
-              .Where((o) => showPaymentPending || o.PaymentStatus == PaymentStatus.Success)
-              .Where((o) => !o.OrderItems.All((o) => o.Status == OrderStatus.PickedUp))
-              .OrderBy((o) => o.PickupTime)
-              .Take(count)
-              .ToArrayAsync();
+            if (!HttpContext.WebSockets.IsWebSocketRequest)
+            {
+                HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                return;
+            }
+            using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+            await _orderEventsWebsocketService.HandleWebsocketConnection(webSocket, filter);
 
+        }
+
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet("")]
+        public async Task<IActionResult> GetOrders([FromQuery] OrderFilter filter)
+        {
+            var orders = await _orderService.GetOrders(filter);
+            var localizer = await _localization.GetLocalizer();
             return Ok(orders.Select((o) => ApiGetOrderResponse.FromOrder(o, localizer, _urlService)));
         }
 
@@ -61,7 +78,7 @@ namespace Rij62.Controllers
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                var errors = await _orderService.ValidateOrder(apiOrder);
+                var errors = await _orderValidationService.ValidateOrder(apiOrder);
                 await transaction.CommitAsync();
                 return Ok(errors);
             }
@@ -73,7 +90,7 @@ namespace Rij62.Controllers
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                var validationErrors = await _orderService.ValidateOrder(apiOrder);
+                var validationErrors = await _orderValidationService.ValidateOrder(apiOrder);
                 if (validationErrors.Count > 0)
                 {
                     return UnprocessableEntity(new ApiCreateOrderResponse
@@ -129,6 +146,8 @@ namespace Rij62.Controllers
                 }
 
                 await transaction.CommitAsync();
+                var localizer = await _localization.GetLocalizer();
+                await _orderEventsService.BroadcastEvent(new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(order, localizer, _urlService)));
                 return Ok(new ApiCreateOrderResponse { OrderId = order.PublicId, ValidationErrors = new List<OrderValidationError>() });
             }
 
@@ -166,6 +185,8 @@ namespace Rij62.Controllers
             item.Status = status.Status;
 
             await _context.SaveChangesAsync();
+
+            await _orderEventsService.BroadcastEvent(new ApiOrderItemStatusUpdatedEvent(ApiGetOrderItemStatusResponse.FromOrderItem(item)));
             return Ok();
         }
 

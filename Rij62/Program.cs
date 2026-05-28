@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Rij62.Data;
@@ -14,7 +15,18 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: corsPolicy,
                       policy =>
                       {
-                          policy.WithOrigins(builder.Configuration.GetValue<string>("FrontendOrigin"))
+                          var frontendOrigin = builder.Configuration.GetValue<string>("FrontendOrigin");
+                          var configOrigins = (builder.Configuration.GetValue<string>("Cors:ExtraAllowedOrigins") ?? "").Split(",");
+
+
+                          string[] origins = new string[configOrigins.Length + (frontendOrigin != null ? 1 : 0)];
+                          if (frontendOrigin != null)
+                          {
+                              origins[0] = frontendOrigin;
+                          }
+                          configOrigins.CopyTo(origins, 1);
+
+                          policy.WithOrigins(origins)
                               .AllowAnyHeader()
                               .AllowAnyMethod(); // CRUD
                       });
@@ -27,7 +39,9 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<MenuPresetService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<OrderValidationService>();
 builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<OrderEventsWebsocketService>();
 builder.Services.AddScoped<PaymentService>();
 
 builder.Services.AddSingleton<UrlService>();
@@ -36,6 +50,7 @@ builder.Services.AddSingleton<JwtGenService>();
 builder.Services.AddHostedService<PaymentRecoveryService>();
 builder.Services.AddHttpClient<BancontactService>();
 builder.Services.AddSingleton<BancontactService>();
+builder.Services.AddSingleton<OrderEventsService>();
 
 
 builder.Services.AddAuthentication("Bearer")
@@ -47,6 +62,27 @@ builder.Services.AddAuthentication("Bearer")
             ValidateAudience = false,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Jwt:IssuerSigningKey")))
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+
+                // Pass the jwt in the sec-websocket-protocol header for websockets
+                if (context.Request.Headers.ContainsKey("sec-websocket-protocol") && context.HttpContext.WebSockets.IsWebSocketRequest)
+                {
+                    var headerValue = context.Request.Headers["sec-websocket-protocol"].ToString();
+                    // token arrives as string = "client, xxxxxxxxxxxxxxxxxxxxx"
+                    var sepIndex = headerValue.IndexOf(',');
+
+                    var token = headerValue.Substring(sepIndex + 1).Trim();
+                    var protocol = headerValue.Substring(0, sepIndex).Trim();
+
+                    context.Token = token;
+                    context.Request.Headers["sec-websocket-protocol"] = protocol;
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -60,6 +96,7 @@ builder.Services.AddAuthorization(options =>
 var app = builder.Build();
 
 app.UseRouting();
+app.UseWebSockets();
 
 //Print all registered routes for debugging
 // Go to http://localhost:5148/routes to see the list of routes
