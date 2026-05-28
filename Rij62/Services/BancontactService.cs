@@ -105,11 +105,11 @@ public class BancontactService
         var resp = await _httpClient.PostAsJsonAsync("/v3/payments", new CreatePaymentRequest
         {
             Reference = "ORDER-" + orderNumber,
-            Amount = ((int)decimal.Round(amount * 100)), // The api want the amount in cents
+            Amount = (int)decimal.Round(amount * 100), // The api want the amount in cents
             Currency = "EUR",
             Description = "Bestelling bij Rij62. ORDER #" + orderNumber,
             CallbackUrl = _urlService.Origin + "/payment/callback",
-            ReturnUrl = _urlService.FrontendOrigin + "/orders?paidOrderId=" + Uri.EscapeDataString(orderId.ToString()),
+            ReturnUrl = _urlService.FrontendOrigin + "/orders/" + orderId
         });
 
         if (resp.StatusCode != HttpStatusCode.OK)

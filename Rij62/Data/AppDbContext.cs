@@ -14,6 +14,15 @@ namespace Rij62.Data
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options) { }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Order>()
+                .Property((o)=>o.OrderNumber)
+                .HasDefaultValueSql("next_order_number()");
+        }
+
+
         public DbSet<LangEntry> Language { get; set; }
         public DbSet<Screen> Screens { get; set; }
         public DbSet<Order> Orders { get; set; }
