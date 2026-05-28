@@ -195,7 +195,6 @@ namespace Rij62.Controllers
             product.IsAvailable = apiProduct.IsAvailable;
             product.CategoryId = apiProduct.CategoryId;
             product.ImgUrl = _urlService.TryMakeRelative(apiProduct.ImgURL);
-            product.MenuPresetId = apiProduct.MenuPresetId;
 
             _context.Entry(product).State = EntityState.Modified;
             await _context.SaveChangesAsync();

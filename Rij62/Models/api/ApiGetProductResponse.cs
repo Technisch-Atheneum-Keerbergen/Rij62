@@ -15,21 +15,20 @@ public class ApiGetProductResponse
 
     public required bool IsAvailable { get; set; }
 
-    public required int? MenuPresetId { get; set; }
     public required bool EnabledByPreset { get; set; }
     public required string ImgURL { get; set; }
     public required int? CategoryId { get; set; }
 
-    public required List<ApiGetStepResponse> Steps { get; set; }
+    public required List<ApiGetStepResponse>? Steps { get; set; }
 
 
     public static ApiGetProductResponse FromProduct(Product product, MenuPresets presets, Localizer localizer, UrlService urlService, bool includeSteps = true)
     {
         if (includeSteps && product.Steps == null)
         {
-            throw new ArgumentNullException("Product.Steps is null make shure you load it from the database");
+            throw new ArgumentNullException("Product.Steps is null make sure you load it from the database");
         }
-        var steps = new List<ApiGetStepResponse>();
+        List<ApiGetStepResponse>? steps = null;
         if (includeSteps)
         {
             steps = product.Steps.Select((s) => ApiGetStepResponse.FromProductStep(s, presets, localizer, urlService)).ToList();
@@ -45,7 +44,6 @@ public class ApiGetProductResponse
             Stock = product.Stock,
             IsAvailable = product.IsAvailable,
             EnabledByPreset = presets.IsProductActive(product),
-            MenuPresetId = product.MenuPresetId,
             ImgURL = urlService.MakeAbsolute(product.ImgUrl),
             CategoryId = product.CategoryId,
             Steps = steps,

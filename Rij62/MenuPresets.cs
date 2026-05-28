@@ -5,13 +5,13 @@ namespace Rij62;
 
 public class MenuPresets
 {
-    MenuPreset[] _presets;
+    MenuPresetLink[] _links;
 
-    public MenuPresets(MenuPreset[] presets)
+    public MenuPresets(MenuPresetLink[] links)
     {
-        _presets = presets;
+        _links = links;
     }
-     public bool IsPresetActive(MenuPreset preset, DateTime? date = null)
+    public bool IsPresetActive(MenuPreset preset, DateTime? date = null)
     {
         if (!preset.Enabled)
         {
@@ -29,21 +29,20 @@ public class MenuPresets
 
     public bool IsProductActive(Product product, DateTime? date = null)
     {
-        // Products that are not in a preset will always be enabled.
-        if (product.MenuPresetId == null)
+        var found = false;
+        foreach (var link in _links)
         {
-            return true;
-        }
-
-
-        foreach (var preset in _presets)
-        {
-            if (product.MenuPresetId == preset.Id && IsPresetActive(preset, date))
+            if (link.ProductId == product.Id)
             {
-                return true;
+                found = true;
+                if (IsPresetActive(link.MenuPreset, date))
+                {
+                    return true;
+                }
             }
         }
-        return false;
+        return !found; // if we found nothing the product should be enabled.
+
     }
 
     public bool IsProductActiveAndAvailable(Product product, DateTime? date = null)
