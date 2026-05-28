@@ -34,7 +34,7 @@ public class OrderEventsWebsocketService
         try
         {
 
-            var orders = (await _orderService.GetOrders(filter)).Select((o) => new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(o, localizer, _urlService))).ToAsyncEnumerable();
+            var orders = (await _orderService.GetOrders(filter)).Select((o) => new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(o, localizer, _urlService, _orderService))).ToAsyncEnumerable();
 
 
             await Task.WhenAny(ReceiveLoop(socket, cts), HandleSending(socket, orders, channel.Reader, cts.Token));

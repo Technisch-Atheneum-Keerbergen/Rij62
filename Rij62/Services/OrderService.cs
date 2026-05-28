@@ -30,7 +30,7 @@ public class OrderService
         _orderEventsService = orderEventsService;
     }
 
-    public decimal CalcTotalOrderPayAmount(Order order)
+    public decimal CalcTotalOrderPrice(Order order)
     {
         if (order.OrderItems == null)
         {

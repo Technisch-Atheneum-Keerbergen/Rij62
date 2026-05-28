@@ -9,16 +9,18 @@ public class ApiGetOrderResponse
     public required long CreatedTime { get; set; }
     public required long PickupTime { get; set; }
     public required int OrderNumber { get; set; }
+    public decimal? TotalPrice { get; set; }
     public required PaymentStatus PaymentStatus { get; set; }
 
     public required string? Comment { get; set; }
     public List<ApiGetOrderItemResponse> Items { get; set; }
 
-    public static ApiGetOrderResponse FromOrder(Order order, Localizer localizer, UrlService urlService)
+    public static ApiGetOrderResponse FromOrder(Order order, Localizer localizer, UrlService urlService, OrderService orderService)
     {
         var items = order.OrderItems.Select((i) => ApiGetOrderItemResponse.FromOrderItem(i, localizer, urlService));
         return new ApiGetOrderResponse
         {
+            TotalPrice = orderService.CalcTotalOrderPrice(order),
             Id = order.PublicId,
             TableNumber = order.TableNumber,
             PaymentStatus = order.PaymentStatus,
@@ -29,4 +31,5 @@ public class ApiGetOrderResponse
             OrderNumber = order.OrderNumber,
         };
     }
+
 }

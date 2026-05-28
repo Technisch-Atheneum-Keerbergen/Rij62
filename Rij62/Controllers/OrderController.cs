@@ -55,7 +55,7 @@ namespace Rij62.Controllers
         {
             var orders = await _orderService.GetOrders(filter);
             var localizer = await _localization.GetLocalizer();
-            return Ok(orders.Select((o) => ApiGetOrderResponse.FromOrder(o, localizer, _urlService)));
+            return Ok(orders.Select((o) => ApiGetOrderResponse.FromOrder(o, localizer, _urlService, _orderService)));
         }
 
         [HttpGet("{id}")]
@@ -70,7 +70,7 @@ namespace Rij62.Controllers
                 return NotFound();
             }
             var localizer = await _localization.GetLocalizer();
-            return Ok(ApiGetOrderResponse.FromOrder(order, localizer, _urlService));
+            return Ok(ApiGetOrderResponse.FromOrder(order, localizer, _urlService, _orderService));
         }
 
 
@@ -155,7 +155,7 @@ namespace Rij62.Controllers
                 }
 
                 var localizer = await _localization.GetLocalizer();
-                await _orderEventsService.BroadcastEvent(new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(fetchedOrder, localizer, _urlService)));
+                await _orderEventsService.BroadcastEvent(new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(fetchedOrder, localizer, _urlService, _orderService)));
                 return Ok(new ApiCreateOrderResponse { OrderId = order.PublicId, ValidationErrors = new List<OrderValidationError>() });
             }
 

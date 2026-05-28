@@ -56,7 +56,7 @@ public class PaymentController : ControllerBase
                 return BadRequest("Order payment is already in progress");
             }
 
-            var amount = _orderService.CalcTotalOrderPayAmount(order);
+            var amount = _orderService.CalcTotalOrderPrice(order);
             var resp = await _paymentService.CreatePayment(amount, order.OrderNumber, order.PublicId, bypassPayment);
             order.PaymentId = resp.PaymentId;
             redirectUrl = resp.Links.Deeplink;
