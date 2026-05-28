@@ -34,7 +34,7 @@ public class OrderService
     {
         if (order.OrderItems == null)
         {
-            throw new ArgumentNullException("Order.OrderItems is null make shure you load it from the database");
+            throw new ArgumentNullException("Order.OrderItems is null make sure you load it from the database");
         }
 
         decimal total = 0;
@@ -43,11 +43,11 @@ public class OrderService
 
             if (item.OrderProduct == null)
             {
-                throw new ArgumentNullException("Order.OrderItems is null make shure you load it from the database");
+                throw new ArgumentNullException("Order.OrderItems is null make sure you load it from the database");
             }
             if (item.Choices == null)
             {
-                throw new ArgumentNullException("Order.OrderItems is null make shure you load it from the database");
+                throw new ArgumentNullException("Order.OrderItems is null make sure you load it from the database");
             }
 
             total += item.OrderProduct.Price;
@@ -55,7 +55,7 @@ public class OrderService
             {
                 if (choice.ChosenOrderProduct == null)
                 {
-                    throw new ArgumentNullException("Order.OrderItems is null make shure you load it from the database");
+                    throw new ArgumentNullException("Order.OrderItems is null make sure you load it from the database");
                 }
                 total += choice.ChosenOrderProduct.Price;
             }

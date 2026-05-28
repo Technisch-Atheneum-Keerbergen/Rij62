@@ -146,8 +146,15 @@ namespace Rij62.Controllers
                 }
 
                 await transaction.CommitAsync();
+
+                var fetchedOrder = await _orderService.FetchOrders().Where((o) => o.Id == order.Id).FirstOrDefaultAsync();
+                if (fetchedOrder == null)
+                {
+                    throw new Exception("BUG: Somehow an order has not been created but we just did?");
+                }
+
                 var localizer = await _localization.GetLocalizer();
-                await _orderEventsService.BroadcastEvent(new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(order, localizer, _urlService)));
+                await _orderEventsService.BroadcastEvent(new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(fetchedOrder, localizer, _urlService)));
                 return Ok(new ApiCreateOrderResponse { OrderId = order.PublicId, ValidationErrors = new List<OrderValidationError>() });
             }
 

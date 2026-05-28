@@ -16,7 +16,7 @@ public class ApiGetStepResponse
     {
         if (step.Options == null)
         {
-            throw new ArgumentNullException("ProductStep.Options is null make shure you load it from the database");
+            throw new ArgumentNullException("ProductStep.Options is null make sure you load it from the database");
 
         }
         return new ApiGetStepResponse
@@ -29,7 +29,7 @@ public class ApiGetStepResponse
             {
                 if (o.Product == null)
                 {
-                    throw new ArgumentNullException("ProductStepOption.Product is null make shure you load it from the database");
+                    throw new ArgumentNullException("ProductStepOption.Product is null make sure you load it from the database");
                 }
                 return ApiGetProductResponse.FromProduct(o.Product, presets, localizer, urlService, false);
             }).ToList(),
