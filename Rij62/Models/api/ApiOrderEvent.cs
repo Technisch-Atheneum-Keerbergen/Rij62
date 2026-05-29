@@ -9,14 +9,42 @@ namespace Rij62.Models.Api;
 [JsonDerivedType(typeof(ApiOrderAddedEvent), "orderAdded")]
 [JsonDerivedType(typeof(ApiOrderItemStatusUpdatedEvent), "orderItemStatusUpdated")]
 [JsonDerivedType(typeof(ApiOrderPaymentStatusUpdatedEvent), "orderPaymentStatusUpdated")]
-public abstract record ApiOrderEvent
+public abstract class ApiOrderEvent
 {
     public byte[] Serialize()
     {
-        return Encoding.UTF8.GetBytes(JsonSerializer.Serialize(this));
+        return Encoding.UTF8.GetBytes(JsonSerializer.Serialize(this, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        }));
     }
 }
 
-public record ApiOrderAddedEvent(ApiGetOrderResponse order) : ApiOrderEvent;
-public record ApiOrderItemStatusUpdatedEvent(ApiGetOrderItemStatusResponse orderItemStatus) : ApiOrderEvent;
-public record ApiOrderPaymentStatusUpdatedEvent(ApiGetOrderPaymentStatusResponse paymentStatus) : ApiOrderEvent;
+public class ApiOrderAddedEvent : ApiOrderEvent
+{
+    public ApiGetOrderResponse Order { get; set; }
+    public ApiOrderAddedEvent(ApiGetOrderResponse order)
+    {
+        Order = order;
+    }
+}
+
+public class ApiOrderItemStatusUpdatedEvent : ApiOrderEvent
+{
+    public ApiGetOrderItemStatusResponse OrderItemStatus { get; set; }
+    public ApiOrderItemStatusUpdatedEvent(ApiGetOrderItemStatusResponse orderItemStatus)
+    {
+        OrderItemStatus = orderItemStatus;
+    }
+}
+
+public class ApiOrderPaymentStatusUpdatedEvent : ApiOrderEvent
+{
+    public ApiGetOrderPaymentStatusResponse PaymentStatus { get; set; }
+
+    public ApiOrderPaymentStatusUpdatedEvent(ApiGetOrderPaymentStatusResponse paymentStatus)
+    {
+        PaymentStatus = paymentStatus;
+    }
+}
+
