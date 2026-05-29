@@ -36,6 +36,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
            .UseSnakeCaseNamingConvention());
 builder.Services.AddControllers();
+builder.Services.AddResponseCaching();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<MenuPresetService>();
 builder.Services.AddScoped<UserService>();
@@ -109,6 +110,7 @@ app.MapGet("/routes", (IEnumerable<EndpointDataSource> sources) =>
 
 app.UseCors(corsPolicy);
 
+app.UseResponseCaching();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -29,6 +29,7 @@ namespace Rij62.Controllers
 
 
         [HttpGet("{imageId}")]
+        [ResponseCache(Duration = 86400)] // Cache images for 1 day
         public async Task<IActionResult> GetImage(Guid imageId)
         {
             Directory.CreateDirectory(_imageDbPath);
@@ -63,8 +64,9 @@ namespace Rij62.Controllers
             Directory.CreateDirectory(_imageDbPath);
             try
             {
-                System.IO.File.Delete(_imageDbPath+"/"+id);
-            }catch(FileNotFoundException)
+                System.IO.File.Delete(_imageDbPath + "/" + id);
+            }
+            catch (FileNotFoundException)
             {
                 return NotFound();
             }
