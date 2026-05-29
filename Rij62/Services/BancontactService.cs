@@ -109,7 +109,7 @@ public class BancontactService
             Currency = "EUR",
             Description = "Bestelling bij Rij62. ORDER #" + orderNumber,
             CallbackUrl = _urlService.Origin + "/payment/callback",
-            ReturnUrl = _urlService.FrontendOrigin + "/orders/" + orderId
+            ReturnUrl = _urlService.GetPaymentReturnUrl(orderId)
         });
 
         if (resp.StatusCode != HttpStatusCode.OK)
