@@ -15,7 +15,6 @@ namespace Rij62.Services;
 public class OrderFilter
 {
     public int? Count { get; set; }
-    public bool ShowPaymentPending { get; set; }
 }
 
 public class OrderService
@@ -78,7 +77,6 @@ public class OrderService
         var count = filter.Count ?? 100;
 
         return await FetchOrders()
-          .Where((o) => filter.ShowPaymentPending || o.PaymentStatus == PaymentStatus.Success)
           .Where((o) => !o.OrderItems.All((o) => o.Status == OrderStatus.PickedUp))
           .OrderBy((o) => o.PickupTime)
           .Take(count)
