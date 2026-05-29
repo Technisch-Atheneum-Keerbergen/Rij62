@@ -44,4 +44,9 @@ public class UrlService
         }
         return url;
     }
+
+    public string GetPaymentReturnUrl(Guid orderId)
+    {
+        return FrontendOrigin + "/orders/" + orderId;
+    }
 }

@@ -68,18 +68,15 @@ builder.Services.AddAuthentication("Bearer")
             OnMessageReceived = context =>
             {
 
-                // Pass the jwt in the sec-websocket-protocol header for websockets
-                if (context.Request.Headers.ContainsKey("sec-websocket-protocol") && context.HttpContext.WebSockets.IsWebSocketRequest)
+                if (context.HttpContext.WebSockets.IsWebSocketRequest &&
+                    context.Request.Headers.TryGetValue("Sec-WebSocket-Protocol", out var values))
                 {
-                    var headerValue = context.Request.Headers["sec-websocket-protocol"].ToString();
-                    // token arrives as string = "client, xxxxxxxxxxxxxxxxxxxxx"
-                    var sepIndex = headerValue.IndexOf(',');
+                    var parts = values.ToString().Split(',', 2);
 
-                    var token = headerValue.Substring(sepIndex + 1).Trim();
-                    var protocol = headerValue.Substring(0, sepIndex).Trim();
-
-                    context.Token = token;
-                    context.Request.Headers["sec-websocket-protocol"] = protocol;
+                    if (parts.Length == 2)
+                    {
+                        context.Token = parts[1].Trim();
+                    }
                 }
                 return Task.CompletedTask;
             }

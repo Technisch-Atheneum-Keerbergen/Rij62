@@ -14,14 +14,17 @@ public class PaymentService
     private ILogger<PaymentService> _logger;
     private BancontactService _bancontactService;
     private OrderService _orderService;
+    private UrlService _urlService;
 
-    public PaymentService(BancontactService bancontactService, AppDbContext context, ILogger<PaymentService> logger, OrderService orderService)
+    public PaymentService(BancontactService bancontactService, AppDbContext context, ILogger<PaymentService> logger, OrderService orderService, UrlService urlService)
     {
         _context = context;
         _logger = logger;
         _bancontactService = bancontactService;
         _orderService = orderService;
+        _urlService = urlService;
     }
+
 
     public async Task<CreatePaymentResponse> CreatePayment(decimal amount, int orderNumber, Guid orderId, bool bypassPayment = false)
     {
@@ -33,7 +36,7 @@ public class PaymentService
                 PaymentId = paymentId,
                 Links = new CreatePaymentResponse.LinksResponse
                 {
-                    Deeplink = "/orders"
+                    Deeplink = _urlService.GetPaymentReturnUrl(orderId)
                 }
 
             };

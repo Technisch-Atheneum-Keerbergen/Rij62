@@ -43,7 +43,7 @@ namespace Rij62.Controllers
                 HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
                 return;
             }
-            using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+            using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync("rij62.OrderEvents");
             await _orderEventsWebsocketService.HandleWebsocketConnection(webSocket, filter);
 
         }
