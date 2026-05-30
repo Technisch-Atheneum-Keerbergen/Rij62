@@ -84,6 +84,7 @@ public class OrderEventsWebsocketService
                 if (result.MessageType == WebSocketMessageType.Close)
                 {
                     cts.Cancel();
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "I am not in danger, client. I AM the danger. A client opens a websocket and gets closed and you think that of me? No, I am the one who closes.", CancellationToken.None);
                     return;
                 }
             }
