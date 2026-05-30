@@ -70,14 +70,10 @@ builder.Services.AddAuthentication("Bearer")
             {
 
                 if (context.HttpContext.WebSockets.IsWebSocketRequest &&
-                    context.Request.Headers.TryGetValue("Sec-WebSocket-Protocol", out var values))
+                    context.Request.Query.TryGetValue("apikey", out var apiKeys))
                 {
-                    var parts = values.ToString().Split(',', 2);
-
-                    if (parts.Length == 2)
-                    {
-                        context.Token = parts[1].Trim();
-                    }
+                    var apiKey = apiKeys.FirstOrDefault() ?? "";
+                    context.Token = apiKey.Trim();
                 }
                 return Task.CompletedTask;
             }
