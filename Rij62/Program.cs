@@ -1,3 +1,4 @@
+using System.Net.WebSockets;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -66,16 +67,29 @@ builder.Services.AddAuthentication("Bearer")
         };
         options.Events = new JwtBearerEvents
         {
-            OnMessageReceived = context =>
+            OnMessageReceived = async context =>
             {
-
-                if (context.HttpContext.WebSockets.IsWebSocketRequest &&
-                    context.Request.Query.TryGetValue("apikey", out var apiKeys))
+                if (context.Request.Query.TryGetValue("apikey", out var apiKeys))
                 {
+                    if (!context.HttpContext.WebSockets.IsWebSocketRequest)
+                    {
+                        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        await context.Response.WriteAsync("apikey query param is only allowed for websockets");
+                        return;
+                    }
                     var apiKey = apiKeys.FirstOrDefault() ?? "";
                     context.Token = apiKey.Trim();
                 }
-                return Task.CompletedTask;
+            },
+            OnChallenge = async context =>
+            {
+                if (context.HttpContext.WebSockets.IsWebSocketRequest)
+                {
+                    context.HandleResponse();
+                    var ws = await context.HttpContext.WebSockets.AcceptWebSocketAsync();
+                    await ws.CloseAsync(WebSocketCloseStatus.PolicyViolation, "unauthorized", CancellationToken.None);
+                }
+                return;
             }
         };
     });
