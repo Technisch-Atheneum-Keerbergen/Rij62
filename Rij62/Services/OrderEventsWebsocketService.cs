@@ -25,7 +25,6 @@ public class OrderEventsWebsocketService
 
     public async Task HandleWebsocketConnection(WebSocket socket, OrderFilter filter)
     {
-
         var localizer = await _localization.GetLocalizer();
 
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.ApplicationStopping);
@@ -37,7 +36,7 @@ public class OrderEventsWebsocketService
             var orders = (await _orderService.GetOrders(filter)).Select((o) => new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(o, localizer, _urlService, _orderService))).ToAsyncEnumerable();
 
 
-            await Task.WhenAny(ReceiveLoop(socket, cts), HandleSending(socket, orders, channel.Reader, cts.Token));
+            await Task.WhenAll(ReceiveLoop(socket, cts), HandleSending(socket, orders, channel.Reader, cts.Token));
         }
         finally
         {
@@ -47,25 +46,32 @@ public class OrderEventsWebsocketService
 
     private async Task HandleSending(WebSocket socket, IAsyncEnumerable<ApiOrderEvent> initialEvents, ChannelReader<ApiOrderEvent> reader, CancellationToken ct)
     {
-        await SendEvents(socket, initialEvents);
-        await SendEvents(socket, reader.ReadAllAsync(ct));
+        await SendEvents(socket, initialEvents, ct);
+        await SendEvents(socket, reader.ReadAllAsync(ct), ct);
     }
 
 
-    private async Task SendEvents(WebSocket socket, IAsyncEnumerable<ApiOrderEvent> events)
+    private async Task SendEvents(WebSocket socket, IAsyncEnumerable<ApiOrderEvent> events, CancellationToken ct)
     {
-        await foreach (var ev in events)
+        try
         {
-            if (socket.State != WebSocketState.Open)
+            await foreach (var ev in events)
             {
-                break;
+                if (socket.State != WebSocketState.Open)
+                {
+                    break;
+                }
+                var json = ev.Serialize();
+                await socket.SendAsync(
+                    json,
+                    WebSocketMessageType.Text,
+                    true,
+                    ct);
             }
-            var json = ev.Serialize();
-            await socket.SendAsync(
-                json,
-                WebSocketMessageType.Text,
-                true,
-                CancellationToken.None);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
         }
     }
 
@@ -73,21 +79,26 @@ public class OrderEventsWebsocketService
         WebSocket socket,
         CancellationTokenSource cts)
     {
+        var buffer = new byte[4096];
         try
         {
-            while (socket.State == WebSocketState.Open)
+            while (true)
             {
                 var result = await socket.ReceiveAsync(
-                    new ArraySegment<byte>(new byte[1]),
+                    new ArraySegment<byte>(buffer),
                     cts.Token);
 
                 if (result.MessageType == WebSocketMessageType.Close)
                 {
                     cts.Cancel();
-                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "I am not in danger, client. I AM the danger. A client opens a websocket and gets closed and you think that of me? No, I am the one who closes.", CancellationToken.None);
+                    await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "A client opens a websocket and gets closed and you think that of me? No, I am the one who closes.", CancellationToken.None);
                     return;
                 }
             }
+        }
+        catch (OperationCanceledException)
+        {
+            return;
         }
         catch
         {
