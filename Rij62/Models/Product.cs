@@ -25,6 +25,9 @@ public class Product
     public required string ImgUrl { get; set; }
     public int? CategoryId { get; set; }
 
+    public ICollection<MenuPresetLink> PresetLinks { get; set; }
+    public ICollection<MenuPreset> MenuPresets { get; set; }
+
     public ICollection<ProductStep> Steps { get; set; }
 
     [ForeignKey("CategoryId")]

@@ -31,7 +31,7 @@ namespace Rij62.Controllers
         {
             var localizer = await _localizationService.GetLocalizer();
             var presets = await _menuPresetService.GetPresets();
-            return Ok(_context.MenuPresets.Include((p) => p.Links).ThenInclude((l) => l.Product).Select((p) => ApiGetMenuPresetResponse.FromMenuPreset(p, presets, localizer, _urlService)).ToAsyncEnumerable());
+            return Ok(await _context.MenuPresets.Include((m) => m.Links).ThenInclude((l) => l.Product).Select((p) => ApiGetMenuPresetResponse.FromMenuPreset(p, presets, localizer, _urlService)).ToArrayAsync());
         }
 
         [Authorize(Policy = "AdminOnly")]

@@ -4,6 +4,7 @@ using Rij62.Services;
 
 public class ApiGetMenuPresetResponse
 {
+    public required int Id { get; set; }
     public required string Name { get; set; }
     public required WeekDayRepeat Repeat { get; set; }
     public required bool Enabled { get; set; }
@@ -13,15 +14,16 @@ public class ApiGetMenuPresetResponse
     {
         if (preset.Links == null)
         {
-            throw new ArgumentNullException("MenuPreset.Links is null make sure you load it from the database");
+            throw new ArgumentNullException("MenuPreset.Products is null make sure you load it from the database");
         }
 
         return new ApiGetMenuPresetResponse
         {
+            Id = preset.Id,
             Name = preset.Name,
             Repeat = preset.Repeat,
             Enabled = preset.Enabled,
-            Products = preset.Links.Select((l) => l.Product).Select((p) => ApiGetProductResponse.FromProduct(p, presets, localizer, urlService, includeSteps: false)).ToArray()
+            Products = preset.Links.Select((p) => ApiGetProductResponse.FromProduct(p.Product, presets, localizer, urlService, includeSteps: false)).ToArray()
         };
 
     }

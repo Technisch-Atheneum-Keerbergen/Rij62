@@ -10,7 +10,8 @@ public class MenuPreset
     public WeekDayRepeat Repeat { get; set; }
     public bool Enabled { get; set; }
 
-    public ICollection<MenuPresetLink> Links;
+    public ICollection<MenuPresetLink> Links { get; set; }
+    public ICollection<Product> Products { get; set; }
 
     public static MenuPreset FromApiMenuPreset(ApiCreateMenuPresetRequest preset)
     {

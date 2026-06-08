@@ -25,6 +25,9 @@ init: load-db-test-data
 db-update:
   dotnet ef --project Rij62 database update
 
+mig-rm:
+  dotnet ef --project Rij62 migrations remove
+
 [positional-arguments]
 mig-add name:
   dotnet ef --project Rij62 migrations add $1
