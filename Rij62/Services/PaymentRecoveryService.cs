@@ -20,9 +20,9 @@ public class PaymentRecoveryService : BackgroundService
             // do async work
             using (var scope = _services.CreateScope())
             {
-               var paymentService = scope.ServiceProvider.GetRequiredService<PaymentService>();
+                var paymentService = scope.ServiceProvider.GetRequiredService<PaymentService>();
 
-            await paymentService.RecoverOrders();
+                await paymentService.RecoverOrders();
             }
             await Task.Delay(TimeSpan.FromMinutes(2), stoppingToken);
         }

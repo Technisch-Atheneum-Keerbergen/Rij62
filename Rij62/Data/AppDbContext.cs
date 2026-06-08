@@ -41,5 +41,8 @@ namespace Rij62.Data
         public DbSet<LinkKey> LinkKeys { get; set; }
         public DbSet<MenuPreset> MenuPresets { get; set; }
         public DbSet<MenuPresetLink> MenuPresetLinks { get; set; }
+
+        public DbSet<TimeSlot> TimeSlots { get; set; }
+        public DbSet<MidnightResetLog> midnightResetLogs { get; set; }
     }
 }

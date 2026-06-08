@@ -21,9 +21,9 @@ namespace Rij62.Controllers
         private readonly UrlService _urlService;
         private readonly OrderEventsService _orderEventsService;
         private readonly OrderEventsWebsocketService _orderEventsWebsocketService;
+        private readonly TimeSlotService _timeSlotService;
 
-
-        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService, UrlService urlService, OrderEventsService chefWebsocketService, OrderEventsWebsocketService orderEventsWebsocketService, OrderValidationService orderValidationService)
+        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService, UrlService urlService, OrderEventsService chefWebsocketService, OrderEventsWebsocketService orderEventsWebsocketService, OrderValidationService orderValidationService, TimeSlotService timeSlotService)
         {
             _context = context;
             _localization = localization;
@@ -32,6 +32,7 @@ namespace Rij62.Controllers
             _orderEventsService = chefWebsocketService;
             _orderEventsWebsocketService = orderEventsWebsocketService;
             _orderValidationService = orderValidationService;
+            _timeSlotService = timeSlotService;
         }
 
         [Authorize(Policy = "AdminOnly")]
@@ -89,6 +90,7 @@ namespace Rij62.Controllers
         [HttpPost("")]
         public async Task<IActionResult> PostOrder([FromBody] ApiCreateOrderRequest apiOrder)
         {
+            var timeSlots = await _timeSlotService.GetTimeSlots();
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 var validationErrors = await _orderValidationService.ValidateOrder(apiOrder);
@@ -101,7 +103,7 @@ namespace Rij62.Controllers
                     });
                 }
 
-                var order = Order.FromApiPostOrder(apiOrder);
+                var order = Order.FromApiPostOrder(apiOrder, timeSlots);
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
 

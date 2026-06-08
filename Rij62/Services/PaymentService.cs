@@ -47,7 +47,7 @@ public class PaymentService
 
     public async Task RecoverOrders()
     {
-        var orders = await _context.Orders.Where((o) => o.PaymentId != null && o.PaymentStatus == PaymentStatus.NotPaid).ToArrayAsync();
+        var orders = await _context.Orders.Include((o) => o.OrderItems).Where((o) => o.PaymentId != null && o.PaymentStatus == PaymentStatus.NotPaid && !o.IsPickedUp()).ToArrayAsync();
         foreach (var order in orders)
         {
             _logger.LogInformation("Trying to recover order");

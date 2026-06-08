@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Rij62.Data;
 using Rij62.Models.Api;
 using Microsoft.EntityFrameworkCore;
+using Rij62.Models;
 
 namespace Rij62.Services;
 
@@ -27,13 +28,13 @@ public class OrderValidationError
     {
         return new OrderValidationError { Type = OrderValidationErrorType.InvalidTableNumber };
     }
-    public static OrderValidationError PastPickupTime()
+    public static OrderValidationError InvalidTimeSlot()
     {
-        return new OrderValidationError { Type = OrderValidationErrorType.PastPickupTime };
+        return new OrderValidationError { Type = OrderValidationErrorType.InvalidTimeSlot };
     }
-    public static OrderValidationError PickupTimeTooFar()
+    public static OrderValidationError TimeSlotNotAvailable()
     {
-        return new OrderValidationError { Type = OrderValidationErrorType.PickupTimeTooFar };
+        return new OrderValidationError { Type = OrderValidationErrorType.TimeSlotNotAvailable };
     }
     public static OrderValidationError EmptyOrder()
     {
@@ -66,9 +67,9 @@ public enum OrderValidationErrorType
 
     ProductInactiveOrDisabled,
 
-    PastPickupTime,
+    InvalidTimeSlot,
 
-    PickupTimeTooFar,
+    TimeSlotNotAvailable,
 
     EmptyOrder,
 }
@@ -78,17 +79,19 @@ public class OrderValidationService
 
     private AppDbContext _context;
     private MenuPresetService _menuPresets;
+    private TimeSlotService _timeSlotService;
     private ILogger<OrderValidationService> _logger;
 
-    public OrderValidationService(AppDbContext context, MenuPresetService menuPresetService, ILogger<OrderValidationService> logger)
+    public OrderValidationService(AppDbContext context, MenuPresetService menuPresetService, ILogger<OrderValidationService> logger, TimeSlotService timeSlotService)
     {
         _context = context;
         _menuPresets = menuPresetService;
         _logger = logger;
+        _timeSlotService = timeSlotService;
 
     }
 
-    public async Task<List<OrderValidationError>> ValidateOrder(ApiCreateOrderRequest order, DateTime? date=null)
+    public async Task<List<OrderValidationError>> ValidateOrder(ApiCreateOrderRequest order, DateTime? date = null)
     {
         if (date == null)
         {
@@ -98,14 +101,19 @@ public class OrderValidationService
         var errors = new List<OrderValidationError>();
         var dateUnix = ((DateTimeOffset)date).ToUnixTimeSeconds();
 
-        if (order.PickupTime != null && order.PickupTime < dateUnix)
+        var timeSlot = await _context.TimeSlots.FindAsync(order.TimeSlotId);
+        if (timeSlot == null)
         {
-            errors.Add(OrderValidationError.PastPickupTime());
+            errors.Add(OrderValidationError.InvalidTimeSlot());
         }
-        if (order.PickupTime > dateUnix + (60 * 60 * 24 * 7))
+        else
         {
-            errors.Add(OrderValidationError.PickupTimeTooFar());
+            if (!_timeSlotService.IsSlotAvailable(timeSlot, date.Value))
+            {
+                errors.Add(OrderValidationError.TimeSlotNotAvailable());
+            }
         }
+
 
         if (order.TableNumber != null)
         {

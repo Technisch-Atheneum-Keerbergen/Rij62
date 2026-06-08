@@ -17,7 +17,7 @@ public class OrderFilter
     public int? Count { get; set; }
 }
 
-public class OrderService
+public class OrderService : IMidnightReset
 {
 
     private AppDbContext _context;
@@ -77,10 +77,14 @@ public class OrderService
         var count = filter.Count ?? 100;
 
         return await FetchOrders()
-          .Where((o) => !o.OrderItems.All((o) => o.Status == OrderStatus.PickedUp))
+          .Where((o) => !o.IsPickedUp())
           .OrderBy((o) => o.PickupTime)
           .Take(count)
           .ToArrayAsync();
+    }
+    public async Task<int> OrdersInTimeSlot(TimeSlot slot)
+    {
+        return await FetchOrders().Where((o) => !o.IsPickedUp()).Where((o) => o.TimeSlotId == slot.Id).CountAsync();
     }
 
 
@@ -105,4 +109,8 @@ public class OrderService
         await _context.SaveChangesAsync();
     }
 
+    public async Task MidnightReset()
+    {
+        await _context.OrderItems.ExecuteUpdateAsync((oi) => oi.SetProperty((oi) => oi.Status, (_) => OrderStatus.PickedUp));
+    }
 }
