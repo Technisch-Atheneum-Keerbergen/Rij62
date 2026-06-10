@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using System.Threading.Channels;
+using Rij62.Models;
 using Rij62.Models.Api;
+using Rij62.Observers;
 
 namespace Rij62.Services;
 
@@ -11,10 +13,21 @@ public struct EventReader
 }
 
 
-public class OrderEventsService
+public class OrderEventsService : IOrderCreatedObserver, IOrderItemUpdatedObserver, IOrderPaymentStatusUpdatedObserver
 {
 
+    private readonly LocalizationService _localizationService;
+    private readonly UrlService _urlService;
+    private readonly OrderService _orderService;
+
     private ImmutableArray<Channel<ApiOrderEvent>> _channels = ImmutableArray<Channel<ApiOrderEvent>>.Empty;
+
+    public OrderEventsService(LocalizationService localizationService, UrlService urlService, OrderService orderService)
+    {
+        _localizationService = localizationService;
+        _urlService = urlService;
+        _orderService = orderService;
+    }
 
     public Channel<ApiOrderEvent> SubscribeReader()
     {
@@ -36,7 +49,7 @@ public class OrderEventsService
     }
 
 
-    public async Task BroadcastEvent(ApiOrderEvent ev)
+    private async Task BroadcastEvent(ApiOrderEvent ev)
     {
         await Task.WhenAll(
             _channels.Select(c =>
@@ -58,4 +71,23 @@ public class OrderEventsService
                 }
             }));
     }
+
+    public async Task OnOrderCreated(Order order)
+    {
+        var localizer = await _localizationService.GetLocalizer();
+        await BroadcastEvent(new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(order, localizer, _urlService, _orderService)));
+
+    }
+
+    public async Task OnOrderItemUpdated(OrderItem item)
+    {
+        await BroadcastEvent(new ApiOrderItemStatusUpdatedEvent(ApiGetOrderItemStatusResponse.FromOrderItem(item)));
+    }
+
+    public async Task OnOrderPaymentStatusUpdated(Order order, PaymentStatus status)
+    {
+        await BroadcastEvent(new ApiOrderPaymentStatusUpdatedEvent(ApiGetOrderPaymentStatusResponse.FromOrderIdAndStatus(order.PublicId, status)));
+
+    }
+
 }

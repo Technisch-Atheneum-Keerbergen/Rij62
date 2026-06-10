@@ -12,7 +12,7 @@ public class TimeSlot
     public required int StartTime { get; set; } // Seconds since midnight
     public required int EndTime { get; set; } // Seconds since midnight
 
-    public TimeSlot FromApiCreateTimeSlotRequest(ApiCreateTimeSlotRequest req)
+    public static TimeSlot FromApiCreateTimeSlotRequest(ApiCreateTimeSlotRequest req)
     {
         return new TimeSlot
         {

@@ -11,7 +11,6 @@ namespace Rij62.Controllers;
 [Route("/api/[controller]")]
 public class TimeSlotController : ControllerBase
 {
-
     private readonly TimeSlotService _timeSlotService;
     private readonly OrderService _orderService;
     private readonly AppDbContext _context;
@@ -32,7 +31,10 @@ public class TimeSlotController : ControllerBase
     [HttpPost("")]
     public async Task<IActionResult> CreateTimeSlot([FromBody] ApiCreateTimeSlotRequest req)
     {
-        TimeSlot.FromApiCreateTimeSlot(req);
+        var ts = TimeSlot.FromApiCreateTimeSlotRequest(req);
+        _context.TimeSlots.Add(ts);
+        await _context.SaveChangesAsync();
+        return Ok();
 
     }
 

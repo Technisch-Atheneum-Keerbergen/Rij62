@@ -108,7 +108,7 @@ public class OrderValidationService
         }
         else
         {
-            if (!_timeSlotService.IsSlotAvailable(timeSlot, date.Value))
+            if (!_timeSlotService.IsSlotAvailable(timeSlot))
             {
                 errors.Add(OrderValidationError.TimeSlotNotAvailable());
             }

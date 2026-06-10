@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
 using Rij62.Models;
+using Rij62.Observers;
 
 namespace Rij62.Services;
 
@@ -22,7 +23,7 @@ public class TimeSlots
     }
 }
 
-public class TimeSlotService : IMidnightReset
+public class TimeSlotService : IMidnightResetObserver
 {
     private readonly AppDbContext _context;
 

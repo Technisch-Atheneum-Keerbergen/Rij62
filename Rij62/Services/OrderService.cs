@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Rij62.Data;
 using Rij62.Models;
 using Rij62.Models.Api;
+using Rij62.Observers;
 
 namespace Rij62.Services;
 
@@ -17,16 +18,16 @@ public class OrderFilter
     public int? Count { get; set; }
 }
 
-public class OrderService : IMidnightReset
+public class OrderService : IMidnightResetObserver
 {
 
     private AppDbContext _context;
-    private OrderEventsService _orderEventsService;
+    private IEnumerable<IOrderPaymentStatusUpdatedObserver> _orderPaymentStatusUpdatedObservers;
 
-    public OrderService(AppDbContext context, OrderEventsService orderEventsService)
+    public OrderService(AppDbContext context, IEnumerable<IOrderPaymentStatusUpdatedObserver> orderPaymentStatusUpdatedObservers)
     {
         _context = context;
-        _orderEventsService = orderEventsService;
+        _orderPaymentStatusUpdatedObservers = orderPaymentStatusUpdatedObservers;
     }
 
     public decimal CalcTotalOrderPrice(Order order)
@@ -104,8 +105,8 @@ public class OrderService : IMidnightReset
 
     public async Task UpdateOrderPaymentStatus(Order order, PaymentStatus status)
     {
+        await Task.WhenAll(_orderPaymentStatusUpdatedObservers.Select((o) => o.OnOrderPaymentStatusUpdated(order, status)));
         order.PaymentStatus = status;
-        await _orderEventsService.BroadcastEvent(new ApiOrderPaymentStatusUpdatedEvent(ApiGetOrderPaymentStatusResponse.FromOrder(order)));
         await _context.SaveChangesAsync();
     }
 

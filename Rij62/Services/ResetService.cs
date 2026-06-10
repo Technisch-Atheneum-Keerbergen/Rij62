@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
 using Rij62.Models;
+using Rij62.Observers;
 
 namespace Rij62.Services;
 
@@ -18,7 +19,7 @@ public class ResetService : BackgroundService
     public async Task Reset(IServiceProvider provider)
     {
 
-        await Task.WhenAll(provider.GetRequiredService<IEnumerable<IMidnightReset>>().Select((t) => t.MidnightReset()));
+        await Task.WhenAll(provider.GetRequiredService<IEnumerable<IMidnightResetObserver>>().Select((t) => t.MidnightReset()));
         var ctx = provider.GetRequiredService<AppDbContext>();
         ctx.midnightResetLogs.Add(new MidnightResetLog { Timestamp = new DateTimeOffset(DateTime.UtcNow) });
         await ctx.SaveChangesAsync();

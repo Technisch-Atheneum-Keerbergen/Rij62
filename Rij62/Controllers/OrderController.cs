@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Rij62.Data;
 using Rij62.Models;
 using Rij62.Models.Api;
+using Rij62.Observers;
 using Rij62.Services;
 
 namespace Rij62.Controllers
@@ -19,34 +20,21 @@ namespace Rij62.Controllers
         private readonly OrderService _orderService;
         private readonly OrderValidationService _orderValidationService;
         private readonly UrlService _urlService;
-        private readonly OrderEventsService _orderEventsService;
-        private readonly OrderEventsWebsocketService _orderEventsWebsocketService;
         private readonly TimeSlotService _timeSlotService;
 
-        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService, UrlService urlService, OrderEventsService chefWebsocketService, OrderEventsWebsocketService orderEventsWebsocketService, OrderValidationService orderValidationService, TimeSlotService timeSlotService)
+        private readonly IEnumerable<IOrderCreatedObserver> _orderCreatedObservers;
+        private readonly IEnumerable<IOrderItemUpdatedObserver> _orderItemUpdatedObservers;
+
+        public OrderController(AppDbContext context, LocalizationService localization, OrderService orderService, UrlService urlService, OrderValidationService orderValidationService, TimeSlotService timeSlotService, IEnumerable<IOrderCreatedObserver> orderCreatedObservers, IEnumerable<IOrderItemUpdatedObserver> orderItemUpdatedObservers)
         {
             _context = context;
             _localization = localization;
             _orderService = orderService;
             _urlService = urlService;
-            _orderEventsService = chefWebsocketService;
-            _orderEventsWebsocketService = orderEventsWebsocketService;
             _orderValidationService = orderValidationService;
             _timeSlotService = timeSlotService;
-        }
-
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet("events")]
-        public async Task Events([FromQuery] OrderFilter filter)
-        {
-            if (!HttpContext.WebSockets.IsWebSocketRequest)
-            {
-                HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-                return;
-            }
-            using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync("rij62.OrderEvents");
-            await _orderEventsWebsocketService.HandleWebsocketConnection(webSocket, filter);
-
+            _orderCreatedObservers = orderCreatedObservers;
+            _orderItemUpdatedObservers = orderItemUpdatedObservers;
         }
 
 
@@ -157,7 +145,8 @@ namespace Rij62.Controllers
                 }
 
                 var localizer = await _localization.GetLocalizer();
-                await _orderEventsService.BroadcastEvent(new ApiOrderAddedEvent(ApiGetOrderResponse.FromOrder(fetchedOrder, localizer, _urlService, _orderService)));
+                await Task.WhenAll(_orderCreatedObservers.Select((o) => o.OnOrderCreated(order)));
+
                 return Ok(new ApiCreateOrderResponse { OrderId = order.PublicId, ValidationErrors = new List<OrderValidationError>() });
             }
 
@@ -195,8 +184,8 @@ namespace Rij62.Controllers
             item.Status = status.Status;
 
             await _context.SaveChangesAsync();
+            await Task.WhenAll(_orderItemUpdatedObservers.Select((o) => o.OnOrderItemUpdated(item)));
 
-            await _orderEventsService.BroadcastEvent(new ApiOrderItemStatusUpdatedEvent(ApiGetOrderItemStatusResponse.FromOrderItem(item)));
             return Ok();
         }
 
