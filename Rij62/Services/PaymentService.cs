@@ -36,7 +36,7 @@ public class PaymentService
                 PaymentId = paymentId,
                 Links = new CreatePaymentResponse.LinksResponse
                 {
-                    Deeplink = _urlService.GetPaymentReturnUrl(orderId)
+                    Deeplink = new CreatePaymentResponse.Link { Href = _urlService.GetPaymentReturnUrl(orderId) }
                 }
 
             };

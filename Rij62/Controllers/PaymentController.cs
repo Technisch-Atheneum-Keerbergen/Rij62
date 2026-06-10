@@ -47,7 +47,7 @@ public class PaymentController : ControllerBase
             {
                 return NotFound("Order not found");
             }
-            if (order.PaymentStatus != PaymentStatus.NotPaid)
+            if (order.PaymentStatus != PaymentStatus.NotPaid && order.PaymentStatus != PaymentStatus.Failed)
             {
                 return BadRequest("Payment has already started for this order");
             }
@@ -59,7 +59,7 @@ public class PaymentController : ControllerBase
             var amount = _orderService.CalcTotalOrderPrice(order);
             var resp = await _paymentService.CreatePayment(amount, order.OrderNumber, order.PublicId, bypassPayment);
             order.PaymentId = resp.PaymentId;
-            redirectUrl = resp.Links.Deeplink;
+            redirectUrl = resp.Links.Deeplink.Href;
             await _context.SaveChangesAsync();
             await transaction.CommitAsync();
 
