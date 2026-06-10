@@ -112,7 +112,7 @@ public class BancontactService
             ReturnUrl = _urlService.GetPaymentReturnUrl(orderId)
         });
 
-        if (resp.StatusCode != HttpStatusCode.OK)
+        if (resp.StatusCode != HttpStatusCode.Created)
         {
             throw new Exception("Payments API returned status code " + resp.StatusCode);
         }
