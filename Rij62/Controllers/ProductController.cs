@@ -76,6 +76,14 @@ namespace Rij62.Controllers
         [HttpPost("{productId}/step")]
         public async Task<IActionResult> PostStep(int productId, [FromBody] ApiCreateStepRequest apiStep)
         {
+            foreach (var opt in apiStep.Options)
+            {
+                if (apiStep.Options.Where((o) => o == opt).Count() > 1)
+                {
+                    return BadRequest($"Option with product id {opt} is added more than once");
+                }
+            }
+
             var product = await _context.Products.FindAsync(productId);
             if (product == null)
             {
